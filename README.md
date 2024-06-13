@@ -16,14 +16,14 @@ Follow these steps to set up the project:
 Clone this repository to your local machine using the following command:
 
 ```sh
-git clone https://github.com/JaclyNolan/sprint-project-web-server-react
+git clone <url>
 ```
 
 ### 2. Navigate to the Project Directory
 Change into the project directory:
 
 ```sh
-cd web-server
+cd <folder_name>
 ```
 
 ### 3. Install Dependencies
