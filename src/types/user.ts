@@ -2,18 +2,7 @@ export interface User {
     id: string,
     email: string,
     name: string,
-    roles: Role[]
-}
-
-export interface Role {
-    id: string
-    name: RoleName,
-    description: string | null
-}
-
-export enum RoleName {
-    Admin = "Admin",
-    User = "User"
+    types: UserType
 }
 
 export interface UserCredential {
@@ -21,4 +10,9 @@ export interface UserCredential {
     accessToken: string,
     expiresIn: number,
     refreshToken: string
+}
+
+export enum UserType {
+    Admin = "Admin",
+    Staff = "Staff"
 }
