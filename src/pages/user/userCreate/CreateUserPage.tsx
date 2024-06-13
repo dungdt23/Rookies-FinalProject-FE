@@ -1,117 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-    Box,
-    Button,
-    FormControl,
-    FormControlLabel,
-    FormLabel,
-    Radio,
-    RadioGroup,
-    Select,
-    MenuItem,
-    TextField,
-    Typography,
-    InputLabel,
-} from '@mui/material';
+import { FormControl, FormLabel, Radio, RadioGroup, Select, MenuItem} from '@mui/material';
+import { FormContainer, FormField, GenderField, GenderOptions, FormButtons } from "../../../components/form/CustomBox";
+import { SaveButton, CancelButton } from "../../../components/form/CustomButton";
+import { GenderOption } from "../../../components/form/CustomFormControlLabel";
+import { FormLabelStyled } from "../../../components/form/CustomInputLabel";
+import { TextFieldStyled } from "../../../components/form/CustomTextField";
+import { FormTitle } from "../../../components/form/CustomTypography";
 import { styled } from '@mui/system';
-
-// Styled Components
-
-const FormContainer = styled(Box)(({ theme }) => ({
-    background: '#fff',
-    padding: '20px',
-    width: '450px',
-    textAlign: 'left',
-    borderRadius: '8px',
-    boxShadow: theme.shadows[2],
-    margin: '0 auto',
-    marginTop: theme.spacing(4),
-}));
-
-const FormTitle = styled(Typography)(({ theme }) => ({
-    fontWeight: 'bold',
-    color: 'red',
-    fontSize: '1.2em',
-    textAlign: 'center',
-    marginBottom: '20px',
-}));
-
-const FormField = styled(Box)(({ theme }) => ({
-    display: 'flex',
-    alignItems: 'center',
-    marginBottom: '15px',
-    flexDirection: 'column',
-    [theme.breakpoints.up('sm')]: {
-        flexDirection: 'row',
-    },
-}));
-
-const FormLabelStyled = styled(InputLabel)(({ theme }) => ({
-    minWidth: '150px',
-    whiteSpace: 'nowrap',
-    textAlign: 'right',
-    paddingRight: '10px',
-    [theme.breakpoints.down('xs')]: {
-        textAlign: 'left',
-        paddingRight: '0',
-    },
-}));
-
-const TextFieldStyled = styled(TextField)(({ theme }) => ({
-    flex: 1,
-    borderRadius: '5px',
-    border: '1px solid #ccc',
-    boxSizing: 'border-box',
-    marginLeft: '10px',
-    fontFamily: 'inherit',
-    [theme.breakpoints.down('xs')]: {
-        marginLeft: '0',
-        marginTop: '10px',
-    },
-}));
-
-const GenderOption = styled(FormControlLabel)(({ theme }) => ({
-    display: 'flex',
-    alignItems: 'center',
-    marginRight: '15px',
-    '& > .MuiRadio-root': {
-        marginRight: '5px',
-    },
-}));
-
-const FormButtons = styled(Box)(({ theme }) => ({
-    display: 'flex',
-    justifyContent: 'center',
-    marginTop: '20px',
-    gap: theme.spacing(2),
-}));
-
-const SaveButton = styled(Button)(({ theme }) => ({
-    padding: '10px 20px',
-    margin: '5px',
-    borderRadius: '5px',
-    fontSize: '16px',
-    backgroundColor: 'red',
-    color: 'white',
-    '&:hover': {
-        backgroundColor: theme.palette.error.dark,
-    },
-}));
-
-const CancelButton = styled(Button)(({ theme }) => ({
-    padding: '10px 20px',
-    margin: '5px',
-    borderRadius: '5px',
-    fontSize: '16px',
-    border: '1px solid #ccc',
-    backgroundColor: 'white',
-    color: 'grey',
-    '&:hover': {
-        backgroundColor: theme.palette.action.hover,
-    },
-}));
-
 const CreateUserPage: React.FC = () => {
     const [firstName, setFirstName] = useState<string>('');
     const [lastName, setLastName] = useState<string>('');
@@ -174,7 +70,8 @@ const CreateUserPage: React.FC = () => {
                     />
                 </FormField>
                 <FormField>
-                        <FormLabelStyled htmlFor="gender">Gender</FormLabelStyled>
+                    <FormControl component="fieldset" margin="dense" fullWidth>
+                        <FormLabel component="legend">Gender</FormLabel>
                         <RadioGroup
                             row
                             name="gender"
@@ -192,6 +89,7 @@ const CreateUserPage: React.FC = () => {
                                 label="Male"
                             />
                         </RadioGroup>
+                    </FormControl>
                 </FormField>
                 <FormField>
                     <FormLabelStyled htmlFor="joinedDate">Joined Date</FormLabelStyled>
@@ -212,8 +110,7 @@ const CreateUserPage: React.FC = () => {
                         <Select
                             id="type"
                             value={type}
-                            onChange={(e) => setType(e.target.value as string)}
-                            displayEmpty
+                            onChange={(e) => setType(e.target.value)}
                             variant="outlined"
                         >
                             <MenuItem value="Staff">Staff</MenuItem>
@@ -222,10 +119,16 @@ const CreateUserPage: React.FC = () => {
                     </FormControl>
                 </FormField>
                 <FormButtons>
-                    <SaveButton type="submit" variant="contained" disabled={!isSaveEnabled}>
+                    <SaveButton
+                        type="submit"
+                        disabled={!isSaveEnabled}
+                    >
                         Save
                     </SaveButton>
-                    <CancelButton type="button" variant="outlined" onClick={handleCancel}>
+                    <CancelButton
+                        type="button"
+                        onClick={handleCancel}
+                    >
                         Cancel
                     </CancelButton>
                 </FormButtons>
