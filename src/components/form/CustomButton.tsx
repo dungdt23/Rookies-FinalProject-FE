@@ -26,7 +26,7 @@ export const CancelButton = styled(Button)(({ theme }) => ({
     },
 }));
 
-const CustomButton: FC = () => {
+const CustomButton = () => {
 }
 
 export default CustomButton;

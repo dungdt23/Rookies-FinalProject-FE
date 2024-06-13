@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FormControl, FormLabel, Radio, RadioGroup, Select, MenuItem} from '@mui/material';
-import { FormContainer, FormField, GenderField, GenderOptions, FormButtons } from "../../../components/form/CustomBox";
+import { FormContainer, FormField, FormButtons } from "../../../components/form/CustomBox";
 import { SaveButton, CancelButton } from "../../../components/form/CustomButton";
 import { GenderOption } from "../../../components/form/CustomFormControlLabel";
 import { FormLabelStyled } from "../../../components/form/CustomInputLabel";
 import { TextFieldStyled } from "../../../components/form/CustomTextField";
 import { FormTitle } from "../../../components/form/CustomTypography";
-import { styled } from '@mui/system';
+
 const CreateUserPage: React.FC = () => {
     const [firstName, setFirstName] = useState<string>('');
     const [lastName, setLastName] = useState<string>('');

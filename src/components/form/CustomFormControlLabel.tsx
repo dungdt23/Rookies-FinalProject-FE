@@ -1,7 +1,7 @@
 import { styled } from '@mui/system';
 import { FormControlLabel } from '@mui/material';
 
-export const GenderOption = styled(FormControlLabel)(({ theme }) => ({
+export const GenderOption = styled(FormControlLabel)(({  }) => ({
     display: 'flex',
     alignItems: 'center',
     marginRight: '15px',
@@ -9,6 +9,6 @@ export const GenderOption = styled(FormControlLabel)(({ theme }) => ({
         marginRight: '5px',
     },
 }));
-const CustomFormControlLabel: FC = () => {
+const CustomFormControlLabel = () => {
 }
 export default CustomFormControlLabel;

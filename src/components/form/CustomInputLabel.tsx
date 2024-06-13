@@ -11,6 +11,6 @@ export const FormLabelStyled = styled(InputLabel)(({ theme }) => ({
         paddingRight: '0',
     },
 }));
-const CustomInputLabel: FC = () => {
+const CustomInputLabel = () => {
 }
 export default CustomInputLabel;

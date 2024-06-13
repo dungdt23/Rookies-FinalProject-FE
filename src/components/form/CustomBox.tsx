@@ -7,7 +7,6 @@ export const FormContainer = styled(Box)(({ theme }) => ({
     width: '450px',
     textAlign: 'left',
     borderRadius: '8px',
-    boxShadow: theme.shadows[2],
     margin: '0 auto',
     marginTop: theme.spacing(4),
 }));
@@ -22,17 +21,6 @@ export const FormField = styled(Box)(({ theme }) => ({
     },
 }));
 
-export const GenderField = styled(Box)(({ theme }) => ({
-    display: 'flex',
-    alignItems: 'center',
-}));
-
-export const GenderOptions = styled(Box)(({ theme }) => ({
-    display: 'flex',
-    alignItems: 'center',
-    flexWrap: 'wrap',
-}));
-
 export const FormButtons = styled(Box)(({ theme }) => ({
     display: 'flex',
     justifyContent: 'center',
@@ -40,7 +28,7 @@ export const FormButtons = styled(Box)(({ theme }) => ({
     gap: theme.spacing(2),
 }));
 
-const CustomBox: FC = () => {
+const CustomBox = () => {
 }
 
 export default CustomBox;

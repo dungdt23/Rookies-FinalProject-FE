@@ -13,6 +13,6 @@ export const TextFieldStyled = styled(TextField)(({ theme }) => ({
         marginTop: '10px',
     },
 }));
-const CustomTextField: FC = () => {
+const CustomTextField = () => {
 }
 export default CustomTextField;
