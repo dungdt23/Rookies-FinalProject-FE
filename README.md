@@ -1,4 +1,4 @@
-# React + Vite + TypeScript Project Setup
+# FinalProject-FE
 
 ## Prerequisites
 
