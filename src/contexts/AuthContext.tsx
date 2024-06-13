@@ -19,7 +19,9 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
         const storedUserCredential = localStorage.getItem(LocalStorageConstants.USER_CREDENTIAL);
         return storedUserCredential ? JSON.parse(storedUserCredential) : null;
     });
+    //@ts-ignore
     const [isUserFetching, setIsUserFetching] = useState<boolean>(false);
+    //@ts-ignore
     const navigate = useNavigate();
 
     const setUserCredential = (userCredential: UserCredential | null) => {

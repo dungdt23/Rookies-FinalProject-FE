@@ -19,6 +19,7 @@ const HeaderMockInfo: BreadcrumbsInfo[] = [
 ]
 
 const Header: FC = () => {
+    //@ts-ignore
     const [history, setHistory] = useState<BreadcrumbsInfo[]>(HeaderMockInfo)
     return (
         <Box className="header">
