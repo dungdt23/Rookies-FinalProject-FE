@@ -1,3 +1,4 @@
+import { AxiosResponse } from 'axios';
 import { apiEndpoints } from '../constants/apiEndpoint';
 import { User, UserType } from '../types/user';
 import axiosInstance from './axios';
@@ -25,8 +26,8 @@ enum fieldFilter {
 
 export const fetchAllUser = async (params: GetAllUserParams): Promise<ApiResponse> => {
     try {
-      const response = await axiosInstance.get<ApiResponse>(apiEndpoints.USER.GET_ALL, { params });
-      return response.data;
+      const response = await axiosInstance.get<AxiosResponse>(apiEndpoints.USER.GET_ALL, { params });
+      return response.data.data;
     } catch (error) {
       console.error('Failed to fetch users:', error);
       throw error;
