@@ -15,8 +15,10 @@ jobs:
     runs-on: ubuntu-latest
     name: Build and Deploy Job
     env:
-      API_URL: ${{ secrets.APP_URL }}
+      API_URL: ${{ secrets.API_URL }}
     steps:
+      - name: Check Environment Variables
+        run: printenv
       - name: Use API URL
         run: echo "The API URL is $API_URL"
       - uses: actions/checkout@v3
