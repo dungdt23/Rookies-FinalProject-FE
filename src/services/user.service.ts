@@ -3,33 +3,33 @@ import { apiEndpoints } from '../constants/apiEndpoint';
 import { User, UserType } from '../types/user';
 import axiosInstance from './axios';
 
-interface ApiResponse {
+interface PaginateResponse {
     data: User[];
+    totalCount: number,
     statusCode: number;
     message: string;
 }
 
 export interface GetAllUserParams {
-    type?: UserType,
+    userType?: UserType,
     searchString?: string,
     isAscending: boolean,
     index: number, // pageNumber
     size: number, // pageSize
-    fieldFilter?: fieldFilter
+    fieldFilter?: FieldFilter
 }
 
-enum fieldFilter {
-    staffCode = 0,
-    fullName = 1,
-    joinedDate = 2
+export enum FieldFilter {
+    staffCode = 1,
+    fullName = 2,
+    joinedDate = 3
 }
 
-export const fetchAllUser = async (params: GetAllUserParams): Promise<ApiResponse> => {
+export const fetchAllUser = async (params: GetAllUserParams): Promise<PaginateResponse> => {
     try {
-      const response = await axiosInstance.get<AxiosResponse>(apiEndpoints.USER.GET_ALL, { params });
-      return response.data.data;
+        const response: AxiosResponse<PaginateResponse> = await axiosInstance.get(apiEndpoints.USER.GET_ALL, { params });
+        return response.data;
     } catch (error) {
-      console.error('Failed to fetch users:', error);
-      throw error;
+        throw error;
     }
-  };
+};
