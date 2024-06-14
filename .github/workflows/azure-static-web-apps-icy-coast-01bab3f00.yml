@@ -15,12 +15,12 @@ jobs:
     runs-on: ubuntu-latest
     name: Build and Deploy Job
     env:
-      API_URL: ${{ vars.API_URL }}
+      VITE_API_URL: ${{ vars.API_URL }}
     steps:
       - name: Check Environment Variables
         run: printenv
       - name: Use API URL
-        run: echo "The API URL is $API_URL"
+        run: echo "The API URL is $VITE_API_URL"
       - uses: actions/checkout@v3
         with:
           submodules: true
