@@ -1,6 +1,6 @@
 import { List, ListItem, ListItemText, styled } from '@mui/material';
 import { FC, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { routeNames } from '../../constants/routeName';
 
 const StyledListItem = styled(ListItem)<{ active: boolean }>(({ theme, active }) => ({
@@ -22,7 +22,8 @@ interface SidebarItem {
 }
 
 const Sidebar: FC = () => {
-    const [activeItem, setActiveItem] = useState('Manage User');
+    const location = useLocation();
+    const [activeItem, setActiveItem] = useState<string>(location.pathname);
     const navigate = useNavigate();
 
     const menuItems: SidebarItem[] = [
@@ -35,8 +36,10 @@ const Sidebar: FC = () => {
     ];
 
     const handleItemClick = (item: SidebarItem) => {
-        setActiveItem(item.label);
-        if (item.to) navigate(item.to);
+        if (item.to) {
+            navigate(item.to);
+            setActiveItem(item.to);
+        }
     };
 
     return (
@@ -44,7 +47,7 @@ const Sidebar: FC = () => {
             {menuItems.map((item) => (
                 <StyledListItem
                     key={item.label}
-                    active={activeItem === item.label}
+                    active={activeItem === item.to}
                     onClick={() => handleItemClick(item)}
                 >
                     <ListItemText
