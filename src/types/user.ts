@@ -7,7 +7,7 @@ export interface User {
     joinedDate: string;
     typeGender: UserGender;
     type: UserType;
-  }
+}
 
 export interface UserCredential {
     tokenType: string,
