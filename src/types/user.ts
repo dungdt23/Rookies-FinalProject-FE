@@ -1,19 +1,12 @@
 export interface User {
-    id: string,
-    email: string,
-    name: string,
-    roles: Role[]
-}
-
-export interface Role {
-    id: string
-    name: RoleName,
-    description: string | null
-}
-
-export enum RoleName {
-    Admin = "Admin",
-    User = "User"
+    id: string;
+    staffCode: string;
+    firstName: string;
+    lastName: string;
+    userName: string;
+    joinedDate: string;
+    typeGender: UserGender;
+    type: UserType;
 }
 
 export interface UserCredential {
@@ -21,4 +14,14 @@ export interface UserCredential {
     accessToken: string,
     expiresIn: number,
     refreshToken: string
+}
+
+export enum UserGender {
+    Male = 1,
+    Female = 0
+}
+
+export enum UserType {
+    Admin = "Admin",
+    Staff = "Staff"
 }

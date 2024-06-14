@@ -1,0 +1,113 @@
+/* Form Container */
+.form-container {
+    background: #fff;
+    padding: 20px;
+    width: 450px; /* Adjusted width to fit all labels and inputs comfortably */
+    text-align: left;
+}
+
+/* Form Title */
+.form-title {
+    font-weight: bold;
+    color: red;
+    font-size: 1.2em;
+    text-align: center;
+    margin-bottom: 20px;
+    display: block;
+}
+
+/* Form Field */
+.form-field {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+    /* Labels with width based on the longest text */
+    .form-field > label {
+        min-width: 150px; /* Adjust this value to fit the longest label text */
+        white-space: nowrap;
+        text-align: right;
+        padding-right: 10px; /* Add space between label and input */
+    }
+
+    /* Input fields */
+    .form-field > input,
+    .form-field > select {
+        flex: 1;
+        padding: 8px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        box-sizing: border-box;
+        margin-left: 10px; /* Added margin to create space */
+        font-family: inherit;
+    }
+
+/* Gender Radio Buttons */
+.gender-field {
+    display: flex;
+    align-items: center;
+}
+
+.gender-options {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.gender-option {
+    display: flex;
+    align-items: center;
+    margin-right: 15px; /* Space between radio buttons */
+}
+
+    .gender-option input {
+        margin-right: 5px; /* Space between the radio button and label */
+    }
+
+/* Style the date input to hide the placeholder text */
+input[type="date"] {
+    color: transparent;
+}
+
+    input[type="date"]::-webkit-datetime-edit,
+    input[type="date"]::-webkit-inner-spin-button,
+    input[type="date"]::-webkit-clear-button {
+        color: transparent;
+        display: none;
+    }
+
+    input[type="date"]::-moz-datetime-edit,
+    input[type="date"]::-moz-inner-spin-button,
+    input[type="date"]::-moz-clear-button {
+        color: transparent;
+        display: none;
+    }
+
+/* Form Buttons */
+.form-buttons {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.save-button {
+    padding: 10px 20px;
+    margin: 5px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    background-color: red;
+    color: white;
+}
+
+.cancel-button {
+    padding: 10px 20px;
+    margin: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    background-color: white;
+    color: grey;
+}
