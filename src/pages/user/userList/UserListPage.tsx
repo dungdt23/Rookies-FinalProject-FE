@@ -16,6 +16,7 @@ import { removeUndefinedValues } from "../../../helpers/removeUndefined";
 const RootBox = styled(Box)(() => ({
     minWidth: '30rem',
     width: '100%',
+    p: 2
 }))
 
 const StyledTableContainer = styled(TableContainer)(() => ({
@@ -179,9 +180,12 @@ const UserListPage: FC<ListPageProps> = ({ alertString }) => {
             <Helmet>
                 <title>Manage User</title>
             </Helmet>
+            <RootBox sx={{mb: '1rem'}}>
+                <Typography variant="h5" color='primary'>User Management</Typography>
+            </RootBox>
             <RootBox>
                 {alert && <Alert severity="success" onClose={() => setAlert(undefined)}></Alert>}
-                <Box display="flex" justifyContent="space-between" alignItems="center" p={2}>
+                <Box display="flex" justifyContent="space-between" alignItems="center" sx={{mb: '1rem'}} >
                     <Select size="small" value={userType} onChange={handleTypeFilter}>
                         <MenuItem value="all">
                             <em>Type</em>

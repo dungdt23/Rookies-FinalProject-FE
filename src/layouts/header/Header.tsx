@@ -1,4 +1,4 @@
-import { Box, Breadcrumbs, Link, Typography } from "@mui/material";
+import { Box, Breadcrumbs, Typography } from "@mui/material";
 import { FC, useState } from "react";
 import { NoStyleLink } from "../../components/noStyleLink";
 
@@ -28,7 +28,7 @@ const Header: FC = () => {
                     return (
                         page === history[history.length - 1]
                             ? <Typography key={page.label} variant="body2">{page.label}</Typography>
-                            : <NoStyleLink key={page.label} to={page.to}><Link variant="body2">{page.label}</Link> </NoStyleLink>
+                            : <NoStyleLink key={page.label} to={page.to}>{page.label}</NoStyleLink>
                     );
                 })}
             </Breadcrumbs>
