@@ -1,6 +1,10 @@
 {
     "navigationFallback": {
-       "rewrite": "/index.html"
+       "rewrite": "/index.html",
+       "exclude": ["/static/media/*.{png,jpg,jpeg,gif,bmp}",   "/static/css/*"]
+    },
+    "mimeTypes": {
+        ".json": "text/json"
     },
     "globalHeaders": {
       "Access-Control-Allow-Origin": "https://icy-coast-01bab3f00-1.eastasia.5.azurestaticapps.net",
