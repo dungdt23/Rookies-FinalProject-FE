@@ -1,17 +1,23 @@
 import { Edit, HighlightOff, Search } from "@mui/icons-material";
-import { Alert, Box, Button, Divider, Grid, IconButton, InputBase, MenuItem, Pagination, Paper, Select, SelectChangeEvent, Skeleton, styled, Table, TableBody, TableCell, TableContainer, TablePagination, TableRow, Typography } from "@mui/material";
+import { Alert, Box, Button, Divider, Grid, IconButton, InputBase, MenuItem, Pagination, Paper, Select, SelectChangeEvent, styled, Table, TableBody, TableContainer, TableRow, Typography } from "@mui/material";
 import { FC, useEffect, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { NoStyleLink } from "../../../components/noStyleLink";
 import { CustomPopover } from "../../../components/popover";
 import { CustomTableCell, CustomTableHead, StyledTableCell } from "../../../components/table";
 import { Order, TableHeadInfo } from "../../../components/table/CustomTableHead";
+import { theme } from "../../../constants/appTheme";
 import { routeNames } from "../../../constants/routeName";
-import { User, UserType } from "../../../types/user";
-import { fetchAllUser, FieldFilter, GetAllUserParams } from "../../../services/user.service";
-import { ListPageProps } from "../../../types/common";
 import { toStandardFormat } from "../../../helpers/formatDate";
 import { removeUndefinedValues } from "../../../helpers/removeUndefined";
+import { fetchAllUser, FieldFilter, GetAllUserParams } from "../../../services/user.service";
+import { ListPageProps } from "../../../types/common";
+import { User, UserGender, UserType } from '../../../types/user';
+import { inherits } from "util";
+
+const ClickableCustomTableCell = styled(CustomTableCell)(({ theme }) => ({
+    cursor: "pointer",
+}))
 
 const RootBox = styled(Box)(() => ({
     minWidth: '30rem',
@@ -127,6 +133,7 @@ const UserListPage: FC<ListPageProps> = ({ alertString }) => {
     };
 
     const handleClosePopover = () => {
+        setSelected(null);
         setRowAnchorEl(null);
         setDeleteAnchorEl(null);
     };
@@ -145,32 +152,52 @@ const UserListPage: FC<ListPageProps> = ({ alertString }) => {
         }
     };
 
+
+
     const renderUserDetail = () => {
         if (!selected) return null;
+        const userDetails = [
+            {
+                label: "Staff Code: ",
+                value: selected?.staffCode,
+            },
+            {
+                label: "First Name: ",
+                value: selected?.firstName,
+            },
+            {
+                label: "Last Name: ",
+                value: selected?.lastName,
+            },
+            {
+                label: "Username: ",
+                value: selected?.userName,
+            },
+            {
+                label: "Joined Date: ",
+                value: toStandardFormat(selected?.joinedDate),
+            },
+            {
+                label: "Gender: ",
+                value: UserGender[selected?.typeGender],
+            },
+            {
+                label: "Type: ",
+                value: selected?.type,
+            },
+        ]
         return (
             <Box>
-                <Grid container spacing={2}>
-                    <Grid item xs={4}>
-                            <Typography variant="subtitle1">Id:</Typography>
-                            <Typography variant="subtitle1">Staff Code:</Typography>
-                            <Typography variant="subtitle1">First Name:</Typography>
-                            <Typography variant="subtitle1">Last Name:</Typography>
-                            <Typography variant="subtitle1">Username:</Typography>
-                            <Typography variant="subtitle1">Joined Date:</Typography>
-                            <Typography variant="subtitle1">Type Gender:</Typography>
-                            <Typography variant="subtitle1">Type:</Typography>
+                {userDetails.map((item) => (
+                    <Grid container spacing={2} key={item.label}>
+                        <Grid item xs={4}>
+                            {item.label}
+                        </Grid>
+                        <Grid item xs={8}>
+                            {item.value}
+                        </Grid>
                     </Grid>
-                    <Grid item xs={8}>
-                            <Typography variant="body1">{selected.id}</Typography>
-                            <Typography variant="body1">{selected.staffCode}</Typography>
-                            <Typography variant="body1">{selected.firstName}</Typography>
-                            <Typography variant="body1">{selected.lastName}</Typography>
-                            <Typography variant="body1">{selected.userName}</Typography>
-                            <Typography variant="body1">{toStandardFormat(selected.joinedDate)}</Typography>
-                            <Typography variant="body1">{selected.typeGender}</Typography>
-                            <Typography variant="body1">{selected.type}</Typography>
-                    </Grid>
-                </Grid>
+                ))}
             </Box>
         );
     };
@@ -180,12 +207,12 @@ const UserListPage: FC<ListPageProps> = ({ alertString }) => {
             <Helmet>
                 <title>Manage User</title>
             </Helmet>
-            <RootBox sx={{mb: '1rem'}}>
+            <RootBox sx={{ mb: '1rem' }}>
                 <Typography variant="h5" color='primary'>User Management</Typography>
             </RootBox>
             <RootBox>
                 {alert && <Alert severity="success" onClose={() => setAlert(undefined)}></Alert>}
-                <Box display="flex" justifyContent="space-between" alignItems="center" sx={{mb: '1rem'}} >
+                <Box display="flex" justifyContent="space-between" alignItems="center" sx={{ mb: '1rem' }} >
                     <Select size="small" value={userType} onChange={handleTypeFilter}>
                         <MenuItem value="all">
                             <em>Type</em>
@@ -228,12 +255,13 @@ const UserListPage: FC<ListPageProps> = ({ alertString }) => {
                             {users.map((user) => (
                                 <TableRow
                                     key={user.id}
+                                    sx={{ backgroundColor: selected?.id === user.id ? theme.palette.action.hover : 'unset' }}
                                 >
-                                    <CustomTableCell onClick={(event) => handleRowClick(event, user)}>{user.staffCode}</CustomTableCell>
-                                    <CustomTableCell onClick={(event) => handleRowClick(event, user)}>{user.firstName + " " + user.lastName}</CustomTableCell>
-                                    <CustomTableCell onClick={(event) => handleRowClick(event, user)}>{user.userName}</CustomTableCell>
-                                    <CustomTableCell onClick={(event) => handleRowClick(event, user)}>{toStandardFormat(user.joinedDate)}</CustomTableCell>
-                                    <CustomTableCell onClick={(event) => handleRowClick(event, user)}>{user.type}</CustomTableCell>
+                                    <ClickableCustomTableCell onClick={(event) => handleRowClick(event, user)}>{user.staffCode}</ClickableCustomTableCell>
+                                    <ClickableCustomTableCell onClick={(event) => handleRowClick(event, user)}>{user.firstName + " " + user.lastName}</ClickableCustomTableCell>
+                                    <ClickableCustomTableCell onClick={(event) => handleRowClick(event, user)}>{user.userName}</ClickableCustomTableCell>
+                                    <ClickableCustomTableCell onClick={(event) => handleRowClick(event, user)}>{toStandardFormat(user.joinedDate)}</ClickableCustomTableCell>
+                                    <ClickableCustomTableCell onClick={(event) => handleRowClick(event, user)}>{user.type}</ClickableCustomTableCell>
                                     <StyledTableCell align="center">
                                         <IconButton>
                                             <Edit />
