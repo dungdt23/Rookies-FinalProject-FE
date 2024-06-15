@@ -272,7 +272,7 @@ const UserListPage: FC<ListPageProps> = ({ alertString }) => {
                                     </StyledTableCell>
                                 </TableRow>
                             ))}
-                            {(users.length === 0 && isFetching == false)
+                            {(users.length === 0 && !isFetching)
                                 && <TableRow style={{ height: 200 }}>
                                     <StyledTableCell align="center" colSpan={TABLE_HEAD.length}>
                                         <Box
@@ -287,8 +287,10 @@ const UserListPage: FC<ListPageProps> = ({ alertString }) => {
                                             <Typography variant="body2">
                                                 {search === "" ? "There are no records."
                                                     : (<>
-                                                        No results found for &nbsp;
-                                                        <strong>&quot;{search}&quot;</strong>.
+                                                        No results found for{' '}
+                                                        <strong>
+                                                            &quot;{search}&quot;
+                                                        </strong>.
                                                         <br /> Try checking for typos or using complete words.</>)}
                                             </Typography>
                                         </Box>
