@@ -51,6 +51,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return <ScreenLoader/>
   }
 
+  console.log(user);
+
   return (
     <AuthContext.Provider value={{ user, loading, login, logout }}>
       {children}

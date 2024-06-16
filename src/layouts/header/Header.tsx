@@ -1,6 +1,7 @@
 import { Box, Breadcrumbs, styled, Typography } from "@mui/material";
 import { FC, useState } from "react";
 import { NoStyleLink } from "../../components/noStyleLink";
+import AccountPopover from "./AccountPopover";
 
 interface BreadcrumbsInfo {
     label: string,
@@ -39,7 +40,7 @@ const Header: FC = () => {
                     );
                 })}
             </Breadcrumbs>
-            
+            <AccountPopover/>
         </RootBox>
     )
 }

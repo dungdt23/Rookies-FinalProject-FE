@@ -57,7 +57,6 @@ const AccountPopover = () => {
   const handleLogout = async () => {
     setOpen(null);
     try {
-      await axios.delete(BACKEND_URL.LOGOUT_ENDPOINT);
       logout();
       navigate(routeNames.login);
     } catch (error) {
