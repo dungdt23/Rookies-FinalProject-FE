@@ -2,21 +2,14 @@ import { LoadingButton } from '@mui/lab';
 import { Box, Button, FormControl, FormControlLabel, FormLabel, Grid, MenuItem, Radio, RadioGroup, Stack, styled } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import { useState, useCallback, FC } from 'react';
 import { useFormik } from 'formik';
+import { FC, useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 import * as yup from 'yup';
-import { AxiosResponse } from 'axios';
-import { DebounceSelect } from '../../../components/form';
-import { createUser, CreateUserRequest } from '../../../services/user.service';
-import { SelectOption } from '../../../components/form/DebounceSelect';
 import { NoStyleLink } from '../../../components/noStyleLink';
 import { routeNames } from '../../../constants/routeName';
-import { Helmet } from 'react-helmet-async';
+import { createUser, CreateUserRequest } from '../../../services/user.service';
 import { UserGender, UserType } from '../../../types/user';
-
-interface CreateUserPageProps {
-    fetchList: () => void;
-}
 
 export interface Role {
     id: string;
@@ -30,8 +23,8 @@ const RootBox = styled(Box)(() => ({
 }))
 
 // Import dayjs plugins if needed, e.g., for relative time or localized formats
-import 'dayjs/locale/en'; // Example locale import
 import dayjs from 'dayjs';
+import 'dayjs/locale/en'; // Example locale import
 
 // Set dayjs locale if needed
 dayjs.locale('en');
@@ -70,7 +63,7 @@ const validationSchema = yup.object({
         .oneOf(Object.values(UserType), 'Please choose Admin or Staff'),
 });
 
-const CreateUserPage: FC<CreateUserPageProps> = ({ fetchList }) => {
+const CreateUserPage: FC = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const formik = useFormik({
@@ -99,7 +92,6 @@ const CreateUserPage: FC<CreateUserPageProps> = ({ fetchList }) => {
                 const response = await createUser(payload);
                 const user = response.data;
                 alert(`Added successfully! Id: ${user.id}, Username: ${user.userName}`);
-                fetchList();
             } catch (error) {
                 console.error('Error adding user:', error);
             } finally {
@@ -203,7 +195,9 @@ const CreateUserPage: FC<CreateUserPageProps> = ({ fetchList }) => {
                                     onBlur={formik.handleBlur}
                                     error={formik.touched.joinedDate && Boolean(formik.errors.joinedDate)}
                                     helperText={formik.touched.joinedDate && formik.errors.joinedDate}
-
+                                    InputLabelProps={{
+                                        shrink: true,
+                                    }}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6}>

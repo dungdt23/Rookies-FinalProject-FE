@@ -1,4 +1,4 @@
-import { Box, Breadcrumbs, Typography } from "@mui/material";
+import { Box, Breadcrumbs, styled, Typography } from "@mui/material";
 import { FC, useState } from "react";
 import { NoStyleLink } from "../../components/noStyleLink";
 
@@ -18,11 +18,18 @@ const HeaderMockInfo: BreadcrumbsInfo[] = [
     }
 ]
 
+const RootBox = styled(Box)(({ theme }) => ({
+    display: 'flex',
+    justifyContent: 'space-between',
+    backgroundColor: theme.palette.primary.main,
+    padding: '1.5rem 1rem'
+}))
+
 const Header: FC = () => {
     //@ts-ignore
     const [history, setHistory] = useState<BreadcrumbsInfo[]>(HeaderMockInfo)
     return (
-        <Box className="header">
+        <RootBox className="header">
             <Breadcrumbs separator=">" aria-label="breadcrumb">
                 {history.map((page) => {
                     return (
@@ -32,7 +39,8 @@ const Header: FC = () => {
                     );
                 })}
             </Breadcrumbs>
-        </Box>
+            
+        </RootBox>
     )
 }
 

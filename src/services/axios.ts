@@ -1,7 +1,6 @@
 import axios from "axios";
 import { LocalStorageConstants } from "../constants/localStorage";
 import { AxiosConstants } from "../constants/axiosConstants";
-import { UserCredential } from "../types/user";
 import { routeNames } from "../constants/routeName";
 
 const axiosInstance = axios.create({
@@ -12,10 +11,10 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
     (config) => {
-        const storedCredential = localStorage.getItem(LocalStorageConstants.USER_CREDENTIAL);
-        const userCredential: UserCredential | null = storedCredential ? JSON.parse(storedCredential) : null;
-        if (userCredential) {
-            config.headers.Authorization = `Bearer ${userCredential.accessToken}`
+        const storedToken = localStorage.getItem(LocalStorageConstants.TOKEN);
+        const token: string | null = storedToken ? JSON.parse(storedToken) : null;
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`
         }
 
         if (process.env.NODE_ENV === 'development') {

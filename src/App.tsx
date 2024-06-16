@@ -1,5 +1,5 @@
 import { BrowserRouter } from 'react-router-dom';
-// import { AuthProvider } from './contexts/AuthContext';
+import { AuthProvider } from './contexts/AuthContext';
 import { HelmetProvider } from 'react-helmet-async';
 import { ThemeProvider } from '@emotion/react';
 import { theme } from './constants/appTheme';
@@ -10,9 +10,9 @@ function App() {
     <HelmetProvider>
       <ThemeProvider theme={theme}>
         <BrowserRouter>
-          {/* <AuthProvider> */}
+          <AuthProvider>
             <AppRouter />
-          {/* </AuthProvider> */}
+          </AuthProvider>
         </BrowserRouter>
       </ThemeProvider>
     </HelmetProvider>

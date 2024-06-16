@@ -9,11 +9,16 @@ export interface User {
     type: UserType;
 }
 
-export interface UserCredential {
-    tokenType: string,
-    accessToken: string,
-    expiresIn: number,
-    refreshToken: string
+export interface JWTPayload {
+    id: string;
+    username: string;
+    typeId: string;
+    type: string;
+    locationId: string;
+    location: string;
+    nbf: number;
+    exp: number;
+    iat: number;
 }
 
 export enum UserGender {

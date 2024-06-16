@@ -10,7 +10,7 @@ interface PaginateResponse {
     message: string;
 }
 
-interface ApiResponse<T> {
+export interface ApiResponse<T> {
     data: T,
     statusCode: number;
     message: string;
@@ -41,20 +41,27 @@ export interface CreateUserRequest {
     locationId: string
 }
 
+export interface LoginRequest {
+    userName: string,
+    password: string
+}
+
+export interface LoginResponse {
+    tokenType: string,
+    token: string
+}
+
 export const fetchAllUser = async (params: GetAllUserParams): Promise<PaginateResponse> => {
-    try {
-        const response: AxiosResponse<PaginateResponse> = await axiosInstance.get(apiEndpoints.USER.GET_ALL, { params });
-        return response.data;
-    } catch (error) {
-        throw error;
-    }
+    const response: AxiosResponse<PaginateResponse> = await axiosInstance.get(apiEndpoints.USER.GET_ALL, { params });
+    return response.data;
 };
 
 export const createUser = async (payload: CreateUserRequest): Promise<ApiResponse<User>> => {
-    try {
-        const response: AxiosResponse<ApiResponse<User>> = await axiosInstance.post(apiEndpoints.USER.CREATE, payload)
-        return response.data
-    } catch (error) {
-        throw error;
-    }
+    const response: AxiosResponse<ApiResponse<User>> = await axiosInstance.post(apiEndpoints.USER.CREATE, payload)
+    return response.data
+}
+
+export const loginPost = async (payload: LoginRequest): Promise<ApiResponse<LoginResponse>> => {
+    const response: AxiosResponse<ApiResponse<LoginResponse>> = await axiosInstance.post(apiEndpoints.LOGIN, payload)
+    return response.data
 }

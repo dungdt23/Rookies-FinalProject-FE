@@ -1,6 +1,6 @@
 import { Edit, HighlightOff, Search } from "@mui/icons-material";
 import { Alert, Box, Button, Divider, Grid, IconButton, InputBase, MenuItem, Pagination, Paper, Select, SelectChangeEvent, styled, Table, TableBody, TableContainer, TableRow, Typography } from "@mui/material";
-import { FC, useEffect, useRef, useState } from "react";
+import { FC, MouseEvent, useEffect, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { NoStyleLink } from "../../../components/noStyleLink";
 import { CustomPopover } from "../../../components/popover";
@@ -122,12 +122,12 @@ const UserListPage: FC<ListPageProps> = ({ alertString }) => {
         setOrder("desc");
     }
 
-    const handleRowClick = (event: React.MouseEvent<HTMLElement>, user: User) => {
+    const handleRowClick = (event: MouseEvent<HTMLElement>, user: User) => {
         setRowAnchorEl(event.currentTarget);
         setSelected(user);
     };
 
-    const handleDeleteClick = (event: React.MouseEvent<HTMLElement>, user: User) => {
+    const handleDeleteClick = (event: MouseEvent<HTMLElement>, user: User) => {
         setDeleteAnchorEl(event.currentTarget);
         setSelected(user);
     };
