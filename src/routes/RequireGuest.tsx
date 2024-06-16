@@ -4,6 +4,7 @@ import { routeNames } from '../constants/routeName';
 
 const RequireGuest = () => {
     const { user } = useAuth();
+
     return (
         !user
             ? <Outlet />
