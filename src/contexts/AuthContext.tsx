@@ -24,12 +24,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       try {
         const decoded = jwtDecode<JWTPayload>(token);
         setUser(decoded);
-        setLoading(false);
+        console.log(decoded)
       } catch (error) {
         console.error('Failed to decode token:', error);
         localStorage.removeItem(LocalStorageConstants.TOKEN);
       }
     }
+    setLoading(false);
   }, []);
 
   const login = (token: string) => {
@@ -48,7 +49,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   if (loading) {
-    return <ScreenLoader/>
+    return <ScreenLoader />
   }
 
   return (
