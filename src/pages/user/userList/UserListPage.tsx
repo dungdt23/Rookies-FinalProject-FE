@@ -1,6 +1,6 @@
 import { Edit, HighlightOff, Search } from "@mui/icons-material";
 import { Alert, Box, Button, Divider, Grid, IconButton, InputBase, MenuItem, Pagination, Paper, Select, SelectChangeEvent, styled, Table, TableBody, TableContainer, TableRow, Typography } from "@mui/material";
-import { FC, MouseEvent, useEffect, useRef, useState } from "react";
+import { FC, MouseEvent, ReactNode, useEffect, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { NoStyleLink } from "../../../components/noStyleLink";
 import { CustomPopover } from "../../../components/popover";
@@ -13,6 +13,7 @@ import { removeUndefinedValues } from "../../../helpers/removeUndefined";
 import { fetchAllUser, FieldFilter, GetAllUserParams } from "../../../services/user.service";
 import { ListPageProps } from "../../../types/common";
 import { User, UserGender, UserType } from '../../../types/user';
+import { LoadingButton } from "@mui/lab";
 
 const ClickableCustomTableCell = styled(CustomTableCell)(({ theme }) => ({
     cursor: "pointer",
@@ -75,6 +76,7 @@ const UserListPage: FC<ListPageProps> = ({ alertString }) => {
     const [alert, setAlert] = useState<string | undefined>(alertString);
     const [isFetching, setIsFetching] = useState<boolean>(false);
     const [selected, setSelected] = useState<User | null>(null)
+    const [canDisable, setCanDelete] = useState<boolean>(true)
     const inputRef = useRef<HTMLInputElement | null>(null);
 
     const getUsers = async () => {
@@ -129,6 +131,7 @@ const UserListPage: FC<ListPageProps> = ({ alertString }) => {
     const handleDeleteClick = (event: MouseEvent<HTMLElement>, user: User) => {
         setDeleteAnchorEl(event.currentTarget);
         setSelected(user);
+        setCanDelete(true);
     };
 
     const handleClosePopover = () => {
@@ -151,9 +154,7 @@ const UserListPage: FC<ListPageProps> = ({ alertString }) => {
         }
     };
 
-
-
-    const renderUserDetail = () => {
+    const renderUserDetailDialog = (): ReactNode => {
         if (!selected) return null;
         const userDetails = [
             {
@@ -190,16 +191,47 @@ const UserListPage: FC<ListPageProps> = ({ alertString }) => {
                 {userDetails.map((item) => (
                     <Grid container spacing={2} key={item.label}>
                         <Grid item xs={4}>
-                            {item.label}
+                            <Typography variant="body1" gutterBottom>{item.label}</Typography>
                         </Grid>
                         <Grid item xs={8}>
-                            {item.value}
+                            <Typography variant="body1" gutterBottom>{item.value}</Typography>
                         </Grid>
                     </Grid>
                 ))}
             </Box>
         );
     };
+
+    const renderUserDisableDialog = (): ReactNode => {
+        return (
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <Typography>Do you want to disable this user?</Typography>
+                <Box sx={{ display: 'flex', gap: '1rem' }}>
+                    <LoadingButton
+                        type="submit"
+                        variant="contained"
+                        onClick={() => setCanDelete(false)}
+                    >
+                        Disable
+                    </LoadingButton>
+                    <Button variant="outlined" onClick={handleClosePopover}>
+                        Cancel
+                    </Button>
+                </Box>
+            </Box>
+        )
+    }
+
+    const renderCannotDisableDialog = (): ReactNode => {
+        return (
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <Typography variant="body1" gutterBottom>
+                    There are valid assignments belonging to this user.
+                    Please close all assignments before disabling user.
+                </Typography>
+            </Box>
+        )
+    }
 
     return (
         <>
@@ -311,16 +343,16 @@ const UserListPage: FC<ListPageProps> = ({ alertString }) => {
                 open={Boolean(rowAnchorEl)}
                 handleClose={handleClosePopover}
                 renderTitle={() => <span>Detailed User Information</span>}
-                renderDescription={renderUserDetail}
+                renderDescription={renderUserDetailDialog}
                 boxProps={{ sx: { minWidth: '25rem' } }}
             />
             <CustomPopover
                 elAnchor={deleteAnchorEl}
                 open={Boolean(deleteAnchorEl)}
                 handleClose={handleClosePopover}
-                renderTitle={() => <span>Are you sure?</span>}
-                renderDescription={() => <span>Delete this user?</span>}
-                boxProps={{ sx: { minWidth: '25rem' } }}
+                renderTitle={() => canDisable ? <span>Are you sure?</span> : <span>Can not disable user</span>}
+                renderDescription={canDisable ? renderUserDisableDialog : renderCannotDisableDialog}
+                boxProps={{ sx: { maxWidth: '25rem' } }}
             >
 
             </CustomPopover>
