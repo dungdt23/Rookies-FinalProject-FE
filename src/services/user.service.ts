@@ -1,4 +1,4 @@
-import { AxiosResponse } from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import { apiEndpoints } from '../constants/apiEndpoint';
 import { User, UserGender, UserType } from '../types/user';
 import axiosInstance from './axios';
@@ -80,6 +80,21 @@ export const loginPost = async (payload: LoginRequest): Promise<ApiResponse<Logi
 }
 
 export const fetchUser = async (id: string): Promise<ApiResponse<User>> => {
-    const response: AxiosResponse<ApiResponse<User>> = await axiosInstance.get(`${apiEndpoints.USER.GET_ID}/${id}`)
+    const response: AxiosResponse<ApiResponse<User>> = await axiosInstance.get(`${apiEndpoints.USER.GET_ID(id)}`)
     return response.data
 }
+
+export const disableUser = async (id: string): Promise<boolean> => {
+    try {
+        await axiosInstance.delete(`${apiEndpoints.USER.DELETE(id)}`);
+        return true;
+    } catch (error) {
+        if (axios.isAxiosError(error)) {
+            if (error.response && error.response.status === 409) {
+                return false;
+            }
+        }
+        // Re-throw other errors
+        throw error;
+    }
+};
