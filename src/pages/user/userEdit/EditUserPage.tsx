@@ -11,7 +11,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import * as yup from 'yup';
 import { NoStyleLink } from '../../../components/noStyleLink';
 import { routeNames } from '../../../constants/routeName';
-import { editUser, EditUserRequest, fetchUser } from '../../../services/user.service';
+import { editUserById, EditUserRequest, fetchUserById } from '../../../services/user.service';
 import { User, UserGender, UserType } from '../../../types/user';
 
 export interface Role {
@@ -78,7 +78,7 @@ const EditUserPage: FC = () => {
         setIsFetching(true);
         if (userId) {
             try {
-                const response = await fetchUser(userId);
+                const response = await fetchUserById(userId);
                 setUser(response.data);
             } catch (error) {
                 console.error(error);
@@ -113,7 +113,7 @@ const EditUserPage: FC = () => {
                 type: values.userType,
             } as EditUserRequest;
             try {
-                await editUser(userId!, payload);
+                await editUserById(userId!, payload);
                 alert(`User updated successfully! Id: ${userId}`);
                 navigate(routeNames.user.list);
             } catch (error) {

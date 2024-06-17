@@ -1,4 +1,5 @@
 import { Edit, HighlightOff, Search } from "@mui/icons-material";
+import { LoadingButton } from "@mui/lab";
 import { Alert, Box, Button, Divider, Grid, IconButton, InputBase, MenuItem, Pagination, Paper, Select, SelectChangeEvent, styled, Table, TableBody, TableContainer, TableRow, Typography } from "@mui/material";
 import { FC, MouseEvent, ReactNode, useEffect, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
@@ -10,10 +11,9 @@ import { theme } from "../../../constants/appTheme";
 import { routeNames } from "../../../constants/routeName";
 import { toStandardFormat } from "../../../helpers/formatDate";
 import { removeUndefinedValues } from "../../../helpers/removeUndefined";
-import { fetchAllUser, FieldFilter, GetAllUserParams } from "../../../services/user.service";
+import { disableUserById, fetchAllUser, FieldFilter, GetAllUserParams } from "../../../services/user.service";
 import { ListPageProps } from "../../../types/common";
 import { User, UserGender, UserType } from '../../../types/user';
-import { LoadingButton } from "@mui/lab";
 
 const ClickableCustomTableCell = styled(CustomTableCell)(() => ({
     cursor: "pointer",
@@ -75,6 +75,7 @@ const UserListPage: FC<ListPageProps> = ({ alertString }) => {
     const [deleteAnchorEl, setDeleteAnchorEl] = useState<HTMLElement | null>(null);
     const [alert, setAlert] = useState<string | undefined>(alertString);
     const [isFetching, setIsFetching] = useState<boolean>(false);
+    const [isDisabling, setIsDisabling] = useState<boolean>(false);
     const [selected, setSelected] = useState<User | null>(null)
     const [canDisable, setCanDelete] = useState<boolean>(true)
     const inputRef = useRef<HTMLInputElement | null>(null);
@@ -206,15 +207,36 @@ const UserListPage: FC<ListPageProps> = ({ alertString }) => {
         );
     };
 
+    const disableUser = async () => {
+        setIsDisabling(true);
+        try {
+            const result = await disableUserById(selected!.id);
+            setCanDelete(result)
+            if (result) {
+                handleClosePopover()
+                getUsers()
+                setAlert(`User ${selected?.userName} is disabled`)
+            }
+        } catch (error) {
+            console.error(error)
+        }
+
+        setIsDisabling(false);
+    }
+
     const renderUserDisableDialog = (): ReactNode => {
         return (
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                <Typography>Do you want to disable this user?</Typography>
-                <Box sx={{ display: 'flex', gap: '1rem' }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                <Typography variant="body1" gutterBottom>
+                    Do you want to disable this user? <br />
+                    User: {selected?.userName}
+                </Typography>
+                <Box sx={{ display: 'flex', gap: '1rem', mt: '1rem' }}>
                     <LoadingButton
+                        loading={isDisabling}
                         type="submit"
                         variant="contained"
-                        onClick={() => setCanDelete(false)}
+                        onClick={disableUser}
                     >
                         Disable
                     </LoadingButton>
@@ -246,7 +268,7 @@ const UserListPage: FC<ListPageProps> = ({ alertString }) => {
                 <Typography variant="h5" color='primary'>User Management</Typography>
             </RootBox>
             <RootBox>
-                {alert && <Alert severity="success" onClose={() => setAlert(undefined)}></Alert>}
+                {alert && <Alert sx={{mb: '1rem'}} severity="success" onClose={() => setAlert(undefined)}>{alert}</Alert>}
                 <Box display="flex" justifyContent="space-between" alignItems="center" sx={{ mb: '1rem' }} >
                     <Select size="small" value={userType} onChange={handleTypeFilter}>
                         <MenuItem value="all">

@@ -69,7 +69,7 @@ export const createUser = async (payload: CreateUserRequest): Promise<ApiRespons
     return response.data
 }
 
-export const editUser = async (id: string, payload: EditUserRequest): Promise<void> => {
+export const editUserById = async (id: string, payload: EditUserRequest): Promise<void> => {
     await axiosInstance.put(apiEndpoints.USER.EDIT(id), payload)
     return
 }
@@ -79,12 +79,12 @@ export const loginPost = async (payload: LoginRequest): Promise<ApiResponse<Logi
     return response.data
 }
 
-export const fetchUser = async (id: string): Promise<ApiResponse<User>> => {
+export const fetchUserById = async (id: string): Promise<ApiResponse<User>> => {
     const response: AxiosResponse<ApiResponse<User>> = await axiosInstance.get(`${apiEndpoints.USER.GET_ID(id)}`)
     return response.data
 }
 
-export const disableUser = async (id: string): Promise<boolean> => {
+export const disableUserById = async (id: string): Promise<boolean> => {
     try {
         await axiosInstance.delete(`${apiEndpoints.USER.DELETE(id)}`);
         return true;
