@@ -13,7 +13,6 @@ import { removeUndefinedValues } from "../../../helpers/removeUndefined";
 import { fetchAllUser, FieldFilter, GetAllUserParams } from "../../../services/user.service";
 import { ListPageProps } from "../../../types/common";
 import { User, UserGender, UserType } from '../../../types/user';
-import { inherits } from "util";
 
 const ClickableCustomTableCell = styled(CustomTableCell)(({ theme }) => ({
     cursor: "pointer",

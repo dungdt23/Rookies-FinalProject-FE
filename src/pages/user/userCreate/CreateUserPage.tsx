@@ -10,6 +10,9 @@ import { NoStyleLink } from '../../../components/noStyleLink';
 import { routeNames } from '../../../constants/routeName';
 import { createUser, CreateUserRequest } from '../../../services/user.service';
 import { UserGender, UserType } from '../../../types/user';
+import dayjs, { Dayjs } from 'dayjs';
+import { DatePicker } from '@mui/x-date-pickers';
+import { useAuth } from '../../../contexts/AuthContext';
 
 export interface Role {
     id: string;
@@ -20,19 +23,15 @@ export interface Role {
 const RootBox = styled(Box)(() => ({
     maxWidth: '100vh',
     margin: 'auto'
-}))
-
-// Import dayjs plugins if needed, e.g., for relative time or localized formats
-import dayjs from 'dayjs';
-import 'dayjs/locale/en'; // Example locale import
+}));
 
 // Set dayjs locale if needed
 dayjs.locale('en');
 
 // Custom validation function using dayjs
-const isAfterOrEqual = (a: Date, b: Date) => dayjs(a).isAfter(b);
-const isWeekday = (date: Date) => dayjs(date).day() !== 0 && dayjs(date).day() !== 6;
-const isUnder18 = (dob: Date) => dayjs().diff(dob, 'years') > 18;
+const isAfterOrEqual = (a: Dayjs, b: Dayjs) => dayjs(a).isAfter(b);
+const isWeekday = (date: Dayjs) => dayjs(date).day() !== 0 && dayjs(date).day() !== 6;
+const isUnder18 = (dob: Dayjs) => dayjs().diff(dob, 'years') < 18;
 
 // Validation schema
 const validationSchema = yup.object({
@@ -42,18 +41,19 @@ const validationSchema = yup.object({
     lastName: yup.string()
         .required('Last Name is required')
         .max(100, 'Last Name length can\'t be more than 100 characters.'),
-    dateOfBirth: yup.date()
+    dateOfBirth: yup.object()
         .required('Date of Birth is required')
-        .test('is-18-or-older', 'User is under 18. Please select a different date', function(value) {
-            return isUnder18(value);
+        .test('is-18-or-older', 'User must be 18 or older', function (value) {
+            console.log(!isUnder18(value as Dayjs))
+            return !isUnder18(value as Dayjs);
         }),
-    joinedDate: yup.date()
+    joinedDate: yup.object()
         .required('Joined Date is required')
-        .test('is-after-dob', 'Joined date is not later than Date of Birth. Please select a different date', function(value, { parent }) {
-            return isAfterOrEqual(value, parent.dateOfBirth);
+        .test('is-after-dob', 'Joined date must be after Date of Birth', function (value, context) {
+            return isAfterOrEqual(value as Dayjs, context.parent.dateOfBirth as Dayjs);
         })
-        .test('is-weekday', 'Joined date is Saturday or Sunday. Please select a different date', function(value) {
-            return isWeekday(value);
+        .test('is-weekday', 'Joined date cannot be Saturday or Sunday', function (value) {
+            return isWeekday(value as Dayjs);
         }),
     gender: yup.number()
         .required('Gender is required')
@@ -65,16 +65,16 @@ const validationSchema = yup.object({
 
 const CreateUserPage: FC = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const { user } = useAuth();
 
     const formik = useFormik({
         initialValues: {
             firstName: '',
             lastName: '',
             userType: 'unset',
-            locationId: '',
             gender: UserGender.Male,
-            dateOfBirth: '',
-            joinedDate: ''
+            dateOfBirth: null as Dayjs | null,
+            joinedDate: null as Dayjs | null,
         },
         validationSchema: validationSchema,
         onSubmit: async (values) => {
@@ -82,10 +82,10 @@ const CreateUserPage: FC = () => {
             const payload = {
                 firstName: values.firstName,
                 lastName: values.lastName,
-                joinedDate: values.joinedDate,
-                dateOfBirth: values.dateOfBirth,
+                joinedDate: values.joinedDate?.toISOString(),
+                dateOfBirth: values.dateOfBirth?.toISOString(),
                 gender: values.gender,
-                locationId: values.locationId,
+                locationId: user?.locationId,
                 type: values.userType,
             } as CreateUserRequest;
             try {
@@ -103,15 +103,15 @@ const CreateUserPage: FC = () => {
     return (
         <>
             <Helmet>
-                Create User
+                <title>Create User</title>
             </Helmet>
             <RootBox>
-                <Stack spacing={3} >
-                    <Typography variant="h6" gutterBottom color='primary'>
+                <Stack spacing={3}>
+                    <Typography variant="h6" gutterBottom color="primary">
                         Create User
                     </Typography>
                     <form onSubmit={formik.handleSubmit}>
-                        <Grid container spacing={3} >
+                        <Grid container spacing={3}>
                             <Grid item xs={12} sm={6}>
                                 <TextField
                                     required
@@ -141,20 +141,21 @@ const CreateUserPage: FC = () => {
                                 />
                             </Grid>
                             <Grid item xs={12}>
-                                <TextField
-                                    required
-                                    fullWidth
-                                    id="dateOfBirth"
-                                    name="dateOfBirth"
-                                    label="Date of Birth"
-                                    type="date"
+                                <DatePicker
+                                    disableFuture
+                                    format="DD/MM/YYYY"
                                     value={formik.values.dateOfBirth}
-                                    onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}
-                                    error={formik.touched.dateOfBirth && Boolean(formik.errors.dateOfBirth)}
-                                    helperText={formik.touched.dateOfBirth && formik.errors.dateOfBirth}
-                                    InputLabelProps={{
-                                        shrink: true,
+                                    onChange={(value) => dayjs(value).isValid() && formik.setFieldValue('dateOfBirth', value, true)}
+                                    slotProps={{
+                                        textField: {
+                                            id: "dateOfBirth",
+                                            name: "dateOfBirth",
+                                            label: "Date of Birth",
+                                            error: Boolean(formik.errors.dateOfBirth),
+                                            helperText: formik.errors.dateOfBirth,
+                                            fullWidth: true,
+                                            required: true,
+                                        }
                                     }}
                                 />
                             </Grid>
@@ -183,20 +184,20 @@ const CreateUserPage: FC = () => {
                                 </FormControl>
                             </Grid>
                             <Grid item xs={12}>
-                                <TextField
-                                    required
-                                    fullWidth
-                                    id="joinedDate"
-                                    name="joinedDate"
-                                    label="Joined Date"
-                                    type="date"
+                                <DatePicker
+                                    format="DD/MM/YYYY"
                                     value={formik.values.joinedDate}
-                                    onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}
-                                    error={formik.touched.joinedDate && Boolean(formik.errors.joinedDate)}
-                                    helperText={formik.touched.joinedDate && formik.errors.joinedDate}
-                                    InputLabelProps={{
-                                        shrink: true,
+                                    onChange={(value) => dayjs(value).isValid() && formik.setFieldValue('joinedDate', value, true)}
+                                    slotProps={{
+                                        textField: {
+                                            id: "joinedDate",
+                                            name: "joinedDate",
+                                            label: "Joined Date",
+                                            error: Boolean(formik.errors.joinedDate),
+                                            helperText: formik.errors.joinedDate,
+                                            fullWidth: true,
+                                            required: true,
+                                        }
                                     }}
                                 />
                             </Grid>
@@ -205,8 +206,8 @@ const CreateUserPage: FC = () => {
                                     required
                                     select
                                     fullWidth
-                                    id="userType" // ensure this matches the formik field name
-                                    name="userType" // ensure this matches the formik field name
+                                    id="userType"
+                                    name="userType"
                                     label="Type"
                                     value={formik.values.userType}
                                     onChange={formik.handleChange}
@@ -214,7 +215,7 @@ const CreateUserPage: FC = () => {
                                     error={formik.touched.userType && Boolean(formik.errors.userType)}
                                     helperText={formik.touched.userType && formik.errors.userType}
                                 >
-                                    <MenuItem value="unset">- Please choose -</MenuItem> {/* updated to match initial value */}
+                                    <MenuItem value="unset">- Please choose -</MenuItem>
                                     <MenuItem value={UserType.Admin}>Admin</MenuItem>
                                     <MenuItem value={UserType.Staff}>Staff</MenuItem>
                                 </TextField>
@@ -230,7 +231,7 @@ const CreateUserPage: FC = () => {
                                         Save
                                     </LoadingButton>
                                     <NoStyleLink to={routeNames.user.list}>
-                                        <Button variant='outlined'>
+                                        <Button variant="outlined">
                                             Cancel
                                         </Button>
                                     </NoStyleLink>
@@ -242,6 +243,6 @@ const CreateUserPage: FC = () => {
             </RootBox>
         </>
     );
-}
+};
 
 export default CreateUserPage;

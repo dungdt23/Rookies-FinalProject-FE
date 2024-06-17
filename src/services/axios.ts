@@ -12,7 +12,7 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
     (config) => {
         const storedToken = localStorage.getItem(LocalStorageConstants.TOKEN);
-        const token: string | null = storedToken ? JSON.parse(storedToken) : null;
+        const token: string | null = storedToken || null;
         if (token) {
             config.headers.Authorization = `Bearer ${token}`
         }
@@ -35,6 +35,7 @@ axiosInstance.interceptors.response.use(
         return response
     },
     error => {
+        console.error(error)
         if (!error.response) {
             console.error('Network error, unable to connect to API');
             // Return a specific error message or object for network errors
