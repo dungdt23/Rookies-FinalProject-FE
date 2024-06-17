@@ -66,7 +66,7 @@ const UserListPage: FC<ListPageProps> = ({ alertString }) => {
     const [users, setUsers] = useState<User[]>([]);
     const [totalCount, setTotalCount] = useState<number>(0);
     const [page, setPage] = useState<number>(1);
-    const [pageSize] = useState<number>(10);
+    const [pageSize] = useState<number>(15);
     const [userType, setUserType] = useState<UserType | "all">("all");
     const [search, setSearch] = useState<string>("");
     const [order, setOrder] = useState<Order>("desc");

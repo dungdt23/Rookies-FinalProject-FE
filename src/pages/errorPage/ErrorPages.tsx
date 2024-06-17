@@ -2,6 +2,7 @@ import { Button, Container, Typography, styled } from '@mui/material';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 import { routeNames } from '../../constants/routeName';
+import { Logo } from '../../components/logo';
 
 const StyledContent = styled('div')(({ theme }) => ({
   maxWidth: 480,
@@ -35,6 +36,7 @@ const ErrorPage = ({ code, title, heading, message }: ErrorPageProps) => {
 
       <Container>
         <StyledContent sx={{ textAlign: 'center', alignItems: 'center' }}>
+          <Logo/>
           <Typography variant="h3" paragraph>
             {heading}
           </Typography>
@@ -43,7 +45,7 @@ const ErrorPage = ({ code, title, heading, message }: ErrorPageProps) => {
             {message}
           </Typography>
 
-          <Button sx={{mt: 3}} color='primary' size="large" variant="contained" onClick={goToHome}>
+          <Button sx={{ mt: 3 }} color='primary' size="large" variant="contained" onClick={goToHome}>
             Go to Home
           </Button>
         </StyledContent>
