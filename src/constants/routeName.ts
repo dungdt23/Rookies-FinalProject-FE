@@ -7,6 +7,7 @@ export const routeNames = {
     serverError: "/server-error",
     user: {
         list: "/users",
-        create: "/users/create"
+        create: "/users/create",
+        edit: (userId: string): string => `/users/edit/${userId}`
     },
 }

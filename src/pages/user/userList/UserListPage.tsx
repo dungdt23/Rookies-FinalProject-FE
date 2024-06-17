@@ -15,7 +15,7 @@ import { ListPageProps } from "../../../types/common";
 import { User, UserGender, UserType } from '../../../types/user';
 import { LoadingButton } from "@mui/lab";
 
-const ClickableCustomTableCell = styled(CustomTableCell)(({ theme }) => ({
+const ClickableCustomTableCell = styled(CustomTableCell)(() => ({
     cursor: "pointer",
 }))
 
@@ -185,6 +185,10 @@ const UserListPage: FC<ListPageProps> = ({ alertString }) => {
                 label: "Type: ",
                 value: selected?.type,
             },
+            {
+                label: "Location: ",
+                value: selected?.location,
+            },
         ]
         return (
             <Box>
@@ -294,11 +298,14 @@ const UserListPage: FC<ListPageProps> = ({ alertString }) => {
                                     <ClickableCustomTableCell onClick={(event) => handleRowClick(event, user)}>{toStandardFormat(user.joinedDate)}</ClickableCustomTableCell>
                                     <ClickableCustomTableCell onClick={(event) => handleRowClick(event, user)}>{user.type}</ClickableCustomTableCell>
                                     <StyledTableCell align="center">
-                                        <IconButton>
-                                            <Edit />
-                                        </IconButton>
+                                        <NoStyleLink to={routeNames.user.edit(user.id)}>
+                                            <IconButton>
+                                                <Edit />
+                                            </IconButton>
+                                        </NoStyleLink>
+
                                         <IconButton onClick={(event) => handleDeleteClick(event, user)}>
-                                            <HighlightOff />
+                                            <HighlightOff color="primary" />
                                         </IconButton>
                                     </StyledTableCell>
                                 </TableRow>

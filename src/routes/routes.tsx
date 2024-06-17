@@ -10,6 +10,7 @@ import UserListPage from '../pages/user/userList/UserListPage';
 import { UserType } from '../types/user';
 import RequireAuth from './RequireAuth';
 import RequireGuest from './RequireGuest';
+import { EditUserPage } from '../pages/user/userEdit';
 
 const commonRoutes: RouteObject[] = [
     {
@@ -66,6 +67,10 @@ export const adminRoutes: RouteObject[] = [
                     {
                         path: routeNames.user.create,
                         element: <CreateUserPage />
+                    },
+                    {
+                        path: routeNames.user.edit(':userId'),
+                        element: <EditUserPage />
                     }
                 ]
             }
