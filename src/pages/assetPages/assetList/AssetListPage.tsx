@@ -1,20 +1,21 @@
-import { Edit, HighlightOff, Search } from "@mui/icons-material";
-import { LoadingButton } from "@mui/lab";
-import { Alert, Box, Button, Divider, Grid, IconButton, InputBase, MenuItem, Pagination, Paper, Select, SelectChangeEvent, styled, Table, TableBody, TableContainer, TableRow, Typography } from "@mui/material";
 import { FC, MouseEvent, ReactNode, useEffect, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { NoStyleLink } from "../../../components/noStyleLink";
+import { Alert, Box, Button, Divider, Grid, IconButton, InputBase, MenuItem, Pagination, Paper, Select, SelectChangeEvent, styled, Table, TableBody, TableContainer, TableRow, Typography } from "@mui/material";
+import { Edit, HighlightOff, Search } from "@mui/icons-material";
+import { LoadingButton } from "@mui/lab";
+import { CircularProgressWrapper } from "../../../components/loading";
 import { CustomPopover } from "../../../components/popover";
 import { CustomTableCell, CustomTableHead, StyledTableCell } from "../../../components/table";
-import { Order, TableHeadInfo } from "../../../components/table/CustomTableHead";
+import { NoStyleLink } from "../../../components/noStyleLink";
 import { theme } from "../../../constants/appTheme";
 import { routeNames } from "../../../constants/routeName";
 import { toStandardFormat } from "../../../helpers/formatDate";
 import { removeUndefinedValues } from "../../../helpers/removeUndefined";
-import { disableUserById, fetchAllUsers, UserFieldFilter, GetAllUserParams } from "../../../services/user.service";
-import { ListPageProps } from "../../../types/common";
-import { User, UserGender, UserType } from '../../../types/user';
-import { CircularProgressWrapper } from "../../../components/loading";
+import { ListPageProps, SortOrder } from "../../../types/common";
+import { Asset, AssetState } from '../../../types/asset';
+import { Order, TableHeadInfo } from "../../../components/table/CustomTableHead";
+import { AssetFieldFilter, fetchAllAsset as fetchAllAssets, GetAllAssetParams } from "../../../services/asset.service";
+import LoadingSelect from "../../../components/form/LoadingSelect";
 
 const ClickableTableRow = styled(TableRow)(({ theme }) => ({
     cursor: "pointer",
@@ -37,44 +38,36 @@ const StyledTableContainer = styled(TableContainer)(() => ({
 
 const TABLE_HEAD: TableHeadInfo[] = [
     {
-        id: UserFieldFilter[UserFieldFilter.staffCode],
-        label: "Staff Code",
+        id: AssetFieldFilter[AssetFieldFilter.assetCode],
+        label: "Asset Code",
         sortable: true
     },
     {
-        id: UserFieldFilter[UserFieldFilter.fullName],
-        label: "Full Name",
+        id: AssetFieldFilter[AssetFieldFilter.assetName],
+        label: "Asset Name",
         sortable: true
     },
     {
-        id: "username",
-        label: "Username",
+        id: AssetFieldFilter[AssetFieldFilter.category],
+        label: "Category",
     },
     {
-        id: UserFieldFilter[UserFieldFilter.joinedDate],
-        label: "Joined Date",
-        sortable: true
-    },
-    {
-        id: UserFieldFilter[UserFieldFilter.type],
-        label: "Type",
+        id: AssetFieldFilter[AssetFieldFilter.state],
+        label: "State",
         sortable: true
     },
     {
         id: "action",
         label: "Action",
     },
-]
+];
 
-
-
-const UserListPage: FC<ListPageProps> = ({ alertString }) => {
-    const defaultSortOrder: Order = "asc"
-    const [users, setUsers] = useState<User[]>([]);
+const AssetListPage: FC<ListPageProps> = ({ alertString }) => {
+    const defaultSortOrder: Order = "asc";
+    const [assets, setAssets] = useState<Asset[]>([]);
     const [totalCount, setTotalCount] = useState<number>(0);
     const [page, setPage] = useState<number>(1);
     const [pageSize] = useState<number>(15);
-    const [userType, setUserType] = useState<UserType | "all">("all");
     const [search, setSearch] = useState<string>("");
     const [order, setOrder] = useState<Order>(defaultSortOrder);
     const [orderBy, setOrderBy] = useState<string>(TABLE_HEAD[0].id);
@@ -83,65 +76,63 @@ const UserListPage: FC<ListPageProps> = ({ alertString }) => {
     const [alert, setAlert] = useState<string | undefined>(alertString);
     const [isFetching, setIsFetching] = useState<boolean>(false);
     const [isDisabling, setIsDisabling] = useState<boolean>(false);
-    const [selected, setSelected] = useState<User | null>(null)
-    const [canDisable, setCanDisable] = useState<boolean>(true)
+    const [selected, setSelected] = useState<Asset | null>(null);
+    const [canDisable, setCanDisable] = useState<boolean>(true);
     const inputRef = useRef<HTMLInputElement | null>(null);
-    const placeholderSearch = "Search user by code and name"
+    const placeholderSearch = "Search asset by code and name";
 
-    const getUsers = async () => {
+    const getAssets = async () => {
         setIsFetching(true);
-        let params: GetAllUserParams = {
-            userType: userType === "all" ? undefined : userType,
-            searchString: search !== "" ? search : undefined,
-            isAscending: order === "asc",
+        let params: GetAllAssetParams = {
+            search: search !== "" ? search : undefined,
+            order: order === "asc" ? SortOrder.Ascending : SortOrder.Descending,
+            categoryId: undefined,
+            state: undefined,
             index: page,
             size: pageSize,
-            fieldFilter: UserFieldFilter[orderBy as keyof typeof UserFieldFilter],
+            sort: AssetFieldFilter[orderBy as keyof typeof AssetFieldFilter],
         };
 
-        removeUndefinedValues<GetAllUserParams>(params);
+        removeUndefinedValues<GetAllAssetParams>(params);
 
         try {
-            const data = await fetchAllUsers(params);
-            setUsers(data.data);
-            setTotalCount(data.totalCount)
+            const data = await fetchAllAssets(params);
+            setAssets(data.data);
+            setTotalCount(data.totalCount);
         } catch (error) {
+            console.error("Error fetching assets:", error);
         } finally {
             setIsFetching(false);
         }
     };
 
     useEffect(() => {
-        getUsers();
-    }, [userType, search, order, orderBy, page, pageSize]);
-
-    const handleTypeFilter = (event: SelectChangeEvent) => {
-        setUserType(event.target.value as UserType | "all");
-    };
+        getAssets();
+    }, [search, order, orderBy, page, pageSize]);
 
     const handleChangePage = (_: unknown, newPage: number) => {
         setPage(newPage);
-    }
+    };
 
     const onRequestSort = (property: string) => {
         // toggle sort
         if (orderBy === property) {
-            setOrder(order === "asc" ? "desc" : "asc")
-            return
+            setOrder(order === "asc" ? "desc" : "asc");
+            return;
         }
         setOrderBy(property);
         setOrder(defaultSortOrder);
-    }
-
-    const handleRowClick = (event: MouseEvent<HTMLElement>, user: User) => {
-        setRowAnchorEl(event.currentTarget);
-        setSelected(user);
     };
 
-    const handleDeleteClick = (event: MouseEvent<HTMLElement>, user: User) => {
+    const handleRowClick = (event: MouseEvent<HTMLElement>, asset: Asset) => {
+        setRowAnchorEl(event.currentTarget);
+        setSelected(asset);
+    };
+
+    const handleDeleteClick = (event: MouseEvent<HTMLElement>, asset: Asset) => {
         setDeleteAnchorEl(event.currentTarget);
-        setSelected(user);
-        setCanDisable(true);
+        setSelected(asset);
+        setCanDisable(true); // Assuming you have a similar logic for disabling assets
     };
 
     const handleClosePopover = () => {
@@ -164,49 +155,41 @@ const UserListPage: FC<ListPageProps> = ({ alertString }) => {
         }
     };
 
-    const renderUserDetailDialog = (): ReactNode => {
+    const renderAssetDetailDialog = (): ReactNode => {
         if (!selected) return null;
-        const userDetails = [
+        const assetDetails = [
             {
-                label: "Staff Code: ",
-                value: selected?.staffCode,
+                label: "Asset Code: ",
+                value: selected?.assetCode,
             },
             {
-                label: "First Name: ",
-                value: selected?.firstName,
+                label: "Asset Name: ",
+                value: selected?.assetName,
             },
             {
-                label: "Last Name: ",
-                value: selected?.lastName,
-            },
-            {
-                label: "Username: ",
-                value: selected?.userName,
-            },
-            {
-                label: "Date of Birth: ",
-                value: toStandardFormat(selected?.dateOfBirth),
-            },
-            {
-                label: "Joined Date: ",
-                value: toStandardFormat(selected?.joinedDate),
-            },
-            {
-                label: "Gender: ",
-                value: UserGender[selected?.typeGender],
-            },
-            {
-                label: "Type: ",
-                value: selected?.type,
+                label: "Category: ",
+                value: selected?.category,
             },
             {
                 label: "Location: ",
                 value: selected?.location,
             },
-        ]
+            {
+                label: "Specification: ",
+                value: selected?.specification,
+            },
+            {
+                label: "Installed Date: ",
+                value: toStandardFormat(selected?.installedDate),
+            },
+            {
+                label: "State: ",
+                value: AssetState[selected?.state],
+            },
+        ];
         return (
             <Box>
-                {userDetails.map((item) => (
+                {assetDetails.map((item) => (
                     <Grid container spacing={2} key={item.label}>
                         <Grid item xs={4}>
                             <Typography variant="body1" gutterBottom>{item.label}</Typography>
@@ -220,36 +203,35 @@ const UserListPage: FC<ListPageProps> = ({ alertString }) => {
         );
     };
 
-    const disableUser = async () => {
+    const disableAsset = async () => {
         setIsDisabling(true);
         try {
-            const result = await disableUserById(selected!.id);
-            setCanDisable(result)
-            if (result) {
-                handleClosePopover()
-                getUsers()
-                setAlert(`User ${selected?.userName} is disabled`)
-            }
+            // Implement your logic to disable asset here
+            // For example:
+            // const result = await disableAssetById(selected!.id);
+            // setCanDisable(result);
+            handleClosePopover();
+            getAssets(); // Refresh assets after disabling
+            setAlert(`Asset ${selected?.assetCode} is disabled`);
         } catch (error) {
-            console.error(error)
+            console.error(error);
         }
-
         setIsDisabling(false);
-    }
+    };
 
-    const renderUserDisableDialog = (): ReactNode => {
+    const renderAssetDisableDialog = (): ReactNode => {
         return (
             <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                 <Typography variant="body1" gutterBottom>
-                    Do you want to disable this user? <br />
-                    User: {selected?.userName}
+                    Do you want to disable this asset? <br />
+                    Asset Code: {selected?.assetCode}
                 </Typography>
                 <Box sx={{ display: 'flex', gap: '1rem', mt: '1rem' }}>
                     <LoadingButton
                         loading={isDisabling}
                         type="submit"
                         variant="contained"
-                        onClick={disableUser}
+                        onClick={disableAsset}
                     >
                         Disable
                     </LoadingButton>
@@ -258,38 +240,23 @@ const UserListPage: FC<ListPageProps> = ({ alertString }) => {
                     </Button>
                 </Box>
             </Box>
-        )
-    }
-
-    const renderCannotDisableDialog = (): ReactNode => {
-        return (
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                <Typography variant="body1" gutterBottom>
-                    There are valid assignments belonging to this user.
-                    Please close all assignments before disabling user.
-                </Typography>
-            </Box>
-        )
-    }
+        );
+    };
 
     return (
         <>
             <Helmet>
-                <title>Manage User</title>
+                <title>Manage Assets</title>
             </Helmet>
             <RootBox sx={{ mb: '1rem' }}>
-                <Typography variant="h5" color='primary'>User Management</Typography>
+                <Typography variant="h5" color='primary'>Asset Management</Typography>
             </RootBox>
             <RootBox>
                 {alert && <Alert sx={{ mb: '1rem' }} severity="success" onClose={() => setAlert(undefined)}>{alert}</Alert>}
                 <Box display="flex" justifyContent="space-between" alignItems="center" sx={{ mb: '1rem' }} >
-                    <Select size="small" value={userType} onChange={handleTypeFilter}>
-                        <MenuItem value="all">
-                            <em>Type</em>
-                        </MenuItem>
-                        <MenuItem value="Admin">Admin</MenuItem>
-                        <MenuItem value="Staff">Staff</MenuItem>
-                    </Select>
+                    {/* <LoadingSelect
+                        
+                    /> */}
                     <Box display={'flex'}>
                         <Paper
                             variant="outlined"
@@ -307,9 +274,9 @@ const UserListPage: FC<ListPageProps> = ({ alertString }) => {
                                 <Search />
                             </IconButton>
                         </Paper>
-                        <NoStyleLink to={routeNames.user.create}>
+                        <NoStyleLink to={routeNames.asset.create}>
                             <Button sx={{ marginLeft: "1rem", p: '0 1.5rem', height: '100%' }} variant="contained" color="primary">
-                                Create New User
+                                Create New Asset
                             </Button>
                         </NoStyleLink>
                     </Box>
@@ -323,35 +290,35 @@ const UserListPage: FC<ListPageProps> = ({ alertString }) => {
                                 columns={TABLE_HEAD}
                                 order={order}
                                 orderBy={orderBy}
-                                onRequestSort={onRequestSort} />
+                                onRequestSort={onRequestSort}
+                            />
                             <TableBody>
-                                {users.map((user) => (
+                                {assets.map((asset) => (
                                     <ClickableTableRow
-                                        key={user.id}
-                                        sx={{ backgroundColor: selected?.id === user.id ? theme.palette.action.hover : 'unset' }}
+                                        key={asset.id}
+                                        sx={{ backgroundColor: selected?.id === asset.id ? theme.palette.action.hover : 'unset' }}
                                     >
-                                        <CustomTableCell onClick={(event) => handleRowClick(event, user)}>{user.staffCode}</CustomTableCell>
-                                        <CustomTableCell onClick={(event) => handleRowClick(event, user)}>{user.firstName + " " + user.lastName}</CustomTableCell>
-                                        <CustomTableCell onClick={(event) => handleRowClick(event, user)}>{user.userName}</CustomTableCell>
-                                        <CustomTableCell onClick={(event) => handleRowClick(event, user)}>{toStandardFormat(user.joinedDate)}</CustomTableCell>
-                                        <CustomTableCell onClick={(event) => handleRowClick(event, user)}>{user.type}</CustomTableCell>
+                                        <CustomTableCell onClick={(event) => handleRowClick(event, asset)}>{asset.assetCode}</CustomTableCell>
+                                        <CustomTableCell onClick={(event) => handleRowClick(event, asset)}>{asset.assetName}</CustomTableCell>
+                                        <CustomTableCell onClick={(event) => handleRowClick(event, asset)}>{asset.category}</CustomTableCell>
+                                        <CustomTableCell onClick={(event) => handleRowClick(event, asset)}>{toStandardFormat(asset.installedDate)}</CustomTableCell>
+                                        <CustomTableCell onClick={(event) => handleRowClick(event, asset)}>{asset.location}</CustomTableCell>
                                         <StyledTableCell align="center">
-                                            <NoStyleLink to={routeNames.user.edit(user.id)}>
+                                            <NoStyleLink to={routeNames.asset.edit(asset.id)}>
                                                 <IconButton>
                                                     <Edit />
                                                 </IconButton>
                                             </NoStyleLink>
-
-                                            <IconButton onClick={(event) => handleDeleteClick(event, user)}>
+                                            <IconButton onClick={(event) => handleDeleteClick(event, asset)}>
                                                 <HighlightOff color="primary" />
                                             </IconButton>
                                         </StyledTableCell>
                                     </ClickableTableRow>
                                 ))}
-                                {(users.length === 0 && isFetching)
+                                {(assets.length === 0 && isFetching)
                                     && <TableRow style={{ height: 200 }}>
                                     </TableRow>}
-                                {(users.length === 0 && !isFetching)
+                                {(assets.length === 0 && !isFetching)
                                     && <TableRow style={{ height: 200 }}>
                                         <StyledTableCell align="center" colSpan={TABLE_HEAD.length}>
                                             <Box
@@ -362,7 +329,6 @@ const UserListPage: FC<ListPageProps> = ({ alertString }) => {
                                                 <Typography variant="h6" paragraph>
                                                     {search === "" ? "Empty!" : "Not found"}
                                                 </Typography>
-
                                                 <Typography variant="body2">
                                                     {search === "" ? "There are no records."
                                                         : (<>
@@ -391,22 +357,20 @@ const UserListPage: FC<ListPageProps> = ({ alertString }) => {
                 elAnchor={rowAnchorEl}
                 open={Boolean(rowAnchorEl)}
                 handleClose={handleClosePopover}
-                renderTitle={() => <span>Detailed User Information</span>}
-                renderDescription={renderUserDetailDialog}
+                renderTitle={() => <span>Detailed Asset Information</span>}
+                renderDescription={renderAssetDetailDialog}
                 boxProps={{ sx: { minWidth: '25rem' } }}
             />
-            <CustomPopover
+            {/* <CustomPopover
                 elAnchor={deleteAnchorEl}
                 open={Boolean(deleteAnchorEl)}
                 handleClose={handleClosePopover}
-                renderTitle={() => canDisable ? <span>Are you sure?</span> : <span>Can not disable user</span>}
-                renderDescription={canDisable ? renderUserDisableDialog : renderCannotDisableDialog}
+                renderTitle={() => canDisable ? <span>Are you sure?</span> : <span>Cannot disable asset</span>}
+                renderDescription={canDisable ? renderAssetDisableDialog : renderCannotDisableDialog}
                 boxProps={{ sx: { maxWidth: '25rem' } }}
-            >
-
-            </CustomPopover>
+            /> */}
         </>
-    )
-}
+    );
+};
 
-export default UserListPage;
+export default AssetListPage;

@@ -11,6 +11,7 @@ import { UserType } from '../types/user';
 import RequireAuth from './RequireAuth';
 import RequireGuest from './RequireGuest';
 import { EditUserPage } from '../pages/user/userEdit';
+import AssetListPage from '../pages/assetPages/assetList/AssetListPage';
 
 const commonRoutes: RouteObject[] = [
     {
@@ -45,7 +46,7 @@ const commonRoutes: RouteObject[] = [
     },
     {
         path: '*',
-        element: <Navigate to={routeNames.notFound} replace />,
+        element: <Error404 />,
     },
 ]
 
@@ -71,7 +72,11 @@ export const adminRoutes: RouteObject[] = [
                     {
                         path: routeNames.user.edit(':userId'),
                         element: <EditUserPage />
-                    }
+                    },
+                    {
+                        path: routeNames.asset.list,
+                        element: <AssetListPage />
+                    },
                 ]
             }
         ]

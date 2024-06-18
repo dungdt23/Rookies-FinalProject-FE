@@ -10,4 +10,9 @@ export const routeNames = {
         create: "/users/create",
         edit: (userId: string): string => `/users/edit/${userId}`
     },
+    asset: {
+        list: "/assets",
+        create: "/assets/create",
+        edit: (assetId: string): string => `/assets/edit/${assetId}`
+    },
 }
