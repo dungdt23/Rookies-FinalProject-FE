@@ -15,9 +15,13 @@ import { disableUserById, fetchAllUser, FieldFilter, GetAllUserParams } from "..
 import { ListPageProps } from "../../../types/common";
 import { User, UserGender, UserType } from '../../../types/user';
 
-const ClickableCustomTableCell = styled(CustomTableCell)(() => ({
+const ClickableTableRow = styled(TableRow)(({ theme }) => ({
     cursor: "pointer",
-}))
+    "&:hover": {
+        backgroundColor: theme.palette.action.hover,
+        color: theme.palette.primary.main,
+    },
+}));
 
 const RootBox = styled(Box)(() => ({
     minWidth: '30rem',
@@ -317,15 +321,15 @@ const UserListPage: FC<ListPageProps> = ({ alertString }) => {
                             onRequestSort={onRequestSort} />
                         <TableBody>
                             {users.map((user) => (
-                                <TableRow
+                                <ClickableTableRow
                                     key={user.id}
                                     sx={{ backgroundColor: selected?.id === user.id ? theme.palette.action.hover : 'unset' }}
                                 >
-                                    <ClickableCustomTableCell onClick={(event) => handleRowClick(event, user)}>{user.staffCode}</ClickableCustomTableCell>
-                                    <ClickableCustomTableCell onClick={(event) => handleRowClick(event, user)}>{user.firstName + " " + user.lastName}</ClickableCustomTableCell>
-                                    <ClickableCustomTableCell onClick={(event) => handleRowClick(event, user)}>{user.userName}</ClickableCustomTableCell>
-                                    <ClickableCustomTableCell onClick={(event) => handleRowClick(event, user)}>{toStandardFormat(user.joinedDate)}</ClickableCustomTableCell>
-                                    <ClickableCustomTableCell onClick={(event) => handleRowClick(event, user)}>{user.type}</ClickableCustomTableCell>
+                                    <CustomTableCell onClick={(event) => handleRowClick(event, user)}>{user.staffCode}</CustomTableCell>
+                                    <CustomTableCell onClick={(event) => handleRowClick(event, user)}>{user.firstName + " " + user.lastName}</CustomTableCell>
+                                    <CustomTableCell onClick={(event) => handleRowClick(event, user)}>{user.userName}</CustomTableCell>
+                                    <CustomTableCell onClick={(event) => handleRowClick(event, user)}>{toStandardFormat(user.joinedDate)}</CustomTableCell>
+                                    <CustomTableCell onClick={(event) => handleRowClick(event, user)}>{user.type}</CustomTableCell>
                                     <StyledTableCell align="center">
                                         <NoStyleLink to={routeNames.user.edit(user.id)}>
                                             <IconButton>
@@ -337,7 +341,7 @@ const UserListPage: FC<ListPageProps> = ({ alertString }) => {
                                             <HighlightOff color="primary" />
                                         </IconButton>
                                     </StyledTableCell>
-                                </TableRow>
+                                </ClickableTableRow>
                             ))}
                             {(users.length === 0 && !isFetching)
                                 && <TableRow style={{ height: 200 }}>
