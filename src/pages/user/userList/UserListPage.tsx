@@ -11,7 +11,7 @@ import { theme } from "../../../constants/appTheme";
 import { routeNames } from "../../../constants/routeName";
 import { toStandardFormat } from "../../../helpers/formatDate";
 import { removeUndefinedValues } from "../../../helpers/removeUndefined";
-import { disableUserById, fetchAllUser, FieldFilter, GetAllUserParams } from "../../../services/user.service";
+import { disableUserById, fetchAllUsers, UserFieldFilter, GetAllUserParams } from "../../../services/user.service";
 import { ListPageProps } from "../../../types/common";
 import { User, UserGender, UserType } from '../../../types/user';
 
@@ -36,12 +36,12 @@ const StyledTableContainer = styled(TableContainer)(() => ({
 
 const TABLE_HEAD: TableHeadInfo[] = [
     {
-        id: FieldFilter[FieldFilter.staffCode],
+        id: UserFieldFilter[UserFieldFilter.staffCode],
         label: "Staff Code",
         sortable: true
     },
     {
-        id: FieldFilter[FieldFilter.fullName],
+        id: UserFieldFilter[UserFieldFilter.fullName],
         label: "Full Name",
         sortable: true
     },
@@ -50,12 +50,12 @@ const TABLE_HEAD: TableHeadInfo[] = [
         label: "Username",
     },
     {
-        id: FieldFilter[FieldFilter.joinedDate],
+        id: UserFieldFilter[UserFieldFilter.joinedDate],
         label: "Joined Date",
         sortable: true
     },
     {
-        id: FieldFilter[FieldFilter.type],
+        id: UserFieldFilter[UserFieldFilter.type],
         label: "Type",
         sortable: true
     },
@@ -94,13 +94,13 @@ const UserListPage: FC<ListPageProps> = ({ alertString }) => {
             isAscending: order === "asc",
             index: page,
             size: pageSize,
-            fieldFilter: FieldFilter[orderBy as keyof typeof FieldFilter],
+            fieldFilter: UserFieldFilter[orderBy as keyof typeof UserFieldFilter],
         };
 
         removeUndefinedValues<GetAllUserParams>(params);
 
         try {
-            const data = await fetchAllUser(params);
+            const data = await fetchAllUsers(params);
             setUsers(data.data);
             setTotalCount(data.totalCount)
         } catch (error) {
