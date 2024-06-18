@@ -28,7 +28,8 @@ export interface GetAllUserParams {
 export enum FieldFilter {
     staffCode = 1,
     fullName = 2,
-    joinedDate = 3
+    joinedDate = 3,
+    type = 4,
 }
 
 export interface CreateUserRequest {

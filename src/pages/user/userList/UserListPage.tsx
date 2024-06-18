@@ -31,12 +31,12 @@ const StyledTableContainer = styled(TableContainer)(() => ({
 
 const TABLE_HEAD: TableHeadInfo[] = [
     {
-        id: "staffCode",
+        id: FieldFilter[FieldFilter.staffCode],
         label: "Staff Code",
         sortable: true
     },
     {
-        id: "fullName",
+        id: FieldFilter[FieldFilter.fullName],
         label: "Full Name",
         sortable: true
     },
@@ -45,13 +45,14 @@ const TABLE_HEAD: TableHeadInfo[] = [
         label: "Username",
     },
     {
-        id: "joinedDate",
+        id: FieldFilter[FieldFilter.joinedDate],
         label: "Joined Date",
         sortable: true
     },
     {
-        id: "type",
+        id: FieldFilter[FieldFilter.type],
         label: "Type",
+        sortable: true
     },
     {
         id: "action",
