@@ -28,6 +28,6 @@ export enum UserGender {
 }
 
 export enum UserType {
-    Admin = "ADMIN",
-    Staff = "STAFF"
+    Admin = "Admin",
+    Staff = "Staff"
 }

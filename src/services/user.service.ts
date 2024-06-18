@@ -64,8 +64,9 @@ export const createUser = async (payload: CreateUserRequest): Promise<ApiRespons
     return response.data
 }
 
-export const editUserById = async (id: string, payload: EditUserRequest): Promise<void> => {
-    await axiosInstance.put(apiEndpoints.USER.EDIT(id), payload)
+export const editUserById = async (id: string, payload: EditUserRequest): Promise<ApiResponse<User>> => {
+    const response: AxiosResponse<ApiResponse<User>> =await axiosInstance.put(apiEndpoints.USER.EDIT(id), payload)
+    return response.data
 }
 
 export const loginPost = async (payload: LoginRequest): Promise<ApiResponse<LoginResponse>> => {

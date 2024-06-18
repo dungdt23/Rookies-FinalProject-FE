@@ -9,10 +9,12 @@ import * as yup from 'yup';
 import { NoStyleLink } from '../../../components/noStyleLink';
 import { routeNames } from '../../../constants/routeName';
 import { createUser, CreateUserRequest } from '../../../services/user.service';
-import { UserGender, UserType } from '../../../types/user';
+import { User, UserGender, UserType } from '../../../types/user';
 import dayjs, { Dayjs } from 'dayjs';
 import { DatePicker } from '@mui/x-date-pickers';
 import { useAuth } from '../../../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import { ListPageProps, ListPageState } from '../../../types/common';
 
 export interface Role {
     id: string;
@@ -32,19 +34,21 @@ dayjs.locale('en');
 const isAfterOrEqual = (a: Dayjs, b: Dayjs) => dayjs(a).isAfter(b);
 const isWeekday = (date: Dayjs) => dayjs(date).day() !== 0 && dayjs(date).day() !== 6;
 const isUnder18 = (dob: Dayjs) => dayjs().diff(dob, 'years') < 18;
+const unicodeAlphabetRegex = /^[\p{L}]+$/u;
 
 // Validation schema
 const validationSchema = yup.object({
     firstName: yup.string()
         .required('First Name is required')
-        .max(100, 'First Name length can\'t be more than 100 characters.'),
+        .max(100, 'First Name length can\'t be more than 100 characters.')
+        .matches(unicodeAlphabetRegex, 'First Name can only contain alphabetic characters.'),
     lastName: yup.string()
         .required('Last Name is required')
-        .max(100, 'Last Name length can\'t be more than 100 characters.'),
+        .max(100, 'Last Name length can\'t be more than 100 characters.')
+        .matches(unicodeAlphabetRegex, 'Last Name can only contain alphabetic characters.'),
     dateOfBirth: yup.object()
         .required('Date of Birth is required')
         .test('is-18-or-older', 'User must be 18 or older', function (value) {
-            console.log(!isUnder18(value as Dayjs))
             return !isUnder18(value as Dayjs);
         }),
     joinedDate: yup.object()
@@ -66,6 +70,7 @@ const validationSchema = yup.object({
 const CreateUserPage: FC = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const { user } = useAuth();
+    const navigate = useNavigate();
 
     const formik = useFormik({
         initialValues: {
@@ -91,7 +96,11 @@ const CreateUserPage: FC = () => {
             try {
                 const response = await createUser(payload);
                 const user = response.data;
-                alert(`Added successfully! Id: ${user.id}, Username: ${user.userName}`);
+                const listUserPageState = {
+                    alertString: `User ${user.lastName} has been added!`,
+                    presetEntry: user,
+                } as ListPageState<User>
+                navigate(routeNames.user.list, { state: listUserPageState })
             } catch (error) {
                 console.error('Error adding user:', error);
             } finally {
@@ -99,7 +108,7 @@ const CreateUserPage: FC = () => {
             }
         },
     });
-
+    
     return (
         <>
             <Helmet>
