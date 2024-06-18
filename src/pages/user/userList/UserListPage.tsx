@@ -114,6 +114,7 @@ const UserListPage: FC = () => {
         } else {
             _setUsers(users);
         }
+        window.history.replaceState(location.pathname, '')
     };
 
     const getUsers = async () => {
