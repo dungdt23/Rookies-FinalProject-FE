@@ -12,8 +12,9 @@ import { routeNames } from "../../../constants/routeName";
 import { toStandardFormat } from "../../../helpers/formatDate";
 import { removeUndefinedValues } from "../../../helpers/removeUndefined";
 import { disableUserById, fetchAllUsers, UserFieldFilter, GetAllUserParams } from "../../../services/user.service";
-import { ListPageProps } from "../../../types/common";
+import { ListPageProps, ListPageState } from "../../../types/common";
 import { User, UserGender, UserType } from '../../../types/user';
+import { useLocation } from "react-router-dom";
 
 const ClickableTableRow = styled(TableRow)(({ theme }) => ({
     cursor: "pointer",
@@ -67,9 +68,9 @@ const TABLE_HEAD: TableHeadInfo[] = [
 
 
 
-const UserListPage: FC<ListPageProps> = ({ alertString }) => {
+const UserListPage: FC = () => {
     const defaultSortOrder: Order = "asc"
-    const [users, setUsers] = useState<User[]>([]);
+    const [users, _setUsers] = useState<User[]>([]);
     const [totalCount, setTotalCount] = useState<number>(0);
     const [page, setPage] = useState<number>(1);
     const [pageSize] = useState<number>(15);
@@ -79,12 +80,38 @@ const UserListPage: FC<ListPageProps> = ({ alertString }) => {
     const [orderBy, setOrderBy] = useState<string>(TABLE_HEAD[0].id);
     const [rowAnchorEl, setRowAnchorEl] = useState<HTMLElement | null>(null);
     const [deleteAnchorEl, setDeleteAnchorEl] = useState<HTMLElement | null>(null);
-    const [alert, setAlert] = useState<string | undefined>(alertString);
     const [isFetching, setIsFetching] = useState<boolean>(false);
     const [isDisabling, setIsDisabling] = useState<boolean>(false);
     const [selected, setSelected] = useState<User | null>(null)
     const [canDisable, setCanDelete] = useState<boolean>(true)
+    const location = useLocation();
     const inputRef = useRef<HTMLInputElement | null>(null);
+
+    const state: ListPageState<User> | undefined = location.state;
+
+    const [alert, setAlert] = useState<string | undefined>(state?.alertString);
+
+    const [bool, setBool] = useState<boolean>(false);
+    const setUsers = (users: User[]) => {
+        if (!bool && state?.presetEntry) {
+            // Add presetEntry to the beginning of users
+            let newArr = [state.presetEntry, ...users];
+
+            // Remove duplicates based on id
+            let uniqueUsers = newArr.reduce((acc: User[], user) => {
+                const existingUser = acc.find(u => u.id === user.id);
+                if (!existingUser) {
+                    acc.push(user);
+                }
+                return acc;
+            }, []);
+
+            _setUsers(uniqueUsers);
+            setBool(true);
+        } else {
+            _setUsers(users);
+        }
+    };
 
     const getUsers = async () => {
         setIsFetching(true);

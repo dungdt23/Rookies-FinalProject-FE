@@ -13,6 +13,7 @@ import { NoStyleLink } from '../../../components/noStyleLink';
 import { routeNames } from '../../../constants/routeName';
 import { editUserById, EditUserRequest, fetchUserById } from '../../../services/user.service';
 import { User, UserGender, UserType } from '../../../types/user';
+import { ListPageState } from '../../../types/common';
 
 export interface Role {
     id: string;
@@ -32,19 +33,21 @@ dayjs.locale('en');
 const isAfterOrEqual = (a: Dayjs, b: Dayjs) => dayjs(a).isAfter(b);
 const isWeekday = (date: Dayjs) => dayjs(date).day() !== 0 && dayjs(date).day() !== 6;
 const isUnder18 = (dob: Dayjs) => dayjs().diff(dob, 'years') < 18;
+const unicodeAlphabetRegex = /^[\p{L}\s]+$/u;
 
 // Validation schema
 const validationSchema = yup.object({
     firstName: yup.string()
         .required('First Name is required')
-        .max(100, 'First Name length can\'t be more than 100 characters.'),
+        .max(100, 'First Name length can\'t be more than 100 characters.')
+        .matches(unicodeAlphabetRegex, 'First Name can only contain alphabetic characters.'),
     lastName: yup.string()
         .required('Last Name is required')
-        .max(100, 'Last Name length can\'t be more than 100 characters.'),
+        .max(100, 'Last Name length can\'t be more than 100 characters.')
+        .matches(unicodeAlphabetRegex, 'Last Name can only contain alphabetic characters.'),
     dateOfBirth: yup.object()
         .required('Date of Birth is required')
         .test('is-18-or-older', 'User must be 18 or older', function (value) {
-            console.log(!isUnder18(value as Dayjs))
             return !isUnder18(value as Dayjs);
         }),
     joinedDate: yup.object()
@@ -97,8 +100,8 @@ const EditUserPage: FC = () => {
             lastName: user?.lastName ?? '',
             userType: user?.type ?? '',
             gender: user?.typeGender ?? UserGender.Male,
-            dateOfBirth: user?.dateOfBirth ? dayjs(user.dateOfBirth) : null,
-            joinedDate: user?.joinedDate ? dayjs(user.joinedDate) : null,
+            dateOfBirth: user?.dateOfBirth ? dayjs(user.dateOfBirth).startOf('day') : null,
+            joinedDate: user?.joinedDate ? dayjs(user.joinedDate).startOf('day') : null,
         },
         enableReinitialize: true, // Enable reinitializing of form values when initialValues change
         validationSchema: validationSchema,
@@ -112,10 +115,14 @@ const EditUserPage: FC = () => {
                 gender: values.gender,
                 type: values.userType,
             } as EditUserRequest;
+            console.log(values.joinedDate, values.joinedDate?.toISOString())
             try {
-                await editUserById(userId!, payload);
-                alert(`User updated successfully! Id: ${userId}`);
-                navigate(routeNames.user.list);
+                const response = await editUserById(userId!, payload);
+                const listUserPageState = {
+                    alertString: `User ${values.lastName} has been successfully edited!`,
+                    presetEntry: response.data,
+                } as ListPageState<User>
+                navigate(routeNames.user.list, { state: listUserPageState });
             } catch (error) {
                 console.error('Error updating user:', error);
             } finally {
