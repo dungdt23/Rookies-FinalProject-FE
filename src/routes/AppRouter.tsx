@@ -8,7 +8,7 @@ import { adminRoutes, guestRoutes, staffRoutes } from './routes';
 const AppRouter: React.FC = () => {
     const { user } = useAuth();
     const getRoutes = (): RouteObject[] => {
-        switch (user?.type) {
+        switch (user?.role) {
             case UserType.Admin:
                 return adminRoutes;
             case UserType.Staff:

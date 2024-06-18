@@ -2,13 +2,7 @@ import axios, { AxiosResponse } from 'axios';
 import { apiEndpoints } from '../constants/apiEndpoint';
 import { User, UserGender, UserType } from '../types/user';
 import axiosInstance from './axios';
-
-interface PaginateResponse {
-    data: User[];
-    totalCount: number,
-    statusCode: number;
-    message: string;
-}
+import { PaginateResponse } from '../types/common';
 
 export interface ApiResponse<T> {
     data: T,
@@ -22,10 +16,10 @@ export interface GetAllUserParams {
     isAscending: boolean,
     index: number, // pageNumber
     size: number, // pageSize
-    fieldFilter?: FieldFilter
+    fieldFilter?: UserFieldFilter
 }
 
-export enum FieldFilter {
+export enum UserFieldFilter {
     staffCode = 1,
     fullName = 2,
     joinedDate = 3,
@@ -60,8 +54,8 @@ export interface LoginResponse {
     token: string
 }
 
-export const fetchAllUser = async (params: GetAllUserParams): Promise<PaginateResponse> => {
-    const response: AxiosResponse<PaginateResponse> = await axiosInstance.get(apiEndpoints.USER.GET_ALL, { params });
+export const fetchAllUsers = async (params: GetAllUserParams): Promise<PaginateResponse<User>> => {
+    const response: AxiosResponse<PaginateResponse<User>> = await axiosInstance.get(apiEndpoints.USER.GET_ALL, { params });
     return response.data;
 };
 
@@ -72,7 +66,6 @@ export const createUser = async (payload: CreateUserRequest): Promise<ApiRespons
 
 export const editUserById = async (id: string, payload: EditUserRequest): Promise<void> => {
     await axiosInstance.put(apiEndpoints.USER.EDIT(id), payload)
-    return
 }
 
 export const loginPost = async (payload: LoginRequest): Promise<ApiResponse<LoginResponse>> => {

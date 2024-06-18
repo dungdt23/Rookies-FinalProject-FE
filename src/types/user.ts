@@ -14,8 +14,7 @@ export interface User {
 export interface JWTPayload {
     id: string;
     username: string;
-    typeId: string;
-    type: string;
+    role: string;
     locationId: string;
     location: string;
     nbf: number;
@@ -29,6 +28,6 @@ export enum UserGender {
 }
 
 export enum UserType {
-    Admin = "Admin",
-    Staff = "Staff"
+    Admin = "ADMIN",
+    Staff = "STAFF"
 }

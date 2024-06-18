@@ -16,7 +16,7 @@ const RequireAuth = ({ allowedTypes = [] }: RequireAuthProps) => {
     }
 
     return (
-        (user && allowedTypes.includes(user.type as UserType))
+        (user && allowedTypes.includes(user.role as UserType))
             ? <Outlet />
             : redirect(user)
     )
