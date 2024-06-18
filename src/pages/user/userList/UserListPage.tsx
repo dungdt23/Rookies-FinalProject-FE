@@ -64,13 +64,14 @@ const TABLE_HEAD: TableHeadInfo[] = [
 
 
 const UserListPage: FC<ListPageProps> = ({ alertString }) => {
+    const defaultSortOrder: Order = "asc"
     const [users, setUsers] = useState<User[]>([]);
     const [totalCount, setTotalCount] = useState<number>(0);
     const [page, setPage] = useState<number>(1);
     const [pageSize] = useState<number>(15);
     const [userType, setUserType] = useState<UserType | "all">("all");
     const [search, setSearch] = useState<string>("");
-    const [order, setOrder] = useState<Order>("desc");
+    const [order, setOrder] = useState<Order>(defaultSortOrder);
     const [orderBy, setOrderBy] = useState<string>(TABLE_HEAD[0].id);
     const [rowAnchorEl, setRowAnchorEl] = useState<HTMLElement | null>(null);
     const [deleteAnchorEl, setDeleteAnchorEl] = useState<HTMLElement | null>(null);
@@ -117,12 +118,13 @@ const UserListPage: FC<ListPageProps> = ({ alertString }) => {
     }
 
     const onRequestSort = (property: string) => {
+        // toggle sort
         if (orderBy === property) {
             setOrder(order === "asc" ? "desc" : "asc")
             return
         }
         setOrderBy(property);
-        setOrder("desc");
+        setOrder(defaultSortOrder);
     }
 
     const handleRowClick = (event: MouseEvent<HTMLElement>, user: User) => {
@@ -174,6 +176,10 @@ const UserListPage: FC<ListPageProps> = ({ alertString }) => {
             {
                 label: "Username: ",
                 value: selected?.userName,
+            },
+            {
+                label: "Date of Birth: ",
+                value: toStandardFormat(selected?.dateOfBirth),
             },
             {
                 label: "Joined Date: ",
