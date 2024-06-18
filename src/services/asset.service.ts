@@ -22,6 +22,6 @@ export enum AssetFieldFilter {
 }
 
 export const fetchAllAsset = async (params: GetAllAssetParams): Promise<PaginateResponse<Asset>> => {
-    const response: AxiosResponse<PaginateResponse<Asset>> = await axiosInstance.get(apiEndpoints.USER.GET_ALL, { params });
+    const response: AxiosResponse<PaginateResponse<Asset>> = await axiosInstance.get(apiEndpoints.ASSET.GET_ALL, { params });
     return response.data;
 };

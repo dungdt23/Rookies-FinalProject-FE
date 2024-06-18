@@ -81,6 +81,9 @@ const AssetListPage: FC<ListPageProps> = ({ alertString }) => {
     const inputRef = useRef<HTMLInputElement | null>(null);
     const placeholderSearch = "Search asset by code and name";
 
+    console.log(assets);
+    
+
     const getAssets = async () => {
         setIsFetching(true);
         let params: GetAllAssetParams = {
@@ -301,8 +304,7 @@ const AssetListPage: FC<ListPageProps> = ({ alertString }) => {
                                         <CustomTableCell onClick={(event) => handleRowClick(event, asset)}>{asset.assetCode}</CustomTableCell>
                                         <CustomTableCell onClick={(event) => handleRowClick(event, asset)}>{asset.assetName}</CustomTableCell>
                                         <CustomTableCell onClick={(event) => handleRowClick(event, asset)}>{asset.category}</CustomTableCell>
-                                        <CustomTableCell onClick={(event) => handleRowClick(event, asset)}>{toStandardFormat(asset.installedDate)}</CustomTableCell>
-                                        <CustomTableCell onClick={(event) => handleRowClick(event, asset)}>{asset.location}</CustomTableCell>
+                                        <CustomTableCell onClick={(event) => handleRowClick(event, asset)}>{asset.state}</CustomTableCell>
                                         <StyledTableCell align="center">
                                             <NoStyleLink to={routeNames.asset.edit(asset.id)}>
                                                 <IconButton>
