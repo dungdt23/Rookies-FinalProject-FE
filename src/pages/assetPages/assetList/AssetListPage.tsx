@@ -79,10 +79,7 @@ const AssetListPage: FC<ListPageProps> = ({ alertString }) => {
     const [selected, setSelected] = useState<Asset | null>(null);
     const [canDisable, setCanDisable] = useState<boolean>(true);
     const inputRef = useRef<HTMLInputElement | null>(null);
-    const placeholderSearch = "Search asset by code and name";
-
-    console.log(assets);
-    
+    const placeholderSearch = "Search asset by code and name";    
 
     const getAssets = async () => {
         setIsFetching(true);
@@ -187,7 +184,7 @@ const AssetListPage: FC<ListPageProps> = ({ alertString }) => {
             },
             {
                 label: "State: ",
-                value: AssetState[selected?.state],
+                value: selected?.state,
             },
         ];
         return (
@@ -361,7 +358,7 @@ const AssetListPage: FC<ListPageProps> = ({ alertString }) => {
                 handleClose={handleClosePopover}
                 renderTitle={() => <span>Detailed Asset Information</span>}
                 renderDescription={renderAssetDetailDialog}
-                boxProps={{ sx: { minWidth: '25rem' } }}
+                boxProps={{ sx: { minWidth: '25rem', maxWidth: '30rem' } }}
             />
             {/* <CustomPopover
                 elAnchor={deleteAnchorEl}
