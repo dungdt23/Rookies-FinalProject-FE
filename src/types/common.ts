@@ -1,3 +1,4 @@
 export interface ListPageProps {
-    alertString?: string
+    alertString?: string,
+    presetEntry?: string,
 }

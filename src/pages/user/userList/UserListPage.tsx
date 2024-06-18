@@ -1,6 +1,7 @@
 import { Edit, HighlightOff, Search } from "@mui/icons-material";
+import { LoadingButton } from "@mui/lab";
 import { Alert, Box, Button, Divider, Grid, IconButton, InputBase, MenuItem, Pagination, Paper, Select, SelectChangeEvent, styled, Table, TableBody, TableContainer, TableRow, Typography } from "@mui/material";
-import { FC, MouseEvent, useEffect, useRef, useState } from "react";
+import { FC, MouseEvent, ReactNode, useEffect, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { NoStyleLink } from "../../../components/noStyleLink";
 import { CustomPopover } from "../../../components/popover";
@@ -10,11 +11,11 @@ import { theme } from "../../../constants/appTheme";
 import { routeNames } from "../../../constants/routeName";
 import { toStandardFormat } from "../../../helpers/formatDate";
 import { removeUndefinedValues } from "../../../helpers/removeUndefined";
-import { fetchAllUser, FieldFilter, GetAllUserParams } from "../../../services/user.service";
+import { disableUserById, fetchAllUser, FieldFilter, GetAllUserParams } from "../../../services/user.service";
 import { ListPageProps } from "../../../types/common";
 import { User, UserGender, UserType } from '../../../types/user';
 
-const ClickableCustomTableCell = styled(CustomTableCell)(({ theme }) => ({
+const ClickableCustomTableCell = styled(CustomTableCell)(() => ({
     cursor: "pointer",
 }))
 
@@ -66,7 +67,7 @@ const UserListPage: FC<ListPageProps> = ({ alertString }) => {
     const [users, setUsers] = useState<User[]>([]);
     const [totalCount, setTotalCount] = useState<number>(0);
     const [page, setPage] = useState<number>(1);
-    const [pageSize] = useState<number>(10);
+    const [pageSize] = useState<number>(15);
     const [userType, setUserType] = useState<UserType | "all">("all");
     const [search, setSearch] = useState<string>("");
     const [order, setOrder] = useState<Order>("desc");
@@ -75,7 +76,9 @@ const UserListPage: FC<ListPageProps> = ({ alertString }) => {
     const [deleteAnchorEl, setDeleteAnchorEl] = useState<HTMLElement | null>(null);
     const [alert, setAlert] = useState<string | undefined>(alertString);
     const [isFetching, setIsFetching] = useState<boolean>(false);
+    const [isDisabling, setIsDisabling] = useState<boolean>(false);
     const [selected, setSelected] = useState<User | null>(null)
+    const [canDisable, setCanDelete] = useState<boolean>(true)
     const inputRef = useRef<HTMLInputElement | null>(null);
 
     const getUsers = async () => {
@@ -130,6 +133,7 @@ const UserListPage: FC<ListPageProps> = ({ alertString }) => {
     const handleDeleteClick = (event: MouseEvent<HTMLElement>, user: User) => {
         setDeleteAnchorEl(event.currentTarget);
         setSelected(user);
+        setCanDelete(true);
     };
 
     const handleClosePopover = () => {
@@ -152,9 +156,7 @@ const UserListPage: FC<ListPageProps> = ({ alertString }) => {
         }
     };
 
-
-
-    const renderUserDetail = () => {
+    const renderUserDetailDialog = (): ReactNode => {
         if (!selected) return null;
         const userDetails = [
             {
@@ -185,22 +187,78 @@ const UserListPage: FC<ListPageProps> = ({ alertString }) => {
                 label: "Type: ",
                 value: selected?.type,
             },
+            {
+                label: "Location: ",
+                value: selected?.location,
+            },
         ]
         return (
             <Box>
                 {userDetails.map((item) => (
                     <Grid container spacing={2} key={item.label}>
                         <Grid item xs={4}>
-                            {item.label}
+                            <Typography variant="body1" gutterBottom>{item.label}</Typography>
                         </Grid>
                         <Grid item xs={8}>
-                            {item.value}
+                            <Typography variant="body1" gutterBottom>{item.value}</Typography>
                         </Grid>
                     </Grid>
                 ))}
             </Box>
         );
     };
+
+    const disableUser = async () => {
+        setIsDisabling(true);
+        try {
+            const result = await disableUserById(selected!.id);
+            setCanDelete(result)
+            if (result) {
+                handleClosePopover()
+                getUsers()
+                setAlert(`User ${selected?.userName} is disabled`)
+            }
+        } catch (error) {
+            console.error(error)
+        }
+
+        setIsDisabling(false);
+    }
+
+    const renderUserDisableDialog = (): ReactNode => {
+        return (
+            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                <Typography variant="body1" gutterBottom>
+                    Do you want to disable this user? <br />
+                    User: {selected?.userName}
+                </Typography>
+                <Box sx={{ display: 'flex', gap: '1rem', mt: '1rem' }}>
+                    <LoadingButton
+                        loading={isDisabling}
+                        type="submit"
+                        variant="contained"
+                        onClick={disableUser}
+                    >
+                        Disable
+                    </LoadingButton>
+                    <Button variant="outlined" onClick={handleClosePopover}>
+                        Cancel
+                    </Button>
+                </Box>
+            </Box>
+        )
+    }
+
+    const renderCannotDisableDialog = (): ReactNode => {
+        return (
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <Typography variant="body1" gutterBottom>
+                    There are valid assignments belonging to this user.
+                    Please close all assignments before disabling user.
+                </Typography>
+            </Box>
+        )
+    }
 
     return (
         <>
@@ -211,7 +269,7 @@ const UserListPage: FC<ListPageProps> = ({ alertString }) => {
                 <Typography variant="h5" color='primary'>User Management</Typography>
             </RootBox>
             <RootBox>
-                {alert && <Alert severity="success" onClose={() => setAlert(undefined)}></Alert>}
+                {alert && <Alert sx={{mb: '1rem'}} severity="success" onClose={() => setAlert(undefined)}>{alert}</Alert>}
                 <Box display="flex" justifyContent="space-between" alignItems="center" sx={{ mb: '1rem' }} >
                     <Select size="small" value={userType} onChange={handleTypeFilter}>
                         <MenuItem value="all">
@@ -263,11 +321,14 @@ const UserListPage: FC<ListPageProps> = ({ alertString }) => {
                                     <ClickableCustomTableCell onClick={(event) => handleRowClick(event, user)}>{toStandardFormat(user.joinedDate)}</ClickableCustomTableCell>
                                     <ClickableCustomTableCell onClick={(event) => handleRowClick(event, user)}>{user.type}</ClickableCustomTableCell>
                                     <StyledTableCell align="center">
-                                        <IconButton>
-                                            <Edit />
-                                        </IconButton>
+                                        <NoStyleLink to={routeNames.user.edit(user.id)}>
+                                            <IconButton>
+                                                <Edit />
+                                            </IconButton>
+                                        </NoStyleLink>
+
                                         <IconButton onClick={(event) => handleDeleteClick(event, user)}>
-                                            <HighlightOff />
+                                            <HighlightOff color="primary" />
                                         </IconButton>
                                     </StyledTableCell>
                                 </TableRow>
@@ -312,16 +373,16 @@ const UserListPage: FC<ListPageProps> = ({ alertString }) => {
                 open={Boolean(rowAnchorEl)}
                 handleClose={handleClosePopover}
                 renderTitle={() => <span>Detailed User Information</span>}
-                renderDescription={renderUserDetail}
+                renderDescription={renderUserDetailDialog}
                 boxProps={{ sx: { minWidth: '25rem' } }}
             />
             <CustomPopover
                 elAnchor={deleteAnchorEl}
                 open={Boolean(deleteAnchorEl)}
                 handleClose={handleClosePopover}
-                renderTitle={() => <span>Are you sure?</span>}
-                renderDescription={() => <span>Delete this user?</span>}
-                boxProps={{ sx: { minWidth: '25rem' } }}
+                renderTitle={() => canDisable ? <span>Are you sure?</span> : <span>Can not disable user</span>}
+                renderDescription={canDisable ? renderUserDisableDialog : renderCannotDisableDialog}
+                boxProps={{ sx: { maxWidth: '25rem' } }}
             >
 
             </CustomPopover>

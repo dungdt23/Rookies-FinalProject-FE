@@ -5,8 +5,10 @@ export interface User {
     lastName: string;
     userName: string;
     joinedDate: string;
+    dateOfBirth: string;
     typeGender: UserGender;
     type: UserType;
+    location: string;
 }
 
 export interface JWTPayload {

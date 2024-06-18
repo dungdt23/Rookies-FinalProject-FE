@@ -1,6 +1,6 @@
-import axios from "axios";
-import { LocalStorageConstants } from "../constants/localStorage";
+import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from "axios";
 import { AxiosConstants } from "../constants/axiosConstants";
+import { LocalStorageConstants } from "../constants/localStorage";
 import { routeNames } from "../constants/routeName";
 
 const axiosInstance = axios.create({
@@ -10,31 +10,30 @@ const axiosInstance = axios.create({
 });
 
 axiosInstance.interceptors.request.use(
-    (config) => {
+    (config: InternalAxiosRequestConfig) => {
         const storedToken = localStorage.getItem(LocalStorageConstants.TOKEN);
         const token: string | null = storedToken || null;
         if (token) {
-            config.headers.Authorization = `Bearer ${token}`
+            config.headers.set('Authorization', `Bearer ${token}`);
         }
 
         if (process.env.NODE_ENV === 'development') {
             const method = config.method?.toUpperCase() ?? 'GET';
-            const urlWithParams = method.concat(` ${config.url}`, (config.params ? `?${new URLSearchParams(config.params).toString()}` : ''));
+            const urlWithParams = method.concat(` ${config.url}`, (config.params ? `?${new URLSearchParams(config.params as Record<string, string>).toString()}` : ''));
             console.log('Request URL:', urlWithParams);
         }
 
-        return config
+        return config;
     },
-    (error) => {
-        Promise.reject(new Error(error))
+    (error: AxiosError) => {
+        return Promise.reject(new Error(error.message));
     }
-)
-
+);
 axiosInstance.interceptors.response.use(
-    response => {
+    (response: AxiosResponse) => {
         return response
     },
-    error => {
+    (error: AxiosError) => {
         console.error(error)
         if (!error.response) {
             console.error('Network error, unable to connect to API');
@@ -50,7 +49,7 @@ axiosInstance.interceptors.response.use(
         }
         // You can add other error handling logic here
 
-        return Promise.reject(new Error(error));
+        return Promise.reject(error);
     }
 )
 
