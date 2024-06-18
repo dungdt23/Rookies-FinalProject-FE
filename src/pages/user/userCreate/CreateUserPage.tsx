@@ -34,7 +34,7 @@ dayjs.locale('en');
 const isAfterOrEqual = (a: Dayjs, b: Dayjs) => dayjs(a).isAfter(b);
 const isWeekday = (date: Dayjs) => dayjs(date).day() !== 0 && dayjs(date).day() !== 6;
 const isUnder18 = (dob: Dayjs) => dayjs().diff(dob, 'years') < 18;
-const unicodeAlphabetRegex = /^[\p{L}]+$/u;
+const unicodeAlphabetRegex = /^[\p{L}\s]+$/u;
 
 // Validation schema
 const validationSchema = yup.object({
