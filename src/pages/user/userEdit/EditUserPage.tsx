@@ -38,20 +38,20 @@ const unicodeAlphabetRegex = /^[\p{L}\s]+$/u;
 // Validation schema
 const validationSchema = yup.object({
     firstName: yup.string()
-        .required('First Name is required')
+        .required('Please enter first name')
         .max(100, 'First Name length can\'t be more than 100 characters.')
         .matches(unicodeAlphabetRegex, 'First Name can only contain alphabetic characters.'),
     lastName: yup.string()
-        .required('Last Name is required')
+        .required('Please enter last name')
         .max(100, 'Last Name length can\'t be more than 100 characters.')
         .matches(unicodeAlphabetRegex, 'Last Name can only contain alphabetic characters.'),
     dateOfBirth: yup.object()
-        .required('Date of Birth is required')
+        .required('Please choose date of birth')
         .test('is-18-or-older', 'User must be 18 or older', function (value) {
             return !isUnder18(value as Dayjs);
         }),
     joinedDate: yup.object()
-        .required('Joined Date is required')
+        .required('Please choose joined date')
         .test('is-after-dob', 'Joined date must be after Date of Birth', function (value, context) {
             return isAfterOrEqual(value as Dayjs, context.parent.dateOfBirth as Dayjs);
         })
@@ -59,10 +59,10 @@ const validationSchema = yup.object({
             return isWeekday(value as Dayjs);
         }),
     gender: yup.number()
-        .required('Gender is required')
+        .required('Please choose the gender')
         .oneOf([UserGender.Male, UserGender.Female], 'Invalid gender value'),
     userType: yup.string()
-        .required('User Type is required')
+        .required('Please choose type ')
         .oneOf(Object.values(UserType), 'Please choose Admin or Staff'),
 });
 
