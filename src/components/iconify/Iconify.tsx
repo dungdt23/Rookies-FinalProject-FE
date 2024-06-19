@@ -1,6 +1,6 @@
-import { forwardRef, ForwardedRef } from 'react';
+import { ForwardedRef, forwardRef } from 'react';
 // icons
-import { Icon, IconProps } from '@iconify/react';
+import { Icon } from '@iconify/react';
 // @mui
 import { Box, BoxProps } from '@mui/material';
 import { SxProps, Theme } from '@mui/system';

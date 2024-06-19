@@ -1,4 +1,4 @@
-import { Navigate, RouteObject } from 'react-router-dom';
+import { RouteObject } from 'react-router-dom';
 import { routeNames } from '../constants/routeName';
 import { AdminLayout } from '../layouts/adminLayout';
 import { SimpleLayout } from '../layouts/simpleLayout';

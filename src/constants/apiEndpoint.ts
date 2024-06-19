@@ -13,10 +13,20 @@ export const apiEndpoints = {
         EDIT: (assetId: string) => `/assets/${assetId}`,
         DELETE: (assetId: string) => `/assets/${assetId}`,
     },
+    ASSIGNMENT: {
+        GET_ALL: "/assignments",
+        GET_ID: (assignmentId: string) => `/assignments/${assignmentId}`,
+        CREATE: "/assignments",
+        EDIT: (assignmentId: string) => `/assignments/${assignmentId}`,
+        DELETE: (assignmentId: string) => `/assignments/${assignmentId}`,
+    },
     CATEGORY: {
         GET_ALL: "/categories",
         CREATE: "/categories",
         CHECK_UNIQUE: "/categories/unique-prefix-name"
     },
-    LOGIN: "/users/Login"
+    TYPE: {
+        GET_ALL: "/types"
+    },
+    LOGIN: "/users/login"
 }

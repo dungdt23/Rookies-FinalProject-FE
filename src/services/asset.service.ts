@@ -7,7 +7,7 @@ import { ApiResponse } from "./user.service";
 
 export interface GetAllAssetParams {
     state?: AssetState,
-    categoryId?: string,
+    category?: string,
     search?: string,
     sort: AssetFieldFilter,
     order: SortOrder,
@@ -27,12 +27,6 @@ export const fetchAllAsset = async (params: GetAllAssetParams): Promise<Paginate
     return response.data;
 };
 
-const API_BASE_URL = 'https://rookies-b7-g3-api.azurewebsites.net';
-
-export const fetchCategories = async () => {
-    return axios.get(`${API_BASE_URL}/categories`);
-};
-
 export const createAsset = async (payload: CreateAssetRequest): Promise<ApiResponse<Asset>> => {
     const response: AxiosResponse<ApiResponse<Asset>> = await axiosInstance.post(apiEndpoints.ASSET.CREATE, payload)
     return response.data
@@ -47,3 +41,17 @@ export const editAssetById = async (id: string, payload: CreateAssetRequest): Pr
     const response: AxiosResponse<ApiResponse<Asset>> =await axiosInstance.put(apiEndpoints.ASSET.EDIT(id), payload)
     return response.data
 }
+export const deleteAssetById = async (id: string): Promise<boolean> => {
+    try {
+        await axiosInstance.delete(`${apiEndpoints.ASSET.DELETE(id)}`);
+        return true;
+    } catch (error) {
+        if (axios.isAxiosError(error)) {
+            if (error.response && error.response.status === 409) {
+                return false;
+            }
+        }
+        // Re-throw other errors
+        throw error;
+    }
+};
