@@ -3,7 +3,7 @@ import { LoadingButton } from "@mui/lab";
 import { Alert, Box, Button, Divider, FormControl, Grid, IconButton, InputBase, InputLabel, MenuItem, Pagination, Paper, Select, SelectChangeEvent, styled, Table, TableBody, TableContainer, TableRow, Typography } from "@mui/material";
 import { FC, MouseEvent, ReactNode, useEffect, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import LoadingSelect, { LoadingSelectOption } from "../../../components/form/LoadingSelect";
 import { CircularProgressWrapper } from "../../../components/loading";
 import { NoStyleLink } from "../../../components/noStyleLink";
@@ -14,10 +14,10 @@ import { theme } from "../../../constants/appTheme";
 import { routeNames } from "../../../constants/routeName";
 import { toStandardFormat } from "../../../helpers/formatDate";
 import { removeUndefinedValues } from "../../../helpers/removeUndefined";
-import { AssetFieldFilter, fetchAllAsset as fetchAllAssets, GetAllAssetParams } from "../../../services/asset.service";
-import { fetchAllCategory } from "../../../services/category.service";
+import { AssetFieldFilter, deleteAssetById, fetchAllAsset as fetchAllAssets, GetAllAssetParams } from "../../../services/asset.service";
 import { Asset, AssetState } from '../../../types/asset';
-import { ListPageProps, SortOrder } from "../../../types/common";
+import { ListPageProps, ListPageState, SortOrder } from "../../../types/common";
+import { fetchAllCategory } from "../../../services/category.service";
 
 const ClickableTableRow = styled(TableRow)(({ theme }) => ({
     cursor: "pointer",
@@ -28,26 +28,25 @@ const ClickableTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 const RootBox = styled(Box)(() => ({
-    minWidth: '30rem',
-    width: '100%',
-    p: 2
-}))
+    minWidth: "30rem",
+    width: "100%",
+    p: 2,
+}));
 
 const StyledTableContainer = styled(TableContainer)(() => ({
-    border: '0px',
-}))
-
+    border: "0px",
+}));
 
 const TABLE_HEAD: TableHeadInfo[] = [
     {
         id: AssetFieldFilter[AssetFieldFilter.assetCode],
         label: "Asset Code",
-        sortable: true
+        sortable: true,
     },
     {
         id: AssetFieldFilter[AssetFieldFilter.assetName],
         label: "Asset Name",
-        sortable: true
+        sortable: true,
     },
     {
         id: AssetFieldFilter[AssetFieldFilter.category],
@@ -56,7 +55,7 @@ const TABLE_HEAD: TableHeadInfo[] = [
     {
         id: AssetFieldFilter[AssetFieldFilter.state],
         label: "State",
-        sortable: true
+        sortable: true,
     },
     {
         id: "action",
@@ -71,7 +70,7 @@ const allOption = {
 
 const AssetListPage: FC<ListPageProps> = ({ alertString }) => {
     const defaultSortOrder: Order = "asc";
-    const [assets, setAssets] = useState<Asset[]>([]);
+    const [assets, _setAssets] = useState<Asset[]>([]);
     const [totalCount, setTotalCount] = useState<number>(0);
     const [page, setPage] = useState<number>(1);
     const [pageSize] = useState<number>(15);
@@ -111,7 +110,7 @@ const AssetListPage: FC<ListPageProps> = ({ alertString }) => {
             sort: AssetFieldFilter[orderBy as keyof typeof AssetFieldFilter],
         };
 
-        removeUndefinedValues<GetAllAssetParams>(params);
+        removeUndefinedValues(params);
 
         try {
             const data = await fetchAllAssets(params);
@@ -122,6 +121,25 @@ const AssetListPage: FC<ListPageProps> = ({ alertString }) => {
         } finally {
             setIsFetching(false);
         }
+    };
+
+    const location = useLocation();
+    const state: ListPageState<Asset> | undefined = location.state;
+    const [bool, setBool] = useState<boolean>(false);
+    const setAssets = (assets: Asset[]) => {
+        if (!bool && state?.presetEntry) {
+            // add presetEntry into assets
+            let newArr = [state.presetEntry, ...assets];
+            let uniqueAssets = Array.from(
+                new Map(newArr.map((asset) => [asset.id, asset])).values()
+            );
+
+            _setAssets(uniqueAssets);
+            setBool(true);
+        } else {
+            _setAssets(assets);
+        }
+        window.history.replaceState(location.pathname, "");
     };
 
     const getCategories = async () => {
@@ -159,16 +177,15 @@ const AssetListPage: FC<ListPageProps> = ({ alertString }) => {
         setOrderBy(property);
         setOrder(defaultSortOrder);
     };
-
-    const handleRowClick = (event: MouseEvent<HTMLElement>, asset: Asset) => {
-        setRowAnchorEl(event.currentTarget);
-        setSelected(asset);
-    };
-
     const handleDeleteClick = (event: MouseEvent<HTMLElement>, asset: Asset) => {
         setDeleteAnchorEl(event.currentTarget);
         setSelected(asset);
         setCanDelete(true); // Assuming you have a similar logic for disabling assets
+    };
+
+    const handleRowClick = (event: MouseEvent<HTMLElement>, asset: Asset) => {
+        setRowAnchorEl(event.currentTarget);
+        setSelected(asset);
     };
 
     const handleClosePopover = () => {
@@ -250,8 +267,8 @@ const AssetListPage: FC<ListPageProps> = ({ alertString }) => {
             return
         }
         try {
-            // const result = await deleteAssetById(selected.id);
-            const result = false;
+            const result = await deleteAssetById(selected.id);
+
             setCanDelete(result);
             if (result) {
                 handleClosePopover();

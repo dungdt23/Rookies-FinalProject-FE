@@ -16,3 +16,10 @@ export enum AssetState {
     WaitingForRecycling = 4,
     Recycled = 5
 }
+export interface CreateAssetRequest {
+    assetName: string;
+    categoryId: string;
+    installedDate: string;
+    specification: string;
+    state: AssetState;
+}

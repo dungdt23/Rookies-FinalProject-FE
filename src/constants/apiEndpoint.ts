@@ -23,6 +23,7 @@ export const apiEndpoints = {
     CATEGORY: {
         GET_ALL: "/categories",
         CREATE: "/categories",
+        CHECK_UNIQUE: "/categories/unique-prefix-name"
     },
     TYPE: {
         GET_ALL: "/types"

@@ -12,7 +12,7 @@ import * as yup from 'yup';
 import { NoStyleLink } from '../../../components/noStyleLink';
 import { routeNames } from '../../../constants/routeName';
 import { useAuth } from '../../../contexts/AuthContext';
-import { createUser, CreateUserRequest } from '../../../services/user.service';
+import { CreateUserRequest, createUser } from '../../../services/user.service';
 import { ListPageState } from '../../../types/common';
 import { User, UserGender, UserType } from '../../../types/user';
 

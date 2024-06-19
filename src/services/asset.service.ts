@@ -1,8 +1,9 @@
-import axios, { AxiosResponse } from "axios";
+import axios, { AxiosResponse } from 'axios';
 import { apiEndpoints } from "../constants/apiEndpoint";
-import { Asset, AssetState } from "../types/asset";
+import { Asset, AssetState, CreateAssetRequest } from "../types/asset";
 import { PaginateResponse, SortOrder } from "../types/common";
 import axiosInstance from "./axios";
+import { ApiResponse } from "./user.service";
 
 export interface GetAllAssetParams {
     state?: AssetState,
@@ -26,6 +27,20 @@ export const fetchAllAsset = async (params: GetAllAssetParams): Promise<Paginate
     return response.data;
 };
 
+export const createAsset = async (payload: CreateAssetRequest): Promise<ApiResponse<Asset>> => {
+    const response: AxiosResponse<ApiResponse<Asset>> = await axiosInstance.post(apiEndpoints.ASSET.CREATE, payload)
+    return response.data
+};
+
+export const fetchAssetById = async (id: string): Promise<ApiResponse<Asset>> => {
+    const response: AxiosResponse<ApiResponse<Asset>> = await axiosInstance.get(`${apiEndpoints.ASSET.GET_ID(id)}`)
+    return response.data
+}
+
+export const editAssetById = async (id: string, payload: CreateAssetRequest): Promise<ApiResponse<Asset>> => {
+    const response: AxiosResponse<ApiResponse<Asset>> =await axiosInstance.put(apiEndpoints.ASSET.EDIT(id), payload)
+    return response.data
+}
 export const deleteAssetById = async (id: string): Promise<boolean> => {
     try {
         await axiosInstance.delete(`${apiEndpoints.ASSET.DELETE(id)}`);
