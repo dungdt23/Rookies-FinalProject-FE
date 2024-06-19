@@ -25,10 +25,10 @@ import { NoStyleLink } from "../../../components/noStyleLink";
 import { routeNames } from "../../../constants/routeName";
 import { useAuth } from "../../../contexts/AuthContext";
 import { editAssetById, fetchAssetById } from "../../../services/asset.service";
-import { fetchCategories } from "../../../services/asset.service";
 import { Asset, AssetState, CreateAssetRequest } from "../../../types/asset";
 import { Category } from "../../../types/category";
 import { ListPageState } from "../../../types/common";
+import { fetchAllCategory } from "../../../services/category.service";
 
 const RootBox = styled(Box)(() => ({
   maxWidth: "100vh",
@@ -89,8 +89,8 @@ const EditAssetPage: FC = () => {
       // Find and set the current category
       const fetchCategoryData = async () => {
         try {
-          const categoryResponse = await fetchCategories();
-          const fetchedCategories = categoryResponse.data.data;
+          const categoryResponse = await fetchAllCategory();
+          const fetchedCategories = categoryResponse.data;
           setCategories(fetchedCategories);
 
           const matchedCategory = fetchedCategories.find(

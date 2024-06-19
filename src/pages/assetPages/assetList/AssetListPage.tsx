@@ -14,7 +14,7 @@ import { theme } from "../../../constants/appTheme";
 import { routeNames } from "../../../constants/routeName";
 import { toStandardFormat } from "../../../helpers/formatDate";
 import { removeUndefinedValues } from "../../../helpers/removeUndefined";
-import { AssetFieldFilter, fetchAllAsset as fetchAllAssets, GetAllAssetParams } from "../../../services/asset.service";
+import { AssetFieldFilter, deleteAssetById, fetchAllAsset as fetchAllAssets, GetAllAssetParams } from "../../../services/asset.service";
 import { Asset, AssetState } from '../../../types/asset';
 import { ListPageProps, ListPageState, SortOrder } from "../../../types/common";
 import { fetchAllCategory } from "../../../services/category.service";
@@ -109,6 +109,9 @@ const AssetListPage: FC<ListPageProps> = ({ alertString }) => {
             size: pageSize,
             sort: AssetFieldFilter[orderBy as keyof typeof AssetFieldFilter],
         };
+
+        removeUndefinedValues(params);
+
         try {
             const data = await fetchAllAssets(params);
             setAssets(data.data);
@@ -199,6 +202,60 @@ const AssetListPage: FC<ListPageProps> = ({ alertString }) => {
         }
     };
 
+    const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === 'Enter') {
+            handleSearchSubmit();
+        }
+    };
+
+    const renderAssetDetailDialog = (): ReactNode => {
+        if (!selected) return null;
+        const assetDetails = [
+            {
+                label: "Asset Code: ",
+                value: selected?.assetCode,
+            },
+            {
+                label: "Asset Name: ",
+                value: selected?.assetName,
+            },
+            {
+                label: "Category: ",
+                value: selected?.category,
+            },
+            {
+                label: "Location: ",
+                value: selected?.location,
+            },
+            {
+                label: "Specification: ",
+                value: selected?.specification,
+            },
+            {
+                label: "Installed Date: ",
+                value: toStandardFormat(selected?.installedDate),
+            },
+            {
+                label: "State: ",
+                value: selected?.state,
+            },
+        ];
+        return (
+            <Box>
+                {assetDetails.map((item) => (
+                    <Grid container spacing={2} key={item.label}>
+                        <Grid item xs={4}>
+                            <Typography variant="body1" gutterBottom>{item.label}</Typography>
+                        </Grid>
+                        <Grid item xs={8}>
+                            <Typography variant="body1" gutterBottom>{item.value}</Typography>
+                        </Grid>
+                    </Grid>
+                ))}
+            </Box>
+        );
+    };
+
     const handleStateFilter = (event: SelectChangeEvent) => {
         setAssetState(event.target.value as AssetState | "");
     };
@@ -210,8 +267,8 @@ const AssetListPage: FC<ListPageProps> = ({ alertString }) => {
             return
         }
         try {
-            // const result = await deleteAssetById(selected.id);
-            const result = false;
+            const result = await deleteAssetById(selected.id);
+
             setCanDelete(result);
             if (result) {
                 handleClosePopover();

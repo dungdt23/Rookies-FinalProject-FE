@@ -3,14 +3,3 @@ export interface Category {
     prefix: string;
     categoryName: string;
 }
-
-
-export interface CreateRequestCategory {
-    prefix: string;
-    categoryName: string;
-}
-
-export interface PrefixNameFilter {
-    isPrefix: boolean;
-    value: string;
-}

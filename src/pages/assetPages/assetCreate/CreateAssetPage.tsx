@@ -28,17 +28,17 @@ import { useNavigate } from "react-router-dom";
 import * as yup from "yup";
 import { NoStyleLink } from "../../../components/noStyleLink";
 import { routeNames } from "../../../constants/routeName";
-import { useAuth } from "../../../contexts/AuthContext";
-import { createAsset, fetchCategories } from "../../../services/asset.service";
+import { createAsset } from "../../../services/asset.service";
 import {
   checkUniquePrefixName,
   createCategory,
+  CreateCategoryRequest,
+  fetchAllCategory,
+  PrefixNameFilter,
 } from "../../../services/category.service";
 import { Asset, AssetState, CreateAssetRequest } from "../../../types/asset";
 import {
   Category,
-  CreateRequestCategory,
-  PrefixNameFilter,
 } from "../../../types/category";
 import { ListPageState } from "../../../types/common";
 
@@ -95,7 +95,7 @@ const CreateAssetPage: FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
   const [open, setOpen] = useState(false);
-  const [newCategory, setNewCategory] = useState<CreateRequestCategory>({
+  const [newCategory, setNewCategory] = useState<CreateCategoryRequest>({
     prefix: "",
     categoryName: "",
   });
@@ -103,14 +103,13 @@ const CreateAssetPage: FC = () => {
     prefix: false,
     categoryName: false,
   });
-  const { user } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCategoryData = async () => {
       try {
-        const response = await fetchCategories();
-        setCategories(response.data.data);
+        const response = await fetchAllCategory();
+        setCategories(response.data);
       } catch (error) {
         console.error("Error fetching categories:", error);
       }
