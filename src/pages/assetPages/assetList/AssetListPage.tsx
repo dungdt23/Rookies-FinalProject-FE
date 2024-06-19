@@ -1,21 +1,23 @@
-import { FC, MouseEvent, ReactNode, useEffect, useRef, useState } from "react";
-import { Helmet } from "react-helmet-async";
-import { Alert, Box, Button, Divider, Grid, IconButton, InputBase, MenuItem, Pagination, Paper, Select, SelectChangeEvent, styled, Table, TableBody, TableContainer, TableRow, Typography } from "@mui/material";
 import { Edit, HighlightOff, Search } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
+import { Alert, Box, Button, Divider, FormControl, Grid, IconButton, InputBase, InputLabel, MenuItem, Pagination, Paper, Select, SelectChangeEvent, styled, Table, TableBody, TableContainer, TableRow, Typography } from "@mui/material";
+import { FC, MouseEvent, ReactNode, useEffect, useRef, useState } from "react";
+import { Helmet } from "react-helmet-async";
+import { Link } from "react-router-dom";
+import LoadingSelect, { LoadingSelectOption } from "../../../components/form/LoadingSelect";
 import { CircularProgressWrapper } from "../../../components/loading";
+import { NoStyleLink } from "../../../components/noStyleLink";
 import { CustomPopover } from "../../../components/popover";
 import { CustomTableCell, CustomTableHead, StyledTableCell } from "../../../components/table";
-import { NoStyleLink } from "../../../components/noStyleLink";
+import { Order, TableHeadInfo } from "../../../components/table/CustomTableHead";
 import { theme } from "../../../constants/appTheme";
 import { routeNames } from "../../../constants/routeName";
 import { toStandardFormat } from "../../../helpers/formatDate";
 import { removeUndefinedValues } from "../../../helpers/removeUndefined";
-import { ListPageProps, SortOrder } from "../../../types/common";
-import { Asset, AssetState } from '../../../types/asset';
-import { Order, TableHeadInfo } from "../../../components/table/CustomTableHead";
 import { AssetFieldFilter, fetchAllAsset as fetchAllAssets, GetAllAssetParams } from "../../../services/asset.service";
-import LoadingSelect from "../../../components/form/LoadingSelect";
+import { fetchAllCategory } from "../../../services/category.service";
+import { Asset, AssetState } from '../../../types/asset';
+import { ListPageProps, SortOrder } from "../../../types/common";
 
 const ClickableTableRow = styled(TableRow)(({ theme }) => ({
     cursor: "pointer",
@@ -62,6 +64,11 @@ const TABLE_HEAD: TableHeadInfo[] = [
     },
 ];
 
+const allOption = {
+    label: "None",
+    value: ""
+}
+
 const AssetListPage: FC<ListPageProps> = ({ alertString }) => {
     const defaultSortOrder: Order = "asc";
     const [assets, setAssets] = useState<Asset[]>([]);
@@ -75,19 +82,30 @@ const AssetListPage: FC<ListPageProps> = ({ alertString }) => {
     const [deleteAnchorEl, setDeleteAnchorEl] = useState<HTMLElement | null>(null);
     const [alert, setAlert] = useState<string | undefined>(alertString);
     const [isFetching, setIsFetching] = useState<boolean>(false);
-    const [isDisabling, setIsDisabling] = useState<boolean>(false);
+    const [isDeleting, setIsDeleting] = useState<boolean>(false);
+    const [isFetchingCategory, setIsFetchingCategory] = useState<boolean>(false);
+    const [categories, _setCategories] = useState<LoadingSelectOption[]>([allOption]);
+    const [category, setCategory] = useState<string>(allOption.value)
+    const [assetState, setAssetState] = useState<AssetState | string>("")
     const [selected, setSelected] = useState<Asset | null>(null);
-    const [canDisable, setCanDisable] = useState<boolean>(true);
+    const [canDelete, setCanDelete] = useState<boolean>(true);
     const inputRef = useRef<HTMLInputElement | null>(null);
-    const placeholderSearch = "Search asset by code and name";    
+    const placeholderSearch = "Search asset by code and name";
+
+    const setCategories = (categories: LoadingSelectOption[]) => {
+        _setCategories([
+            allOption,
+            ...categories
+        ])
+    }
 
     const getAssets = async () => {
         setIsFetching(true);
         let params: GetAllAssetParams = {
             search: search !== "" ? search : undefined,
             order: order === "asc" ? SortOrder.Ascending : SortOrder.Descending,
-            categoryId: undefined,
-            state: undefined,
+            category: category !== allOption.value ? category : undefined,
+            state: assetState !== "" ? assetState as AssetState : undefined,
             index: page,
             size: pageSize,
             sort: AssetFieldFilter[orderBy as keyof typeof AssetFieldFilter],
@@ -106,9 +124,27 @@ const AssetListPage: FC<ListPageProps> = ({ alertString }) => {
         }
     };
 
+    const getCategories = async () => {
+        setIsFetchingCategory(true);
+        try {
+            const response = await fetchAllCategory()
+            setCategories(response.data.map((category) => ({
+                label: category.categoryName,
+                value: category.id
+            })));
+        } catch (error) {
+            console.error(error)
+        }
+        setIsFetchingCategory(false);
+    }
+
+    useEffect(() => {
+        getCategories();
+    }, [])
+
     useEffect(() => {
         getAssets();
-    }, [search, order, orderBy, page, pageSize]);
+    }, [assetState, category, search, order, orderBy, page, pageSize]);
 
     const handleChangePage = (_: unknown, newPage: number) => {
         setPage(newPage);
@@ -132,7 +168,7 @@ const AssetListPage: FC<ListPageProps> = ({ alertString }) => {
     const handleDeleteClick = (event: MouseEvent<HTMLElement>, asset: Asset) => {
         setDeleteAnchorEl(event.currentTarget);
         setSelected(asset);
-        setCanDisable(true); // Assuming you have a similar logic for disabling assets
+        setCanDelete(true); // Assuming you have a similar logic for disabling assets
     };
 
     const handleClosePopover = () => {
@@ -203,37 +239,46 @@ const AssetListPage: FC<ListPageProps> = ({ alertString }) => {
         );
     };
 
+    const handleStateFilter = (event: SelectChangeEvent) => {
+        setAssetState(event.target.value as AssetState | "");
+    };
+
     const disableAsset = async () => {
-        setIsDisabling(true);
+        setIsDeleting(true);
+        if (!selected) {
+            setIsDeleting(false);
+            return
+        }
         try {
-            // Implement your logic to disable asset here
-            // For example:
-            // const result = await disableAssetById(selected!.id);
-            // setCanDisable(result);
-            handleClosePopover();
-            getAssets(); // Refresh assets after disabling
-            setAlert(`Asset ${selected?.assetCode} is disabled`);
+            // const result = await deleteAssetById(selected.id);
+            const result = false;
+            setCanDelete(result);
+            if (result) {
+                handleClosePopover();
+                getAssets(); // Refresh assets after disabling
+                setAlert(`Asset ${selected?.assetCode} is disabled`);
+            }
         } catch (error) {
             console.error(error);
         }
-        setIsDisabling(false);
+        setIsDeleting(false);
     };
 
     const renderAssetDisableDialog = (): ReactNode => {
         return (
             <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                 <Typography variant="body1" gutterBottom>
-                    Do you want to disable this asset? <br />
+                    Do you want to delete this asset? <br />
                     Asset Code: {selected?.assetCode}
                 </Typography>
                 <Box sx={{ display: 'flex', gap: '1rem', mt: '1rem' }}>
                     <LoadingButton
-                        loading={isDisabling}
+                        loading={isDeleting}
                         type="submit"
                         variant="contained"
                         onClick={disableAsset}
                     >
-                        Disable
+                        Delete
                     </LoadingButton>
                     <Button variant="outlined" onClick={handleClosePopover}>
                         Cancel
@@ -242,6 +287,17 @@ const AssetListPage: FC<ListPageProps> = ({ alertString }) => {
             </Box>
         );
     };
+
+    const renderCannotDisableDialog = (): ReactNode => {
+        return (
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <Typography variant="body1" gutterBottom>
+                    Cannot delete the asset because it belongs to one or more historical assignment<br/>
+                    If the asset is not able to be used anymore please update its state in <Link to={routeNames.asset.edit(selected?.id || "")}>Edit Asset Page</Link>
+                </Typography>
+            </Box>
+        )
+    }
 
     return (
         <>
@@ -254,10 +310,35 @@ const AssetListPage: FC<ListPageProps> = ({ alertString }) => {
             <RootBox>
                 {alert && <Alert sx={{ mb: '1rem' }} severity="success" onClose={() => setAlert(undefined)}>{alert}</Alert>}
                 <Box display="flex" justifyContent="space-between" alignItems="center" sx={{ mb: '1rem' }} >
-                    {/* <LoadingSelect
-                        
-                    /> */}
-                    <Box display={'flex'}>
+                    <Box sx={{display:"flex", gap: "1rem"}}>
+                        <FormControl >
+                            <InputLabel id="state-label">State</InputLabel>
+                            <Select
+                                labelId="state-label"
+                                label="State"
+                                value={assetState.toString()}
+                                onChange={handleStateFilter}
+                                sx={{ minWidth: "15rem" }}
+                            >
+                                <MenuItem value="">
+                                    <em>None</em>
+                                </MenuItem>
+                                <MenuItem value={AssetState.Available}>Available</MenuItem>
+                                <MenuItem value={AssetState.NotAvailable}>Not Available</MenuItem>
+                                <MenuItem value={AssetState.Assigned}>Assigned</MenuItem>
+                                <MenuItem value={AssetState.WaitingForRecycling}>Waiting For Recycling</MenuItem>
+                                <MenuItem value={AssetState.Recycled}>Recycled</MenuItem>
+                            </Select>
+                        </FormControl>
+                        <LoadingSelect
+                            label="Category"
+                            loading={isFetchingCategory}
+                            value={category}
+                            options={categories}
+                            onChange={(value) => setCategory(value)}
+                        />
+                    </Box>
+                    <Box sx={{display:"flex", gap: "1rem"}}>
                         <Paper
                             variant="outlined"
                             sx={{ padding: '0 0.5rem', display: 'flex', alignItems: 'center', minWidth: '20rem' }}
@@ -275,7 +356,7 @@ const AssetListPage: FC<ListPageProps> = ({ alertString }) => {
                             </IconButton>
                         </Paper>
                         <NoStyleLink to={routeNames.asset.create}>
-                            <Button sx={{ marginLeft: "1rem", p: '0 1.5rem', height: '100%' }} variant="contained" color="primary">
+                            <Button sx={{ p: '0 1.5rem', height: '100%' }} variant="contained" color="primary">
                                 Create New Asset
                             </Button>
                         </NoStyleLink>
@@ -283,7 +364,7 @@ const AssetListPage: FC<ListPageProps> = ({ alertString }) => {
                 </Box>
                 <StyledTableContainer>
                     <CircularProgressWrapper
-                        loading={isFetching || isDisabling}
+                        loading={isFetching || isDeleting}
                     >
                         <Table>
                             <CustomTableHead
@@ -360,14 +441,14 @@ const AssetListPage: FC<ListPageProps> = ({ alertString }) => {
                 renderDescription={renderAssetDetailDialog}
                 boxProps={{ sx: { minWidth: '25rem', maxWidth: '30rem' } }}
             />
-            {/* <CustomPopover
+            <CustomPopover
                 elAnchor={deleteAnchorEl}
                 open={Boolean(deleteAnchorEl)}
                 handleClose={handleClosePopover}
-                renderTitle={() => canDisable ? <span>Are you sure?</span> : <span>Cannot disable asset</span>}
-                renderDescription={canDisable ? renderAssetDisableDialog : renderCannotDisableDialog}
+                renderTitle={() => canDelete ? <span>Are you sure?</span> : <span>Cannot Delete Asset</span>}
+                renderDescription={canDelete ? renderAssetDisableDialog : renderCannotDisableDialog}
                 boxProps={{ sx: { maxWidth: '25rem' } }}
-            /> */}
+            />
         </>
     );
 };

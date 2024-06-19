@@ -1,6 +1,6 @@
 import { Edit, HighlightOff, Search } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
-import { Alert, Box, Button, Divider, Grid, IconButton, InputBase, MenuItem, Pagination, Paper, Select, SelectChangeEvent, styled, Table, TableBody, TableContainer, TableRow, Typography } from "@mui/material";
+import { Alert, Box, Button, Divider, FormControl, Grid, IconButton, InputBase, InputLabel, MenuItem, Pagination, Paper, Select, SelectChangeEvent, styled, Table, TableBody, TableContainer, TableRow, Typography } from "@mui/material";
 import { FC, MouseEvent, ReactNode, useEffect, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useLocation } from "react-router-dom";
@@ -67,7 +67,10 @@ const TABLE_HEAD: TableHeadInfo[] = [
     },
 ]
 
-
+const allOption = {
+    label: "None",
+    value: ""
+}
 
 const UserListPage: FC = () => {
     const defaultSortOrder: Order = "asc"
@@ -75,7 +78,7 @@ const UserListPage: FC = () => {
     const [totalCount, setTotalCount] = useState<number>(0);
     const [page, setPage] = useState<number>(1);
     const [pageSize] = useState<number>(15);
-    const [userType, setUserType] = useState<UserType | "all">("all");
+    const [userType, setUserType] = useState<UserType | string>(allOption.value);
     const [search, setSearch] = useState<string>("");
     const [order, setOrder] = useState<Order>(defaultSortOrder);
     const [orderBy, setOrderBy] = useState<string>(TABLE_HEAD[0].id);
@@ -120,7 +123,7 @@ const UserListPage: FC = () => {
     const getUsers = async () => {
         setIsFetching(true);
         let params: GetAllUserParams = {
-            userType: userType === "all" ? undefined : userType,
+            userType: userType === allOption.value ? undefined : userType as UserType,
             searchString: search !== "" ? search : undefined,
             isAscending: order === "asc",
             index: page,
@@ -145,7 +148,7 @@ const UserListPage: FC = () => {
     }, [userType, search, order, orderBy, page, pageSize]);
 
     const handleTypeFilter = (event: SelectChangeEvent) => {
-        setUserType(event.target.value as UserType | "all");
+        setUserType(event.target.value as UserType | "");
     };
 
     const handleChangePage = (_: unknown, newPage: number) => {
@@ -251,8 +254,12 @@ const UserListPage: FC = () => {
 
     const disableUser = async () => {
         setIsDisabling(true);
+        if (!selected) {
+            setIsDisabling(false);
+            return
+        }
         try {
-            const result = await disableUserById(selected!.id);
+            const result = await disableUserById(selected?.id);
             setCanDisable(result)
             if (result) {
                 handleClosePopover()
@@ -262,7 +269,6 @@ const UserListPage: FC = () => {
         } catch (error) {
             console.error(error)
         }
-
         setIsDisabling(false);
     }
 
@@ -312,13 +318,18 @@ const UserListPage: FC = () => {
             <RootBox>
                 {alert && <Alert sx={{ mb: '1rem' }} severity="success" onClose={() => setAlert(undefined)}>{alert}</Alert>}
                 <Box display="flex" justifyContent="space-between" alignItems="center" sx={{ mb: '1rem' }} >
-                    <Select size="small" value={userType} onChange={handleTypeFilter}>
-                        <MenuItem value="all">
-                            <em>Type</em>
-                        </MenuItem>
-                        <MenuItem value="Admin">Admin</MenuItem>
-                        <MenuItem value="Staff">Staff</MenuItem>
-                    </Select>
+                    <FormControl>
+                        <InputLabel id="type-label">Type</InputLabel>
+                        <Select labelId="type-label" label="Type" value={userType} onChange={handleTypeFilter}
+                            sx={{minWidth: "7rem"}}
+                        >
+                            <MenuItem value="">
+                                <em>None</em>
+                            </MenuItem>
+                            <MenuItem value="Admin">Admin</MenuItem>
+                            <MenuItem value="Staff">Staff</MenuItem>
+                        </Select>
+                    </FormControl>
                     <Box display={'flex'}>
                         <Paper
                             variant="outlined"

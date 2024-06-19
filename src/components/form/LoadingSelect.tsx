@@ -1,56 +1,64 @@
 import React, { useEffect, useState } from 'react';
-import { CircularProgress, MenuItem, Select, SelectChangeEvent } from '@mui/material';
+import { CircularProgress, InputLabel, MenuItem, Select, SelectChangeEvent, FormControl, FormHelperText } from '@mui/material';
+
+export interface LoadingSelectOption {
+    value: string;
+    label: string;
+}
 
 interface LoadingSelectProps {
-  label: string;
-  loading: boolean;
-  options: { value: string; label: string }[];
-  value: string;
-  onChange: (value: string) => void;
+    label: string;
+    loading: boolean;
+    options: LoadingSelectOption[];
+    value: string;
+    onChange: (value: string) => void;
+    helperText?: string;
 }
 
 const LoadingSelect: React.FC<LoadingSelectProps> = ({
-  label,
-  loading,
-  options,
-  value,
-  onChange,
+    label,
+    loading,
+    options,
+    value,
+    onChange,
+    helperText,
+    ...props
 }) => {
-  const [internalValue, setInternalValue] = useState<string>(value);
+    const [internalValue, setInternalValue] = useState<string>(value);
 
-  useEffect(() => {
-    setInternalValue(value);
-  }, [value]);
+    useEffect(() => {
+        setInternalValue(value);
+    }, [value]);
 
-  const handleChange = (event: SelectChangeEvent<string>) => {
-    setInternalValue(event.target.value);
-    onChange(event.target.value);
-  };
+    const handleChange = (event: SelectChangeEvent<string>) => {
+        setInternalValue(event.target.value);
+        onChange(event.target.value);
+    };
 
-  return (
-    <Select
-      label={label}
-      value={internalValue}
-      onChange={handleChange}
-      disabled={loading}
-      fullWidth
-      renderValue={(selected) => (
-        <div>
-          {loading ? (
-            <CircularProgress size={24} />
-          ) : (
-            options.find((option) => option.value === selected)?.label || 'Select...'
-          )}
-        </div>
-      )}
-    >
-      {options.map((option) => (
-        <MenuItem key={option.value} value={option.value}>
-          {option.label}
-        </MenuItem>
-      ))}
-    </Select>
-  );
+    return (
+        <FormControl >
+            <InputLabel id={`${label}-label`}>{label}</InputLabel>
+            {loading ? (
+                <CircularProgress size={24} />
+            ) : (
+                <Select
+                    labelId={`${label}-label`}
+                    label={label}
+                    value={internalValue}
+                    onChange={handleChange}
+                    sx={{ minWidth: '7rem' }}
+                    {...props}
+                >
+                    {options.map((option: LoadingSelectOption) => (
+                        <MenuItem key={option.value} value={option.value}>
+                            {option.label}
+                        </MenuItem>
+                    ))}
+                </Select>
+            )}
+            {helperText && <FormHelperText>{helperText}</FormHelperText>}
+        </FormControl>
+    );
 };
 
 export default LoadingSelect;

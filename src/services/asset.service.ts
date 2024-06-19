@@ -1,4 +1,4 @@
-import { AxiosResponse } from "axios";
+import axios, { AxiosResponse } from "axios";
 import { apiEndpoints } from "../constants/apiEndpoint";
 import { Asset, AssetState } from "../types/asset";
 import { PaginateResponse, SortOrder } from "../types/common";
@@ -6,7 +6,7 @@ import axiosInstance from "./axios";
 
 export interface GetAllAssetParams {
     state?: AssetState,
-    categoryId?: string,
+    category?: string,
     search?: string,
     sort: AssetFieldFilter,
     order: SortOrder,
@@ -24,4 +24,19 @@ export enum AssetFieldFilter {
 export const fetchAllAsset = async (params: GetAllAssetParams): Promise<PaginateResponse<Asset>> => {
     const response: AxiosResponse<PaginateResponse<Asset>> = await axiosInstance.get(apiEndpoints.ASSET.GET_ALL, { params });
     return response.data;
+};
+
+export const deleteAssetById = async (id: string): Promise<boolean> => {
+    try {
+        await axiosInstance.delete(`${apiEndpoints.ASSET.DELETE(id)}`);
+        return true;
+    } catch (error) {
+        if (axios.isAxiosError(error)) {
+            if (error.response && error.response.status === 409) {
+                return false;
+            }
+        }
+        // Re-throw other errors
+        throw error;
+    }
 };
