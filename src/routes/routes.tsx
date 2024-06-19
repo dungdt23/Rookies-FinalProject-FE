@@ -1,17 +1,17 @@
-import { Navigate, RouteObject } from 'react-router-dom';
+import { RouteObject } from 'react-router-dom';
 import { routeNames } from '../constants/routeName';
 import { AdminLayout } from '../layouts/adminLayout';
 import { SimpleLayout } from '../layouts/simpleLayout';
+import AssetListPage from '../pages/assetPages/assetList/AssetListPage';
 import { Error401, Error403, Error404, Error500 } from '../pages/errorPage/ErrorPages';
 import { HomePage } from '../pages/homePage';
 import { LoginPage } from '../pages/login';
 import CreateUserPage from '../pages/user/userCreate/CreateUserPage';
+import { EditUserPage } from '../pages/user/userEdit';
 import UserListPage from '../pages/user/userList/UserListPage';
 import { UserType } from '../types/user';
 import RequireAuth from './RequireAuth';
 import RequireGuest from './RequireGuest';
-import { EditUserPage } from '../pages/user/userEdit';
-import AssetListPage from '../pages/assetPages/assetList/AssetListPage';
 
 const commonRoutes: RouteObject[] = [
     {

@@ -1,8 +1,7 @@
 import { List, ListItem, ListItemText, styled } from '@mui/material';
 import { FC, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { routeNames } from '../../constants/routeName';
-import { menuItems as sidebarItems, SidebarItem } from './sidebarItems';
+import { SidebarItem, menuItems as sidebarItems } from './sidebarItems';
 
 const StyledListItem = styled(ListItem)<{ active: boolean }>(({ theme, active }) => ({
     backgroundColor: active ? theme.palette.primary.main : theme.palette.lightGrey.main,
