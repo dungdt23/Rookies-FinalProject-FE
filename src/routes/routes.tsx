@@ -12,6 +12,8 @@ import RequireAuth from './RequireAuth';
 import RequireGuest from './RequireGuest';
 import { EditUserPage } from '../pages/user/userEdit';
 import AssetListPage from '../pages/assetPages/assetList/AssetListPage';
+import { CreateAssetPage } from '../pages/assetPages/assetCreate';
+import { EditAssetPage } from '../pages/assetPages/assetEdit';
 
 const commonRoutes: RouteObject[] = [
     {
@@ -77,6 +79,14 @@ export const adminRoutes: RouteObject[] = [
                         path: routeNames.asset.list,
                         element: <AssetListPage />
                     },
+                    {
+                        path: routeNames.asset.create,
+                        element: <CreateAssetPage />
+                    },
+                    {
+                        path: routeNames.asset.edit(':assetId'),
+                        element: <EditAssetPage />
+                    }
                 ]
             }
         ]

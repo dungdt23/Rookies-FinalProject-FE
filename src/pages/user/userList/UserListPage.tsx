@@ -1,6 +1,6 @@
 import { Edit, HighlightOff, Search } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
-import { Alert, Box, Button, Divider, Grid, IconButton, InputBase, MenuItem, Pagination, Paper, Select, SelectChangeEvent, styled, Table, TableBody, TableContainer, TableRow, Typography } from "@mui/material";
+import { Alert, Box, Button, Divider, Grid, IconButton, InputBase, MenuItem, Pagination, Paper, Select, SelectChangeEvent, Table, TableBody, TableContainer, TableRow, Typography, styled } from "@mui/material";
 import { FC, MouseEvent, ReactNode, useEffect, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useLocation } from "react-router-dom";
@@ -13,7 +13,7 @@ import { theme } from "../../../constants/appTheme";
 import { routeNames } from "../../../constants/routeName";
 import { toStandardFormat } from "../../../helpers/formatDate";
 import { removeUndefinedValues } from "../../../helpers/removeUndefined";
-import { disableUserById, fetchAllUsers, GetAllUserParams, UserFieldFilter } from "../../../services/user.service";
+import { GetAllUserParams, UserFieldFilter, disableUserById, fetchAllUsers } from "../../../services/user.service";
 import { ListPageState } from "../../../types/common";
 import { User, UserGender, UserType } from '../../../types/user';
 

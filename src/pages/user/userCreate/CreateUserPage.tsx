@@ -2,19 +2,19 @@ import { LoadingButton } from '@mui/lab';
 import { Box, Button, FormControl, FormControlLabel, FormLabel, Grid, MenuItem, Radio, RadioGroup, Stack, styled } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import { DatePicker } from '@mui/x-date-pickers';
+import dayjs, { Dayjs } from 'dayjs';
 import { useFormik } from 'formik';
 import { FC, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useNavigate } from 'react-router-dom';
 import * as yup from 'yup';
 import { NoStyleLink } from '../../../components/noStyleLink';
 import { routeNames } from '../../../constants/routeName';
-import { createUser, CreateUserRequest } from '../../../services/user.service';
-import { User, UserGender, UserType } from '../../../types/user';
-import dayjs, { Dayjs } from 'dayjs';
-import { DatePicker } from '@mui/x-date-pickers';
 import { useAuth } from '../../../contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
-import { ListPageProps, ListPageState } from '../../../types/common';
+import { CreateUserRequest, createUser } from '../../../services/user.service';
+import { ListPageState } from '../../../types/common';
+import { User, UserGender, UserType } from '../../../types/user';
 
 export interface Role {
     id: string;
