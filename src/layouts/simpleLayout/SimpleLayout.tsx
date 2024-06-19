@@ -18,7 +18,7 @@ export default function SimpleLayout() {
   return (
     <>
       <StyledHeader>
-        <Logo />
+        <Logo sx={{maxWidth: '5rem'}} />
       </StyledHeader>
 
       <Outlet />
