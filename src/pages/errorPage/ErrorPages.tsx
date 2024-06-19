@@ -36,7 +36,7 @@ const ErrorPage = ({ code, title, heading, message }: ErrorPageProps) => {
 
       <Container>
         <StyledContent sx={{ textAlign: 'center', alignItems: 'center' }}>
-          <Logo/>
+          <Logo sx={{ maxWidth: '5rem', mb: '1.5rem' }} />
           <Typography variant="h3" paragraph>
             {heading}
           </Typography>

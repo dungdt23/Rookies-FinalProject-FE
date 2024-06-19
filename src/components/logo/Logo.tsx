@@ -1,29 +1,26 @@
-import { forwardRef } from 'react';
+import { forwardRef, FC } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';
-import { Box, Link } from '@mui/material';
+import { Box, BoxProps, Link } from '@mui/material';
 import { routeNames } from '../../constants/routeName';
+import { SxProps } from '@mui/system';
 
-interface LogoProps {
+interface LogoProps extends BoxProps {
   disabledLink?: boolean;
-  sx?: object;
-  [key: string]: any; // for any other props
+  sx?: SxProps;
 }
 
-const Logo = forwardRef<HTMLDivElement, LogoProps>(({ disabledLink = false, sx, ...other }, ref) => {
+const Logo: FC<LogoProps> = ({ disabledLink = false, sx, ...props }) => {
   const theme = useTheme();
 
   const logo = (
     <Box
-      ref={ref}
       component="div"
       sx={{
-        width: 40,
-        height: 40,
         display: 'inline-flex',
         ...sx,
       }}
-      {...other}
+      {...props}
     >
       <img
         src={`/images/logo.png`}
@@ -42,6 +39,6 @@ const Logo = forwardRef<HTMLDivElement, LogoProps>(({ disabledLink = false, sx, 
       {logo}
     </Link>
   );
-});
+};
 
 export default Logo;
