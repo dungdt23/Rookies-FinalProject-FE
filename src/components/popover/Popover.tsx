@@ -55,6 +55,7 @@ const CustomPopper: FC<PopperProps> = ({ elAnchor, open, handleClose, renderTitl
             open={open}
             anchorEl={elAnchor}
             placement="bottom-start"
+            sx={{ zIndex: 1000 }}
             {...props}
         >
             <Paper elevation={3} ref={popperRef} square={false} sx={{ borderRadius: 2 }}>
