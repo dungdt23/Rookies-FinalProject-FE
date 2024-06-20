@@ -130,9 +130,9 @@ const AssignmentListPage = () => {
             _setAssignments(data.data);
             setTotalCount(data.totalCount)
         } catch (error) {
-            if(error.response.data.statusCode === 404){
-            _setAssignments([]);
-            }
+            // if(error.response.data.statusCode === 404){
+            // _setAssignments([]);
+            // }
         } finally {
             setIsFetching(false);
         }
