@@ -31,7 +31,7 @@ const RootBox = styled(Box)(() => ({
 dayjs.locale('en');
 
 // Custom validation function using dayjs
-const isAfterOrEqual = (a: Dayjs, b: Dayjs) => dayjs(a).isAfter(b);
+const isAfterOrEqual = (a: Dayjs, b: Dayjs) => dayjs(a).add(1, 'day').isAfter(b);
 const isWeekday = (date: Dayjs) => dayjs(date).day() !== 0 && dayjs(date).day() !== 6;
 const isUnder18 = (dob: Dayjs) => dayjs().diff(dob, 'years') < 18;
 const unicodeAlphabetRegex = /^[\p{L}\s]+$/u;
@@ -110,7 +110,7 @@ const CreateUserPage: FC = () => {
             }
         },
     });
-    
+
     return (
         <>
             <Helmet>
