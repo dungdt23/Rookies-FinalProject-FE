@@ -26,17 +26,15 @@ export enum FieldAssignmentFilter {
 
 export interface CreateAssignmentRequest {
     assetId: string;
-    assignerId: string;
     assigneeId: string;
-    assignedDate: Date;
+    assignedDate: string;
     note?: string;
 }
 
 export interface EditAssignmentRequest {
     assetId: string;
-    assignerId: string;
     assigneeId: string;
-    assignedDate: Date;
+    assignedDate: string;
     note?: string;
 }
 

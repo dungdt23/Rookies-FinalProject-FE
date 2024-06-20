@@ -7,6 +7,7 @@ export interface TableHeadInfo {
     id: string,
     label: string,
     sortable?: boolean,
+    disableDivider?: boolean
 }
 
 export type Order = 'asc' | 'desc';
@@ -38,7 +39,7 @@ const CustomTableHead: FC<TableHeadProps> = ({ columns, order, orderBy, onReques
                     >
                         {info.label}
                     </TableSortLabel>
-                    <Divider sx={{borderBottomWidth: "medium", backgroundColor: orderBy === info.id ? "#949494" : "#c9c9c9"}}/>
+                    { !info.disableDivider && <Divider sx={{borderBottomWidth: "medium", backgroundColor: orderBy === info.id ? "#949494" : "#c9c9c9"}}/> }
                 </StyledTableCell>
             ))}
         </TableHead>

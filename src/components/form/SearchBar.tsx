@@ -1,10 +1,10 @@
 import { Search as SearchIcon } from '@mui/icons-material';
-import { Divider, IconButton, InputAdornment, PaperProps, TextField } from '@mui/material';
+import { Divider, IconButton, InputAdornment, TextField } from '@mui/material';
 import { useFormik } from 'formik';
 import React, { forwardRef } from 'react';
 import * as Yup from 'yup';
 
-interface SearchBarProps extends PaperProps {
+interface SearchBarProps {
     placeholderSearch: string;
     onSearchSubmit: (searchTerm: string) => void;
     inputRef?: React.Ref<HTMLInputElement>;
@@ -31,9 +31,6 @@ const SearchBar = forwardRef<HTMLInputElement, SearchBarProps>(
                 formik.handleSubmit();
             }
         };
-
-        console.log(formik.touched.searchTerm, formik.errors.searchTerm);
-        
 
         return (
             <form onSubmit={formik.handleSubmit} style={{ minWidth: '20rem', display: 'flex', alignItems: 'center', flex: 1 }}>

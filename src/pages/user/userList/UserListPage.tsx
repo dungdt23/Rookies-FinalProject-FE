@@ -1,6 +1,6 @@
 import { Edit, HighlightOff } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
-import { Alert, Box, Button, FormControl, Grid, IconButton, InputLabel, MenuItem, Pagination, Select, SelectChangeEvent, styled, Table, TableBody, TableContainer, TableRow, Typography } from "@mui/material";
+import { Alert, Box, Button, FormControl, Grid, IconButton, InputLabel, MenuItem, Pagination, Select, SelectChangeEvent, styled, Table, TableBody, TableRow, Typography } from "@mui/material";
 import { FC, MouseEvent, ReactNode, useEffect, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useLocation } from "react-router-dom";
@@ -8,7 +8,7 @@ import { SearchBar } from "../../../components/form";
 import { CircularProgressWrapper } from "../../../components/loading";
 import { NoStyleLink } from "../../../components/noStyleLink";
 import { CustomPopover } from "../../../components/popover";
-import { CustomTableCell, CustomTableHead, StyledTableCell } from "../../../components/table";
+import { ClickableTableRow, CustomTableCell, CustomTableHead, StyledTableCell, StyledTableContainer } from "../../../components/table";
 import { Order, TableHeadInfo } from "../../../components/table/CustomTableHead";
 import { theme } from "../../../constants/appTheme";
 import { routeNames } from "../../../constants/routeName";
@@ -18,22 +18,10 @@ import { disableUserById, fetchAllUsers, GetAllUserParams, UserFieldFilter } fro
 import { ListPageState } from "../../../types/common";
 import { User, UserGender, UserType } from '../../../types/user';
 
-const ClickableTableRow = styled(TableRow)(({ theme }) => ({
-    cursor: "pointer",
-    "&:hover": {
-        backgroundColor: theme.palette.action.hover,
-        color: theme.palette.primary.main,
-    },
-}));
-
 const RootBox = styled(Box)(() => ({
     minWidth: '30rem',
     width: '100%',
     p: 2
-}))
-
-const StyledTableContainer = styled(TableContainer)(() => ({
-    border: '0px',
 }))
 
 
