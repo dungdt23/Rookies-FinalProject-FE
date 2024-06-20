@@ -15,6 +15,7 @@ import { useAuth } from '../../../contexts/AuthContext';
 import { CreateUserRequest, createUser } from '../../../services/user.service';
 import { ListPageState } from '../../../types/common';
 import { User, UserGender, UserType } from '../../../types/user';
+import { toISOStringWithoutTimezone } from '../../../helpers/helper';
 
 export interface Role {
     id: string;
@@ -93,8 +94,8 @@ const CreateUserPage: FC = () => {
             const payload = {
                 firstName: values.firstName,
                 lastName: values.lastName,
-                joinedDate: values.joinedDate?.toISOString(),
-                dateOfBirth: values.dateOfBirth?.toISOString(),
+                joinedDate: toISOStringWithoutTimezone(values.joinedDate!),
+                dateOfBirth: toISOStringWithoutTimezone(values.dateOfBirth!),
                 gender: values.gender,
                 locationId: user?.locationId,
                 type: values.userType,
@@ -114,6 +115,9 @@ const CreateUserPage: FC = () => {
             }
         },
     });
+
+    console.log(formik.values.dateOfBirth);
+    
 
     return (
         <>

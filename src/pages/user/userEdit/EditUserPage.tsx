@@ -14,6 +14,7 @@ import { routeNames } from '../../../constants/routeName';
 import { editUserById, EditUserRequest, fetchUserById } from '../../../services/user.service';
 import { User, UserGender, UserType } from '../../../types/user';
 import { ListPageState } from '../../../types/common';
+import { toISOStringWithoutTimezone } from '../../../helpers/helper';
 
 export interface Role {
     id: string;
@@ -116,8 +117,8 @@ const EditUserPage: FC = () => {
             const payload = {
                 firstName: values.firstName,
                 lastName: values.lastName,
-                joinedDate: values.joinedDate?.toISOString(),
-                dateOfBirth: values.dateOfBirth?.toISOString(),
+                joinedDate: toISOStringWithoutTimezone(values.joinedDate!),
+                dateOfBirth: toISOStringWithoutTimezone(values.dateOfBirth!),
                 gender: values.gender,
                 type: values.userType,
             } as EditUserRequest;
