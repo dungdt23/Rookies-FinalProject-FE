@@ -57,12 +57,13 @@ const isPastDate = (date: Dayjs) => dayjs(date).isBefore(dayjs(), "day");
 const validationSchema = yup.object({
   assetName: yup
     .string()
-    .required("Asset Name is required")
-    .max(200, "Asset Name length can't be more than 200 characters."),
+    .required("Please enter asset name")
+    .min(2, 'The asset name length should be 2-100 characters')
+    .max(100, 'The asset name length should be 2-100 characters'),
   categoryId: yup.string().required("Category is required"),
   installedDate: yup
     .object()
-    .required("Installed Date is required")
+    .required("Please enter installed date")
     .test(
       "is-past-date",
       "Installed date must be in the past",
@@ -72,11 +73,11 @@ const validationSchema = yup.object({
     ),
   specification: yup
     .string()
-    .required("Specification is required")
+    .required("Please enter specification")
     .max(500, "Specification length can't be more than 500 characters."),
   state: yup
     .number()
-    .required("State is required")
+    .required("Please enter state")
     .oneOf(
       [AssetState.Available, AssetState.NotAvailable],
       "Invalid state value"
