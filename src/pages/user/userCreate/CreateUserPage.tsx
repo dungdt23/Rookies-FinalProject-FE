@@ -34,6 +34,7 @@ dayjs.locale('en');
 const isAfterOrEqual = (a: Dayjs, b: Dayjs) => dayjs(a).add(1, 'day').isAfter(b);
 const isWeekday = (date: Dayjs) => dayjs(date).day() !== 0 && dayjs(date).day() !== 6;
 const isUnder18 = (dob: Dayjs) => dayjs().diff(dob, 'years') < 18;
+const isFuture = (dob: Dayjs) => dob.isAfter(dayjs());
 const unicodeAlphabetRegex = /^[\p{L}\s]+$/u;
 
 // Validation schema
@@ -50,6 +51,9 @@ const validationSchema = yup.object({
         .max(100, 'The Last Name length should be 2-100 characters'),
     dateOfBirth: yup.object()
         .required('Please choose date of birth')
+        .test('is-future', 'The date of birth is in the future. Please select a different date', function (value) {
+            return !isFuture(value as Dayjs);
+        })
         .test('is-18-or-older', 'User is under 18. Please select a different date', function (value) {
             return !isUnder18(value as Dayjs);
         }),
