@@ -14,6 +14,7 @@ import { EditUserPage } from '../pages/user/userEdit';
 import AssetListPage from '../pages/assetPages/assetList/AssetListPage';
 import { CreateAssetPage } from '../pages/assetPages/assetCreate';
 import { EditAssetPage } from '../pages/assetPages/assetEdit';
+import AssignmentListPage from '../pages/assignment/AssignmentListPage';
 
 const commonRoutes: RouteObject[] = [
     {
@@ -86,6 +87,10 @@ export const adminRoutes: RouteObject[] = [
                     {
                         path: routeNames.asset.edit(':assetId'),
                         element: <EditAssetPage />
+                    },
+                    {
+                        path: routeNames.assignment.list,
+                        element: <AssignmentListPage />
                     }
                 ]
             }

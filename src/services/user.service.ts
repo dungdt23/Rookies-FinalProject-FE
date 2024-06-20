@@ -78,7 +78,7 @@ export const fetchUserById = async (id: string): Promise<ApiResponse<User>> => {
     const response: AxiosResponse<ApiResponse<User>> = await axiosInstance.get(`${apiEndpoints.USER.GET_ID(id)}`)
     return response.data
 }
-
+    
 export const disableUserById = async (id: string): Promise<boolean> => {
     try {
         await axiosInstance.delete(`${apiEndpoints.USER.DELETE(id)}`);
