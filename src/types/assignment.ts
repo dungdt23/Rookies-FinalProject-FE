@@ -8,7 +8,7 @@ export interface Assignment {
     state: AssignmentState;
 }
 
-export enum AssignmentState {
+export enum AssignmentState  {
     WaitingForAcceptance = 0,
     Accepted = 1,
     Rejected = -1,

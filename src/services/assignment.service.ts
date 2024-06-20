@@ -7,7 +7,7 @@ import { apiEndpoints } from "../constants/apiEndpoint";
 import { ApiResponse } from "./user.service";
 
 export interface GetAllAssignmentParams {
-    locationIdL: string;
+    locationId: string;
     userId?: string;
     userType: UserType;
     searchString?: string;
