@@ -352,7 +352,7 @@ const UserListPage: FC = () => {
                                         sx={{ backgroundColor: selected?.id === user.id ? theme.palette.action.hover : 'unset' }}
                                     >
                                         <CustomTableCell onClick={(event) => handleRowClick(event, user)}>{user.staffCode}</CustomTableCell>
-                                        <CustomTableCell onClick={(event) => handleRowClick(event, user)}>{user.firstName + " " + user.lastName}</CustomTableCell>
+                                        <CustomTableCell onClick={(event) => handleRowClick(event, user)}>{user.lastName + " " + user.firstName}</CustomTableCell>
                                         <CustomTableCell onClick={(event) => handleRowClick(event, user)}>{user.userName}</CustomTableCell>
                                         <CustomTableCell onClick={(event) => handleRowClick(event, user)}>{toStandardFormat(user.joinedDate)}</CustomTableCell>
                                         <CustomTableCell onClick={(event) => handleRowClick(event, user)}>{user.type}</CustomTableCell>
