@@ -8,8 +8,9 @@ import { ApiResponse } from "./user.service";
 export interface GetAllAssignmentParams {
     searchString?: string;
     isAscending: boolean;
-    fieldFilter: FieldAssignmentFilter;
-    stateFilter: AssignmentState;
+    fieldFilter?: FieldAssignmentFilter;
+    stateFilter?: AssignmentState;
+    assignedDateFilter?: string;
     index: number;
     size: number;
 }

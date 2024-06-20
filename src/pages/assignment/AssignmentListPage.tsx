@@ -94,6 +94,7 @@ const AssignmentListPage = () => {
     const [page, setPage] = useState<number>(1);
     const [pageSize, setPageSize] = useState<number>(15);
     const [assignedDate, setAssignedDate] = useState<Dayjs | null>();
+    const [clearDate, setClearDate] = useState<boolean>(false);
     const [isFetching, setIsFetching] = useState<boolean>(false);
     const [isDisabling, setIsDisabling] = useState<boolean>(false);
     const [selected, setSelected] = useState<Assignment | null>(null);
@@ -113,12 +114,13 @@ const AssignmentListPage = () => {
     const getAssignments = async () => {
         setIsFetching(true);
         let params: GetAllAssignmentParams = {
-            searchString: search,
+            searchString: search ? search as string : undefined,
             isAscending: order === "asc",
             fieldFilter: FieldAssignmentFilter[orderBy as keyof typeof FieldAssignmentFilter],
             index: page,
             size: pageSize,
-            stateFilter: AssignmentState[assignmentState as keyof typeof AssignmentState]
+            stateFilter: AssignmentState[assignmentState as keyof typeof AssignmentState],
+            assignedDateFilter: assignedDate ? dayjs(assignedDate).format('MM-DD-YYYY') : undefined
         };
 
         removeUndefinedValues<GetAllAssignmentParams>(params);
@@ -128,6 +130,9 @@ const AssignmentListPage = () => {
             _setAssignments(data.data);
             setTotalCount(data.totalCount)
         } catch (error) {
+            if(error.response.data.statusCode === 404){
+            _setAssignments([]);
+            }
         } finally {
             setIsFetching(false);
         }
@@ -135,7 +140,14 @@ const AssignmentListPage = () => {
 
     useEffect(() => {
         getAssignments();
-    }, [assignmentState, search, order, orderBy, page, pageSize]);
+    }, [assignmentState, assignedDate, search, order, orderBy, page, pageSize]);
+
+    useEffect(() => {
+        if (clearDate) {
+            setAssignedDate(null);
+            setClearDate(false);
+        }
+    }, [clearDate])
 
     const handleSearchSubmit = () => {
         if (inputRef.current) {
@@ -157,7 +169,6 @@ const AssignmentListPage = () => {
 
     const handleAssignedDateChange = (value: dayjs.Dayjs | null) => {
         setAssignedDate(value as Dayjs | null);
-        console.log(assignedDate);
     }
 
     function onRequestSort(property: string): void {
@@ -183,7 +194,7 @@ const AssignmentListPage = () => {
         setPage(newPage);
     }
 
-const handleClosePopover = () => {
+    const handleClosePopover = () => {
         setSelected(null);
         setRowAnchorEl(null);
         setDeleteAnchorEl(null);
@@ -286,7 +297,7 @@ const handleClosePopover = () => {
                     <FormControl>
                         <InputLabel id="state-label">State</InputLabel>
                         <Box display={'flex'}>
-                            <Select labelId="state-label" label="State" value={assignmentState} onChange={handleStateFilter}
+                            <Select labelId="state-label" label="State" value={assignmentState.toString()} onChange={handleStateFilter}
                                 sx={{ minWidth: "15rem" }}
                             >
                                 <MenuItem value="">
@@ -301,6 +312,9 @@ const handleClosePopover = () => {
                                 format="DD/MM/YYYY"
                                 value={assignedDate}
                                 onChange={(value) => dayjs(value).isValid() && handleAssignedDateChange(value)}
+                                slotProps={{
+                                    field: { clearable: true, onClear: () => setClearDate(true) }
+                                }}
                                 label="Assigned Date"
                             />
                         </Box>
