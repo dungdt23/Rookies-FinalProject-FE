@@ -1,9 +1,10 @@
-import { Edit, HighlightOff, Search } from "@mui/icons-material";
+import { Edit, HighlightOff } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
-import { Alert, Box, Button, Divider, FormControl, Grid, IconButton, InputBase, InputLabel, MenuItem, Pagination, Paper, Select, SelectChangeEvent, styled, Table, TableBody, TableContainer, TableRow, Typography } from "@mui/material";
+import { Alert, Box, Button, FormControl, Grid, IconButton, InputLabel, MenuItem, Pagination, Select, SelectChangeEvent, styled, Table, TableBody, TableContainer, TableRow, Typography } from "@mui/material";
 import { FC, MouseEvent, ReactNode, useEffect, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useLocation } from "react-router-dom";
+import { SearchBar } from "../../../components/form";
 import { CircularProgressWrapper } from "../../../components/loading";
 import { NoStyleLink } from "../../../components/noStyleLink";
 import { CustomPopover } from "../../../components/popover";
@@ -13,7 +14,7 @@ import { theme } from "../../../constants/appTheme";
 import { routeNames } from "../../../constants/routeName";
 import { toStandardFormat } from "../../../helpers/formatDate";
 import { removeUndefinedValues } from "../../../helpers/removeUndefined";
-import { GetAllUserParams, UserFieldFilter, disableUserById, fetchAllUsers } from "../../../services/user.service";
+import { disableUserById, fetchAllUsers, GetAllUserParams, UserFieldFilter } from "../../../services/user.service";
 import { ListPageState } from "../../../types/common";
 import { User, UserGender, UserType } from '../../../types/user';
 
@@ -182,18 +183,9 @@ const UserListPage: FC = () => {
         setDeleteAnchorEl(null);
     };
 
-    const handleSearchSubmit = () => {
-        if (inputRef.current) {
-            const searchQuery = inputRef.current.value;
-            setSearch(searchQuery);
-            setPage(1); // Reset to the first page on search
-        }
-    };
-
-    const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
-        if (event.key === 'Enter') {
-            handleSearchSubmit();
-        }
+    const handleSearchSubmit = (searchTerm: string) => {
+        setSearch(searchTerm);
+        setPage(1); // Reset to the first page on search
     };
 
     const renderUserDetailDialog = (): ReactNode => {
@@ -321,7 +313,7 @@ const UserListPage: FC = () => {
                     <FormControl>
                         <InputLabel id="type-label">Type</InputLabel>
                         <Select labelId="type-label" label="Type" value={userType} onChange={handleTypeFilter}
-                            sx={{minWidth: "7rem"}}
+                            sx={{ minWidth: "7rem" }}
                         >
                             <MenuItem value="">
                                 <em>None</em>
@@ -331,22 +323,11 @@ const UserListPage: FC = () => {
                         </Select>
                     </FormControl>
                     <Box display={'flex'}>
-                        <Paper
-                            variant="outlined"
-                            sx={{ padding: '0 0.5rem', display: 'flex', alignItems: 'center', minWidth: '20rem' }}
-                        >
-                            <InputBase
-                                inputRef={inputRef}
-                                sx={{ ml: 1, flex: 1 }}
-                                placeholder={placeholderSearch}
-                                inputProps={{ 'aria-label': 'search google maps' }}
-                                onKeyUp={handleKeyPress}
-                            />
-                            <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
-                            <IconButton type="button" sx={{ p: '10px' }} aria-label="search" onClick={handleSearchSubmit}>
-                                <Search />
-                            </IconButton>
-                        </Paper>
+                        <SearchBar
+                            ref={inputRef}
+                            placeholderSearch={placeholderSearch}
+                            onSearchSubmit={handleSearchSubmit}
+                        />
                         <NoStyleLink to={routeNames.user.create}>
                             <Button sx={{ marginLeft: "1rem", p: '0 1.5rem', height: '100%' }} variant="contained" color="primary">
                                 Create New User
@@ -371,7 +352,7 @@ const UserListPage: FC = () => {
                                         sx={{ backgroundColor: selected?.id === user.id ? theme.palette.action.hover : 'unset' }}
                                     >
                                         <CustomTableCell onClick={(event) => handleRowClick(event, user)}>{user.staffCode}</CustomTableCell>
-                                        <CustomTableCell onClick={(event) => handleRowClick(event, user)}>{user.firstName + " " + user.lastName}</CustomTableCell>
+                                        <CustomTableCell onClick={(event) => handleRowClick(event, user)}>{user.lastName + " " + user.firstName}</CustomTableCell>
                                         <CustomTableCell onClick={(event) => handleRowClick(event, user)}>{user.userName}</CustomTableCell>
                                         <CustomTableCell onClick={(event) => handleRowClick(event, user)}>{toStandardFormat(user.joinedDate)}</CustomTableCell>
                                         <CustomTableCell onClick={(event) => handleRowClick(event, user)}>{user.type}</CustomTableCell>
