@@ -40,23 +40,25 @@ const unicodeAlphabetRegex = /^[\p{L}\s]+$/u;
 const validationSchema = yup.object({
     firstName: yup.string()
         .required('Please enter first name')
-        .max(100, 'First Name length can\'t be more than 100 characters.')
-        .matches(unicodeAlphabetRegex, 'First Name can only contain alphabetic characters.'),
+        .matches(unicodeAlphabetRegex, 'First name should contain alphabetic characters.')
+        .min(2, 'The first name length should be 2-100 characters')
+        .max(100, 'The first name length should be 2-100 characters'),
     lastName: yup.string()
         .required('Please enter last name')
-        .max(100, 'Last Name length can\'t be more than 100 characters.')
-        .matches(unicodeAlphabetRegex, 'Last Name can only contain alphabetic characters.'),
+        .matches(unicodeAlphabetRegex, 'Last name should contain alphabetic characters.')
+        .min(2, 'The last name length should be 2-100 characters')
+        .max(100, 'The Last Name length should be 2-100 characters'),
     dateOfBirth: yup.object()
         .required('Please choose date of birth')
-        .test('is-18-or-older', 'User must be 18 or older', function (value) {
+        .test('is-18-or-older', 'User is under 18. Please select a different date', function (value) {
             return !isUnder18(value as Dayjs);
         }),
     joinedDate: yup.object()
         .required('Please choose joined date')
-        .test('is-after-dob', 'Joined date must be after Date of Birth', function (value, context) {
+        .test('is-after-dob', 'Joined date is not later than Date of Birth. Please select a different date', function (value, context) {
             return isAfterOrEqual(value as Dayjs, context.parent.dateOfBirth as Dayjs);
         })
-        .test('is-weekday', 'Joined date cannot be Saturday or Sunday', function (value) {
+        .test('is-weekday', 'Joined date is Saturday or Sunday. Please select a different date', function (value) {
             return isWeekday(value as Dayjs);
         }),
     gender: yup.number()

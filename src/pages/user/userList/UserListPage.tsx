@@ -225,7 +225,7 @@ const UserListPage: FC = () => {
             },
             {
                 label: "Gender: ",
-                value: UserGender[selected?.typeGender],
+                value: UserGender[selected?.gender],
             },
             {
                 label: "Type: ",

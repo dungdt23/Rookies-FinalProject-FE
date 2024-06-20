@@ -8,7 +8,7 @@ const AdminLayout: FC = () => {
     return (
         <Box display={'flex'} sx={{ flexDirection: 'column' }}>
             <Header />
-            <Box display={'flex'} sx={{ flexDirection: 'row', m: "1rem 1rem 0 1rem" }}>
+            <Box display={'flex'} sx={{ flexDirection: 'row', m: "1rem 8px 0 8px" }}>
                 <Sidebar />
                 <main style={{ padding: "1rem", width: "100%" }}>
                     <Outlet />

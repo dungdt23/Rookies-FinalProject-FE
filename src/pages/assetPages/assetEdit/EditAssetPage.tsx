@@ -2,11 +2,11 @@ import { LoadingButton } from "@mui/lab";
 import {
   Box,
   Button,
-  Grid,
-  MenuItem,
   FormControl,
   FormControlLabel,
   FormLabel,
+  Grid,
+  MenuItem,
   Radio,
   RadioGroup,
   Stack,
@@ -23,12 +23,11 @@ import { useNavigate, useParams } from "react-router-dom";
 import * as yup from "yup";
 import { NoStyleLink } from "../../../components/noStyleLink";
 import { routeNames } from "../../../constants/routeName";
-import { useAuth } from "../../../contexts/AuthContext";
 import { editAssetById, fetchAssetById } from "../../../services/asset.service";
+import { fetchAllCategory } from "../../../services/category.service";
 import { Asset, AssetState, CreateAssetRequest } from "../../../types/asset";
 import { Category } from "../../../types/category";
 import { ListPageState } from "../../../types/common";
-import { fetchAllCategory } from "../../../services/category.service";
 
 const RootBox = styled(Box)(() => ({
   maxWidth: "100vh",
@@ -42,11 +41,13 @@ const isPastDate = (date: Dayjs) => dayjs(date).isBefore(dayjs(), "day");
 const validationSchema = yup.object({
   assetName: yup
     .string()
-    .required("Asset Name is required")
-    .max(200, "Asset Name length can't be more than 200 characters."),
+    .required("Please enter asset name")
+    .min(2, 'The asset name length should be 2-100 characters')
+    .max(100, 'The asset name length should be 2-100 characters'),
+  categoryId: yup.string().required("Category is required"),
   installedDate: yup
     .object()
-    .required("Installed Date is required")
+    .required("Please enter installed date")
     .test(
       "is-past-date",
       "Installed date must be in the past",
@@ -56,13 +57,13 @@ const validationSchema = yup.object({
     ),
   specification: yup
     .string()
-    .required("Specification is required")
+    .required("Please enter specification")
     .max(500, "Specification length can't be more than 500 characters."),
   state: yup
     .number()
-    .required("State is required")
+    .required("Please enter state")
     .oneOf(
-      [AssetState.Available, AssetState.NotAvailable, AssetState.WaitingForRecycling, AssetState.Recycled],
+      [AssetState.Available, AssetState.NotAvailable],
       "Invalid state value"
     ),
 });
@@ -72,7 +73,6 @@ const EditAssetPage: FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
   const [currentCategory, setCurrentCategory] = useState<Category | null>(null);
-  const { user } = useAuth();
   const navigate = useNavigate();
 
   const fetchAssetDetails = useCallback(async () => {

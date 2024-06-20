@@ -6,7 +6,7 @@ export interface User {
     userName: string;
     joinedDate: string;
     dateOfBirth: string;
-    typeGender: UserGender;
+    gender: UserGender;
     type: UserType;
     location: string;
 }
