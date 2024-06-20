@@ -2,10 +2,12 @@ export interface Assignment {
     id: string;
     assetCode: string;
     assetName: string;
+    specification:string;
     assignedTo: string;
     assignedBy: string;
-    assignedDate: Date;
+    assignedDate: string;
     state: AssignmentState;
+    note?:string;
 }
 
 export enum AssignmentState  {

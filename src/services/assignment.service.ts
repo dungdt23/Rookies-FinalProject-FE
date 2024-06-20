@@ -1,18 +1,15 @@
 import axios, { AxiosResponse } from "axios";
-import { Assignment } from "../types/assignment";
+import { Assignment, AssignmentState } from "../types/assignment";
 import { PaginateResponse } from "../types/common";
-import { UserType } from "../types/user";
 import axiosInstance from "./axios";
 import { apiEndpoints } from "../constants/apiEndpoint";
 import { ApiResponse } from "./user.service";
 
 export interface GetAllAssignmentParams {
-    locationId: string;
-    userId?: string;
-    userType: UserType;
     searchString?: string;
     isAscending: boolean;
     fieldFilter: FieldAssignmentFilter;
+    stateFilter: AssignmentState;
     index: number;
     size: number;
 }
