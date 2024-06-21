@@ -4,20 +4,23 @@ import TextField from '@mui/material/TextField';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs, { Dayjs } from 'dayjs';
 import { useFormik } from 'formik';
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import * as yup from 'yup';
 import { NoStyleLink } from '../../../components/noStyleLink';
 import { routeNames } from '../../../constants/routeName';
 import { toISOStringWithoutTimezone } from '../../../helpers/helper';
-import { createAssignment, CreateAssignmentRequest } from '../../../services/assignment.service';
+import { fetchAssetById } from '../../../services/asset.service';
+import { editAssignmentById, EditAssignmentRequest, fetchAssignmentById } from '../../../services/assignment.service';
+import { fetchUserById } from '../../../services/user.service';
 import { Asset } from '../../../types/asset';
 import { Assignment } from '../../../types/assignment';
 import { ListPageState } from '../../../types/common';
 import { User } from '../../../types/user';
-import UserSelectionDialog from '../assignmentCreate/UserSelectionDialog';
+import { Error404 } from '../../errorPage/ErrorPages';
 import AssetSelectionDialog from '../assignmentCreate/AssetSelectionDialog';
+import UserSelectionDialog from '../assignmentCreate/UserSelectionDialog';
 
 const RootBox = styled(Box)(() => ({
     maxWidth: '100vh',
@@ -38,19 +41,50 @@ const validationSchema = yup.object({
         }),
 });
 
+type RouteParams = {
+    assignmentId: string;
+}
+
 const EditAssignmentPage: FC = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [user, setUser] = useState<User | null>(null);
+    const [assignment, setAssignment] = useState<Assignment | null>(null);
+    const [asset, setAsset] = useState<Asset | null>(null);
     const navigate = useNavigate();
     const [userDialog, setUserDialog] = useState<boolean>(false);
     const [assetDialog, setAssetDialog] = useState<boolean>(false);
+    const [isFetching, setIsFetching] = useState<boolean>(true);
+    const { assignmentId } = useParams<RouteParams>();
+
+    const getAssignment = async () => {
+        setIsFetching(true)
+        if (assignmentId) {
+            try {
+                const response = await fetchAssignmentById(assignmentId);
+                const user = await fetchUserById(response.data.assigneeId)
+                setUser(user.data);
+                const asset = await fetchAssetById(response.data.assetId)
+                setAsset(asset.data);
+                setAssignment(response.data)
+            } catch (error) {
+                console.error(error);
+            }
+        }
+        setIsFetching(false)
+    }
+
+    useEffect(() => {
+        getAssignment();
+    }, [])
 
     const formik = useFormik({
         initialValues: {
-            asset: null as Asset | null,
-            user: null as User | null,
-            note: '',
-            assignedDate: dayjs() as Dayjs | null,
+            asset: asset as Asset | null,
+            user: user as User | null,
+            note: assignment?.note,
+            assignedDate: dayjs(assignment?.assignedDate) as Dayjs | null,
         },
+        enableReinitialize: true, // Enable reinitializing of form values when initialValues change
         validationSchema: validationSchema,
         onSubmit: async (values) => {
             setIsSubmitting(true);
@@ -59,13 +93,13 @@ const EditAssignmentPage: FC = () => {
                 assigneeId: values.user?.id,
                 note: values.note,
                 assignedDate: toISOStringWithoutTimezone(values.assignedDate!),
-            } as CreateAssignmentRequest;
+            } as EditAssignmentRequest;
 
             try {
-                const response = await createAssignment(payload);
+                const response = await editAssignmentById(assignmentId!, payload);
                 const assignment = response.data;
                 const listAssignmentPageState = {
-                    alertString: `Assignment ${assignment.assetName} has been created!`,
+                    alertString: `Assignment ${assignment.assetName} has been edited!`,
                     presetEntry: assignment,
                 } as ListPageState<Assignment>;
                 navigate(routeNames.assignment.list, { state: listAssignmentPageState });
@@ -81,8 +115,9 @@ const EditAssignmentPage: FC = () => {
         setUserDialog(true);
     }
 
-    const handleUserDialogClose = () => {
+    const handleUserDialogClose = async () => {
         setUserDialog(false);
+        await formik.validateField('user')
         formik.setFieldTouched('user', true)
     }
 
@@ -90,28 +125,39 @@ const EditAssignmentPage: FC = () => {
         setAssetDialog(true);
     }
 
-    const handleAssetDialogClose = () => {
+    const handleAssetDialogClose = async () => {
         setAssetDialog(false);
+        await formik.validateField('asset')
         formik.setFieldTouched('asset', true)
     }
 
     const handleSelectUser = (user: User | null) => {
         formik.setFieldValue('user', user);
+        formik.validateField('user')
     };
 
     const handleSelectAsset = (asset: Asset | null): void => {
         formik.setFieldValue('asset', asset);
+        formik.validateField('asset')
     };
+
+    if (isFetching) {
+        return <Typography>Loading...</Typography>;
+    }
+
+    if (!assignment) {
+        return <Error404/>;
+    }
 
     return (
         <>
             <Helmet>
-                <title>Create Assignment</title>
+                <title>Edit Assignment</title>
             </Helmet>
             <RootBox>
                 <Stack spacing={3}>
                     <Typography variant="h6" gutterBottom color="primary">
-                        Create Assignment
+                        Edit Assignment
                     </Typography>
                     <form onSubmit={formik.handleSubmit}>
                         <Grid container spacing={3}>
@@ -230,11 +276,13 @@ const EditAssignmentPage: FC = () => {
                 open={userDialog}
                 onClose={handleUserDialogClose}
                 onSelectSave={handleSelectUser}
+                selected={user || undefined}
             />
             <AssetSelectionDialog
                 open={assetDialog}
                 onClose={handleAssetDialogClose}
                 onSelectSave={handleSelectAsset}
+                selected={asset || undefined}
             />
         </>
     );

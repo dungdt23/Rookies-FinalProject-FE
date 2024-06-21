@@ -58,7 +58,7 @@ export const editAssignmentById = async (id: string, payload: EditAssignmentRequ
     return response.data
 }
 
-export const respondAssignment = async (payload: RespondAssignmentRequest): Promise<ApiResponse<Assignment>> => {
+export const respondAssignmentById = async (payload: RespondAssignmentRequest): Promise<ApiResponse<Assignment>> => {
     const response: AxiosResponse<ApiResponse<Assignment>> = await axiosInstance.put(apiEndpoints.ASSIGNMENT.RESPOND, payload)
     return response.data
 }
