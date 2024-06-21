@@ -2,20 +2,21 @@ import { RouteObject } from 'react-router-dom';
 import { routeNames } from '../constants/routeName';
 import { AdminLayout } from '../layouts/adminLayout';
 import { SimpleLayout } from '../layouts/simpleLayout';
+import { CreateAssetPage } from '../pages/assetPages/assetCreate';
+import { EditAssetPage } from '../pages/assetPages/assetEdit';
+import AssetListPage from '../pages/assetPages/assetList/AssetListPage';
+import { CreateAssignmentPage } from '../pages/assignmentPages/assignmentCreate';
+import AssignmentListPageStaff from '../pages/assignmentPages/assignmentList/AssginmentListPageStaff';
+import AssignmentListPageAdmin from '../pages/assignmentPages/assignmentList/AssignmentListPageAdmin';
 import { Error401, Error403, Error404, Error500 } from '../pages/errorPage/ErrorPages';
 import { HomePage } from '../pages/homePage';
 import { LoginPage } from '../pages/login';
 import CreateUserPage from '../pages/user/userCreate/CreateUserPage';
+import { EditUserPage } from '../pages/user/userEdit';
 import UserListPage from '../pages/user/userList/UserListPage';
 import { UserType } from '../types/user';
 import RequireAuth from './RequireAuth';
 import RequireGuest from './RequireGuest';
-import { EditUserPage } from '../pages/user/userEdit';
-import AssetListPage from '../pages/assetPages/assetList/AssetListPage';
-import { CreateAssetPage } from '../pages/assetPages/assetCreate';
-import { EditAssetPage } from '../pages/assetPages/assetEdit';
-import AssignmentListPage from '../pages/assignment/AssignmentListPage';
-import { CreateAssignmentPage } from '../pages/assignmentPages/assignmentCreate';
 import { EditAssignmentPage } from '../pages/assignmentPages/assignmentEdit';
 
 const commonRoutes: RouteObject[] = [
@@ -92,7 +93,7 @@ export const adminRoutes: RouteObject[] = [
                     },
                     {
                         path: routeNames.assignment.list,
-                        element: <AssignmentListPage />
+                        element: <AssignmentListPageAdmin />
                     },
                     {
                         path: routeNames.assignment.create,
@@ -135,7 +136,7 @@ export const staffRoutes: RouteObject[] = [
                     },
                     {
                         path: routeNames.assignment.list,
-                        element: <AssignmentListPage />
+                        element: <AssignmentListPageStaff />
                     }
                 ]
             }
