@@ -468,7 +468,7 @@ const AssetListPage: FC<ListPageProps> = ({ alertString }) => {
                     >
                       {addSpacesToCamelCase(AssetState[asset.state])}
                     </CustomTableCell>
-                    {asset.state.toString() === "Assigned" && (
+                    {asset.state === AssetState.Assigned && (
                       <StyledTableCell align="center">
                         <NoStyleLink to={routeNames.asset.edit(asset.id)}>
                           <IconButton disabled>
@@ -483,7 +483,7 @@ const AssetListPage: FC<ListPageProps> = ({ alertString }) => {
                         </IconButton>
                       </StyledTableCell>
                     )}
-                    {asset.state.toString() !== "Assigned" && (
+                    {asset.state !== AssetState.Assigned && (
                       <StyledTableCell align="center">
                         <NoStyleLink to={routeNames.asset.edit(asset.id)}>
                           <IconButton>

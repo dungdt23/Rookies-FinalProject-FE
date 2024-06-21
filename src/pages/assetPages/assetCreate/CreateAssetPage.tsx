@@ -54,8 +54,8 @@ const validationSchema = yup.object({
   assetName: yup
     .string()
     .required("Please enter asset name")
-    .min(2, "The asset name length should be 2-100 characters")
-    .max(100, "The asset name length should be 2-100 characters"),
+    .min(2, "The asset name length should be 2-200 characters")
+    .max(200, "The asset name length should be 2-200 characters"),
   categoryId: yup.string().required("Category is required"),
   installedDate: yup
     .object()
@@ -388,7 +388,7 @@ const CreateAssetPage: FC = () => {
                   : newCategory.prefix.length > 4
                   ? "Prefix must be at most 4 characters"
                   : !isUnique.prefix && newCategory.prefix !== ""
-                  ? "Prefix must be unique"
+                  ? "Prefix is already existed. Please enter a different prefix (EL, CM)"
                   : ""
               }
             />
@@ -406,7 +406,7 @@ const CreateAssetPage: FC = () => {
                 newCategory.categoryName.length > 200
                   ? "Category Name must be at most 200 characters"
                   : !isUnique.categoryName && newCategory.categoryName !== ""
-                  ? "Category Name must be unique"
+                  ? "Category is already existed. Please enter a different category (Electronic, Computer)"
                   : ""
               }
             />
