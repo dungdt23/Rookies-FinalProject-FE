@@ -1,4 +1,4 @@
-import { Check, Close, Edit, HighlightOff, Refresh, Search } from "@mui/icons-material";
+import { Edit, HighlightOff, Refresh, Search } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
 import { Alert, Box, Button, Divider, FormControl, Grid, IconButton, InputBase, InputLabel, MenuItem, Pagination, Paper, Select, SelectChangeEvent, Table, TableBody, TableContainer, TableRow, Typography, styled } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
@@ -13,14 +13,12 @@ import { CustomTableCell, StyledTableCell } from "../../../components/table";
 import CustomTableHead, { Order, TableHeadInfo } from "../../../components/table/CustomTableHead";
 import { theme } from "../../../constants/appTheme";
 import { routeNames } from "../../../constants/routeName";
-import { useAuth } from "../../../contexts/AuthContext";
 import { toStandardFormat } from "../../../helpers/formatDate";
+import { addSpacesToCamelCase } from "../../../helpers/helper";
 import { removeUndefinedValues } from "../../../helpers/removeUndefined";
 import { FieldAssignmentFilter, GetAllAssignmentParams, disableAssignmentrById, fetchAllAssignments } from "../../../services/assignment.service";
 import { Assignment, AssignmentState } from "../../../types/assignment";
 import { ListPageState } from "../../../types/common";
-import { UserType } from "../../../types/user";
-import { addSpacesToCamelCase } from "../../../helpers/helper";
 
 const ClickableTableRow = styled(TableRow)(({ theme }) => ({
     cursor: "pointer",
@@ -87,7 +85,6 @@ const TABLE_HEAD: TableHeadInfo[] = [
 const AssignmentListPageAdmin = () => {
     const navigate = useNavigate();
     const defaultSortOrder: Order = "asc"
-    const { user } = useAuth();
     const [assignments, _setAssignments] = useState<Assignment[]>([]);
     const [totalCount, setTotalCount] = useState<number>(0);
     const [assignmentState, setAssignmentState] = useState<AssignmentState | string>(allOption.value);
@@ -403,7 +400,7 @@ const AssignmentListPageAdmin = () => {
                                             <IconButton
                                                 disabled={assignment.state !== AssignmentState.WaitingForAcceptance}
                                                 onClick={() => handleEditClick(assignment)}>
-                                                <Edit color={assignment.state === AssignmentState.WaitingForAcceptance ? "primary" : "disabled"} />
+                                                <Edit color={assignment.state === AssignmentState.WaitingForAcceptance ? undefined : "disabled"} />
                                             </IconButton>
                                             <IconButton
                                                 disabled={assignment.state !== AssignmentState.WaitingForAcceptance}

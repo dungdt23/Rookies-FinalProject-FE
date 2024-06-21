@@ -1,25 +1,22 @@
-import { Check, Close, Edit, HighlightOff, Refresh, Search } from "@mui/icons-material";
+import { Check, Close, Refresh, Search } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
 import { Alert, Box, Button, Divider, FormControl, Grid, IconButton, InputBase, InputLabel, MenuItem, Pagination, Paper, Select, SelectChangeEvent, Table, TableBody, TableContainer, TableRow, Typography, styled } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
 import { MouseEvent, ReactNode, useEffect, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { CircularProgressWrapper } from "../../../components/loading";
-import { NoStyleLink } from "../../../components/noStyleLink";
 import { CustomPopover } from "../../../components/popover";
 import { CustomTableCell, StyledTableCell } from "../../../components/table";
 import CustomTableHead, { Order, TableHeadInfo } from "../../../components/table/CustomTableHead";
 import { theme } from "../../../constants/appTheme";
-import { routeNames } from "../../../constants/routeName";
-import { useAuth } from "../../../contexts/AuthContext";
 import { toStandardFormat } from "../../../helpers/formatDate";
+import { addSpacesToCamelCase } from "../../../helpers/helper";
 import { removeUndefinedValues } from "../../../helpers/removeUndefined";
-import { FieldAssignmentFilter, GetAllAssignmentParams, disableAssignmentrById, fetchAllAssignments } from "../../../services/assignment.service";
+import { FieldAssignmentFilter, GetAllAssignmentParams, RespondAssignmentRequest, disableAssignmentrById, fetchAllAssignments, respondAssignmentById } from "../../../services/assignment.service";
 import { Assignment, AssignmentState } from "../../../types/assignment";
 import { ListPageState } from "../../../types/common";
-import { UserType } from "../../../types/user";
 
 const ClickableTableRow = styled(TableRow)(({ theme }) => ({
     cursor: "pointer",
@@ -84,9 +81,7 @@ const TABLE_HEAD: TableHeadInfo[] = [
 
 
 const AssignmentListPageStaff = () => {
-    const navigate = useNavigate();
     const defaultSortOrder: Order = "asc"
-    const { user } = useAuth();
     const [assignments, _setAssignments] = useState<Assignment[]>([]);
     const [totalCount, setTotalCount] = useState<number>(0);
     const [assignmentState, setAssignmentState] = useState<AssignmentState | string>(allOption.value);
@@ -101,8 +96,9 @@ const AssignmentListPageStaff = () => {
     const [isDisabling, setIsDisabling] = useState<boolean>(false);
     const [selected, setSelected] = useState<Assignment | null>(null);
     const [rowAnchorEl, setRowAnchorEl] = useState<HTMLElement | null>(null);
-    const [deleteAnchorEl, setDeleteAnchorEl] = useState<HTMLElement | null>(null);
-    const [canDisable, setCanDisable] = useState<boolean>(true);
+    const [respondAnchorEl, setRespondAnchorEl] = useState<HTMLElement | null>(null);
+    const [canRespond, setCanRespond] = useState<boolean>(true);
+    const [isAccept, setIsAccpet] = useState<boolean>(false);
     const location = useLocation();
 
 
@@ -189,13 +185,17 @@ const AssignmentListPageStaff = () => {
     }
 
     function handleDeleteClick(event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, assignment: Assignment): void {
-        setDeleteAnchorEl(event.currentTarget);
+        setIsAccpet(false);
+        setRespondAnchorEl(event.currentTarget);
         setSelected(assignment);
-        setCanDisable(true);
+        setCanRespond(true);
     }
 
-    const handleEditClick = (assignment: Assignment) => {
-        navigate(routeNames.assignment.edit(assignment.id));
+    const handleRespondClick = (event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, assignment: Assignment) => {
+        setIsAccpet(true);
+        setRespondAnchorEl(event.currentTarget);
+        setSelected(assignment);
+        setCanRespond(true);
     }
 
     const handleChangePage = (_: unknown, newPage: number) => {
@@ -205,7 +205,7 @@ const AssignmentListPageStaff = () => {
     const handleClosePopover = () => {
         setSelected(null);
         setRowAnchorEl(null);
-        setDeleteAnchorEl(null);
+        setRespondAnchorEl(null);
     };
 
     const deleteAssignment = async () => {
@@ -216,11 +216,36 @@ const AssignmentListPageStaff = () => {
         }
         try {
             const result = await disableAssignmentrById(selected?.id);
-            setCanDisable(result)
+            setCanRespond(result)
             if (result) {
                 handleClosePopover()
                 getAssignments()
-                setAlert(`Assignment of asset ${selected?.assetName} is deleted`)
+                setAlert(`Assignment of asset ${selected?.assetName} is denied`)
+            }
+        } catch (error) {
+            console.error(error)
+        }
+        setIsDisabling(false);
+    }
+
+    const respondAssignment = async () => {
+        setIsDisabling(true);
+        if (!selected) {
+            setIsDisabling(false);
+            return
+        }
+        try {
+            const payload = {
+                assignmentId: selected?.id,
+                isAccept: isAccept
+            } as RespondAssignmentRequest;
+            const result = await respondAssignmentById(payload);
+            const statusCode = result.statusCode;
+            setCanRespond(statusCode === 200)
+            if (statusCode === 200) {
+                handleClosePopover()
+                getAssignments()
+                setAlert(`Assignment of asset ${selected?.assetName} is ${isAccept ? "accepted" : "denied"}`)
             }
         } catch (error) {
             console.error(error)
@@ -256,7 +281,7 @@ const AssignmentListPageStaff = () => {
             },
             {
                 label: "State: ",
-                value: AssignmentState[selected?.state],
+                value: addSpacesToCamelCase(AssignmentState[selected?.state]),
             },
             {
                 label: "Note: ",
@@ -279,31 +304,20 @@ const AssignmentListPageStaff = () => {
         );
     };
 
-    const renderCannotDisableDialog = (): ReactNode => {
-        return (
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                <Typography variant="body1" gutterBottom>
-                    This is a assignment that is not waiting for acceptance.
-                    You can only delete assignment without this status.
-                </Typography>
-            </Box>
-        )
-    }
-
-    const renderAssignmentDeleteDialog = (): ReactNode => {
+    const renderAssignmentRespondDialog = (): ReactNode => {
         return (
             <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                 <Typography variant="body1" gutterBottom>
-                    Do you want to delete this assignment?
+                    Do you want to {isAccept ? "accept" : "deny"} this assignment?
                 </Typography>
                 <Box sx={{ display: 'flex', gap: '1rem', mt: '1rem' }}>
                     <LoadingButton
                         loading={isDisabling}
                         type="submit"
                         variant="contained"
-                        onClick={deleteAssignment}
+                        onClick={respondAssignment}
                     >
-                        Delete
+                        Yes
                     </LoadingButton>
                     <Button variant="outlined" onClick={handleClosePopover}>
                         Cancel
@@ -366,11 +380,6 @@ const AssignmentListPageStaff = () => {
                                 <Search />
                             </IconButton>
                         </Paper>
-                        <NoStyleLink to={routeNames.assignment.create}>
-                            <Button sx={{ marginLeft: "1rem", p: '0 1.5rem', height: '100%' }} variant="contained" color="primary">
-                                Create New Assignment
-                            </Button>
-                        </NoStyleLink>
                     </Box>
 
                 </Box>
@@ -397,15 +406,15 @@ const AssignmentListPageStaff = () => {
                                         <CustomTableCell onClick={(event) => handleRowClick(event, assignment)}>{assignment.assignedTo}</CustomTableCell>
                                         <CustomTableCell onClick={(event) => handleRowClick(event, assignment)}>{assignment.assignedBy}</CustomTableCell>
                                         <CustomTableCell onClick={(event) => handleRowClick(event, assignment)}>{toStandardFormat(assignment.assignedDate)}</CustomTableCell>
-                                        <CustomTableCell onClick={(event) => handleRowClick(event, assignment)}>{assignment.state}</CustomTableCell>
+                                        <CustomTableCell onClick={(event) => handleRowClick(event, assignment)}>{addSpacesToCamelCase(AssignmentState[assignment.state])}</CustomTableCell>
                                         <StyledTableCell align="center">
-                                            <NoStyleLink to={routeNames.assignment.edit(assignment.id)}>
-                                                <IconButton disabled={assignment.state.toString() !== "Waiting For Acceptance"}>
-                                                    <Check color={assignment.state === AssignmentState.WaitingForAcceptance ? "primary" : "disabled"} />
-                                                </IconButton>
-                                            </NoStyleLink>
                                             <IconButton
-                                                disabled={assignment.state.toString() !== "Waiting For Acceptance"}
+                                                disabled={assignment.state !== AssignmentState.WaitingForAcceptance}
+                                                onClick={(event) => handleRespondClick(event, assignment)}>
+                                                <Check color={assignment.state === AssignmentState.WaitingForAcceptance ? "primary" : "disabled"} />
+                                            </IconButton>
+                                            <IconButton
+                                                disabled={assignment.state !== AssignmentState.WaitingForAcceptance}
                                                 onClick={(event) => handleDeleteClick(event, assignment)}>
                                                 <Close color={assignment.state === AssignmentState.WaitingForAcceptance ? "primary" : "disabled"} />
                                             </IconButton>
@@ -463,15 +472,13 @@ const AssignmentListPageStaff = () => {
                 boxProps={{ sx: { minWidth: '25rem' } }}
             />
             <CustomPopover
-                elAnchor={deleteAnchorEl}
-                open={Boolean(deleteAnchorEl)}
+                elAnchor={respondAnchorEl}
+                open={Boolean(respondAnchorEl)}
                 handleClose={handleClosePopover}
-                renderTitle={() => canDisable ? <span>Are you sure?</span> : <span>Can not disable user</span>}
-                renderDescription={canDisable ? renderAssignmentDeleteDialog : renderCannotDisableDialog}
+                renderTitle={() => canRespond ? <span>Are you sure?</span> : <span>Can not respond user</span>}
+                renderDescription={renderAssignmentRespondDialog}
                 boxProps={{ sx: { maxWidth: '25rem' } }}
-            >
-
-            </CustomPopover>
+            />
         </>
     )
 }
