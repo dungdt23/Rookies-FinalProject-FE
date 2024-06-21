@@ -43,9 +43,9 @@ const validationSchema = yup.object({
   assetName: yup
     .string()
     .required("Please enter asset name")
-    .min(2, 'The asset name length should be 2-100 characters')
-    .max(100, 'The asset name length should be 2-100 characters'),
-  categoryId: yup.string().required("Category is required"),
+    .min(2, 'The asset name length should be 2-200 characters')
+    .max(200, 'The asset name length should be 2-200 characters'),
+  //categoryId: yup.string().required("Category is required"),
   installedDate: yup
     .object()
     .required("Please enter installed date")
@@ -64,7 +64,7 @@ const validationSchema = yup.object({
     .number()
     .required("Please enter state")
     .oneOf(
-      [AssetState.Available, AssetState.NotAvailable],
+      [AssetState.Available, AssetState.NotAvailable, AssetState.WaitingForRecycling, AssetState.Recycled],
       "Invalid state value"
     ),
 });
@@ -77,9 +77,12 @@ const EditAssetPage: FC = () => {
   const navigate = useNavigate();
 
   const fetchAssetDetails = useCallback(async () => {
+    
     try {
       const response = await fetchAssetById(assetId!);
       const asset = response.data;
+      console.log(asset);
+      
       formik.setValues({
         assetName: asset.assetName,
         installedDate: dayjs(asset.installedDate),
@@ -122,6 +125,7 @@ const EditAssetPage: FC = () => {
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       setIsSubmitting(true);
+      console.log(currentCategory?.id);
       const payload = {
         assetName: values.assetName,
         categoryId: currentCategory?.id || "",
@@ -246,28 +250,34 @@ const EditAssetPage: FC = () => {
                     id="state"
                     name="state"
                     value={formik.values.state}
-                    onChange={formik.handleChange}
+                    onChange={(event) => {
+                      formik.setFieldValue("state", Number(event.currentTarget.value), true);
+                    }}
                     onBlur={formik.handleBlur}
                   >
                     <FormControlLabel
                       value={AssetState.Available}
                       control={<Radio />}
                       label="Available"
+                      checked={formik.values.state === AssetState.Available}
                     />
                     <FormControlLabel
                       value={AssetState.NotAvailable}
                       control={<Radio />}
                       label="Not available"
+                      checked={formik.values.state === AssetState.NotAvailable}
                     />
                     <FormControlLabel
                       value={AssetState.WaitingForRecycling}
                       control={<Radio />}
                       label="Waiting for recycling"
+                      checked={formik.values.state === AssetState.WaitingForRecycling}
                     />
                     <FormControlLabel
                       value={AssetState.Recycled}
                       control={<Radio />}
                       label="Recycled"
+                      checked={formik.values.state === AssetState.Recycled}
                     />
                   </RadioGroup>
                   {formik.touched.state && formik.errors.state && (
