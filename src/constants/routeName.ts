@@ -15,4 +15,9 @@ export const routeNames = {
         create: "/assets/create",
         edit: (assetId: string): string => `/assets/edit/${assetId}`
     },
+    assignment: {
+        list: "/assignments",
+        create: "/assignments/create",
+        edit: (assignmentId: string): string => `/assignments/edit/${assignmentId}`
+    }
 }

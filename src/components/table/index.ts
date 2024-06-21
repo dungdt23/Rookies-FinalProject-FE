@@ -1,4 +1,6 @@
 import CustomTableHead from './CustomTableHead';
 import CustomTableCell from './CustomTableCell';
 import { StyledTableCell } from './CustomTableCell';
-export { CustomTableHead, StyledTableCell, CustomTableCell }
+import { ClickableTableRow } from './CustomTableRow';
+import { StyledTableContainer } from './CustomTableContainer';
+export { CustomTableHead, StyledTableCell, CustomTableCell, ClickableTableRow, StyledTableContainer }

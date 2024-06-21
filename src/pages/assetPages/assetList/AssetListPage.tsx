@@ -15,7 +15,7 @@ import { theme } from "../../../constants/appTheme";
 import { routeNames } from "../../../constants/routeName";
 import { toStandardFormat } from "../../../helpers/formatDate";
 import { removeUndefinedValues } from "../../../helpers/removeUndefined";
-import { AssetFieldFilter, deleteAssetById, fetchAllAsset as fetchAllAssets, GetAllAssetParams } from "../../../services/asset.service";
+import { AssetFieldFilter, deleteAssetById, fetchAllAssets as fetchAllAssets, GetAllAssetParams } from "../../../services/asset.service";
 import { fetchAllCategory } from "../../../services/category.service";
 import { Asset, AssetState } from '../../../types/asset';
 import { ListPageProps, ListPageState, SortOrder } from "../../../types/common";

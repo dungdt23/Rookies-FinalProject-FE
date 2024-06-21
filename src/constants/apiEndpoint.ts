@@ -19,6 +19,7 @@ export const apiEndpoints = {
         CREATE: "/assignments",
         EDIT: (assignmentId: string) => `/assignments/${assignmentId}`,
         DELETE: (assignmentId: string) => `/assignments/${assignmentId}`,
+        RESPOND: "/assignments"
     },
     CATEGORY: {
         GET_ALL: "/categories",
