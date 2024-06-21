@@ -14,6 +14,7 @@ import { routeNames } from '../../../constants/routeName';
 import { editUserById, EditUserRequest, fetchUserById } from '../../../services/user.service';
 import { User, UserGender, UserType } from '../../../types/user';
 import { ListPageState } from '../../../types/common';
+import { toISOStringWithoutTimezone } from '../../../helpers/helper';
 
 export interface Role {
     id: string;
@@ -30,9 +31,10 @@ const RootBox = styled(Box)(() => ({
 dayjs.locale('en');
 
 // Custom validation function using dayjs
-const isAfterOrEqual = (a: Dayjs, b: Dayjs) => dayjs(a).isAfter(b);
+const isAfterOrEqual = (a: Dayjs, b: Dayjs) => dayjs(a).add(1, 'day').isAfter(b);
 const isWeekday = (date: Dayjs) => dayjs(date).day() !== 0 && dayjs(date).day() !== 6;
 const isUnder18 = (dob: Dayjs) => dayjs().diff(dob, 'years') < 18;
+const isFuture = (dob: Dayjs) => dob.isAfter(dayjs());
 const unicodeAlphabetRegex = /^[\p{L}\s]+$/u;
 
 // Validation schema
@@ -49,6 +51,9 @@ const validationSchema = yup.object({
         .max(100, 'The Last Name length should be 2-100 characters'),
     dateOfBirth: yup.object()
         .required('Please choose date of birth')
+        .test('is-future', 'The date of birth is in the future. Please select a different date', function (value) {
+            return !isFuture(value as Dayjs);
+        })
         .test('is-18-or-older', 'User is under 18. Please select a different date', function (value) {
             return !isUnder18(value as Dayjs);
         }),
@@ -112,8 +117,8 @@ const EditUserPage: FC = () => {
             const payload = {
                 firstName: values.firstName,
                 lastName: values.lastName,
-                joinedDate: values.joinedDate?.toISOString(),
-                dateOfBirth: values.dateOfBirth?.toISOString(),
+                joinedDate: toISOStringWithoutTimezone(values.joinedDate!),
+                dateOfBirth: toISOStringWithoutTimezone(values.dateOfBirth!),
                 gender: values.gender,
                 type: values.userType,
             } as EditUserRequest;

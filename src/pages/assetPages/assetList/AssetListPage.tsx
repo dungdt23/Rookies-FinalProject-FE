@@ -1,9 +1,10 @@
-import { Edit, HighlightOff, Search } from "@mui/icons-material";
+import { Edit, HighlightOff } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
-import { Alert, Box, Button, Divider, FormControl, Grid, IconButton, InputBase, InputLabel, MenuItem, Pagination, Paper, Select, SelectChangeEvent, styled, Table, TableBody, TableContainer, TableRow, Typography } from "@mui/material";
+import { Alert, Box, Button, FormControl, Grid, IconButton, InputLabel, MenuItem, Pagination, Select, SelectChangeEvent, styled, Table, TableBody, TableContainer, TableRow, Typography } from "@mui/material";
 import { FC, MouseEvent, ReactNode, useEffect, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { Link, useLocation } from "react-router-dom";
+import { SearchBar } from "../../../components/form";
 import LoadingSelect, { LoadingSelectOption } from "../../../components/form/LoadingSelect";
 import { CircularProgressWrapper } from "../../../components/loading";
 import { NoStyleLink } from "../../../components/noStyleLink";
@@ -15,9 +16,9 @@ import { routeNames } from "../../../constants/routeName";
 import { toStandardFormat } from "../../../helpers/formatDate";
 import { removeUndefinedValues } from "../../../helpers/removeUndefined";
 import { AssetFieldFilter, deleteAssetById, fetchAllAsset as fetchAllAssets, GetAllAssetParams } from "../../../services/asset.service";
+import { fetchAllCategory } from "../../../services/category.service";
 import { Asset, AssetState } from '../../../types/asset';
 import { ListPageProps, ListPageState, SortOrder } from "../../../types/common";
-import { fetchAllCategory } from "../../../services/category.service";
 
 const ClickableTableRow = styled(TableRow)(({ theme }) => ({
     cursor: "pointer",
@@ -202,12 +203,6 @@ const AssetListPage: FC<ListPageProps> = ({ alertString }) => {
         }
     };
 
-    const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
-        if (event.key === 'Enter') {
-            handleSearchSubmit();
-        }
-    };
-
     const renderAssetDetailDialog = (): ReactNode => {
         if (!selected) return null;
         const assetDetails = [
@@ -309,7 +304,7 @@ const AssetListPage: FC<ListPageProps> = ({ alertString }) => {
         return (
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <Typography variant="body1" gutterBottom>
-                    Cannot delete the asset because it belongs to one or more historical assignment<br/>
+                    Cannot delete the asset because it belongs to one or more historical assignment<br />
                     If the asset is not able to be used anymore please update its state in <Link to={routeNames.asset.edit(selected?.id || "")}>Edit Asset Page</Link>
                 </Typography>
             </Box>
@@ -327,7 +322,7 @@ const AssetListPage: FC<ListPageProps> = ({ alertString }) => {
             <RootBox>
                 {alert && <Alert sx={{ mb: '1rem' }} severity="success" onClose={() => setAlert(undefined)}>{alert}</Alert>}
                 <Box display="flex" justifyContent="space-between" alignItems="center" sx={{ mb: '1rem' }} >
-                    <Box sx={{display:"flex", gap: "1rem"}}>
+                    <Box sx={{ display: "flex", gap: "1rem" }}>
                         <FormControl >
                             <InputLabel id="state-label">State</InputLabel>
                             <Select
@@ -355,23 +350,12 @@ const AssetListPage: FC<ListPageProps> = ({ alertString }) => {
                             onChange={(value) => setCategory(value)}
                         />
                     </Box>
-                    <Box sx={{display:"flex", gap: "1rem"}}>
-                        <Paper
-                            variant="outlined"
-                            sx={{ padding: '0 0.5rem', display: 'flex', alignItems: 'center', minWidth: '20rem' }}
-                        >
-                            <InputBase
-                                inputRef={inputRef}
-                                sx={{ ml: 1, flex: 1 }}
-                                placeholder={placeholderSearch}
-                                inputProps={{ 'aria-label': 'search google maps' }}
-                                onKeyUp={handleKeyPress}
-                            />
-                            <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
-                            <IconButton type="button" sx={{ p: '10px' }} aria-label="search" onClick={handleSearchSubmit}>
-                                <Search />
-                            </IconButton>
-                        </Paper>
+                    <Box sx={{ display: "flex", gap: "1rem" }}>
+                        <SearchBar
+                            ref={inputRef}
+                            placeholderSearch={placeholderSearch}
+                            onSearchSubmit={handleSearchSubmit}
+                        />
                         <NoStyleLink to={routeNames.asset.create}>
                             <Button sx={{ p: '0 1.5rem', height: '100%' }} variant="contained" color="primary">
                                 Create New Asset

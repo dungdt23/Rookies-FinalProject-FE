@@ -39,6 +39,7 @@ import {
 import { Asset, AssetState, CreateAssetRequest } from "../../../types/asset";
 import { Category } from "../../../types/category";
 import { ListPageState } from "../../../types/common";
+import { toISOStringWithoutTimezone } from "../../../helpers/helper";
 
 const RootBox = styled(Box)(() => ({
   maxWidth: "100vh",
@@ -185,7 +186,7 @@ const CreateAssetPage: FC = () => {
       const payload = {
         assetName: values.assetName,
         categoryId: values.categoryId,
-        installedDate: values.installedDate?.toISOString(),
+        installedDate: toISOStringWithoutTimezone(values.installedDate!),
         specification: values.specification,
         state: Number(values.state),
       } as CreateAssetRequest;
