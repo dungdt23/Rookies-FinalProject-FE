@@ -1,29 +1,25 @@
-import { Alert, Box, Button, Divider, FormControl, Grid, IconButton, InputBase, InputLabel, MenuItem, Pagination, Paper, Select, SelectChangeEvent, Table, TableBody, TableContainer, TableRow, Typography, styled } from "@mui/material";
-import { MouseEvent, ReactNode, useEffect, useRef, useState } from "react";
-import { Helmet } from "react-helmet-async";
-import { Assignment, AssignmentState } from "../../types/assignment";
 import { Check, Close, Edit, HighlightOff, Refresh, Search } from "@mui/icons-material";
-import { NoStyleLink } from "../../components/noStyleLink";
-import { routeNames } from "../../constants/routeName";
+import { LoadingButton } from "@mui/lab";
+import { Alert, Box, Button, Divider, FormControl, Grid, IconButton, InputBase, InputLabel, MenuItem, Pagination, Paper, Select, SelectChangeEvent, Table, TableBody, TableContainer, TableRow, Typography, styled } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
-import { CircularProgressWrapper } from "../../components/loading";
-import CustomTableHead, { Order, TableHeadInfo } from "../../components/table/CustomTableHead";
-import { FieldAssignmentFilter, GetAllAssignmentParams, disableAssignmentrById, fetchAllAssignments } from "../../services/assignment.service";
-import { removeUndefinedValues } from "../../helpers/removeUndefined";
-import { UserType } from "../../types/user";
-import { useAuth } from "../../contexts/AuthContext";
-import { CustomTableCell, StyledTableCell } from "../../components/table";
-import { theme } from "../../constants/appTheme";
-import { CustomPopover } from "../../components/popover";
-import { toStandardFormat } from "../../helpers/formatDate";
+import { MouseEvent, ReactNode, useEffect, useRef, useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { useLocation, useNavigate } from "react-router-dom";
-import { ListPageState } from "../../types/common";
-import { LoadingButton } from "@mui/lab";
-import { log } from "console";
-import { AxiosError } from "axios";
-import { ApiResponse } from "../../services/user.service";
-import { nameof } from "../../helpers/helper";
+import { CircularProgressWrapper } from "../../../components/loading";
+import { NoStyleLink } from "../../../components/noStyleLink";
+import { CustomPopover } from "../../../components/popover";
+import { CustomTableCell, StyledTableCell } from "../../../components/table";
+import CustomTableHead, { Order, TableHeadInfo } from "../../../components/table/CustomTableHead";
+import { theme } from "../../../constants/appTheme";
+import { routeNames } from "../../../constants/routeName";
+import { useAuth } from "../../../contexts/AuthContext";
+import { toStandardFormat } from "../../../helpers/formatDate";
+import { removeUndefinedValues } from "../../../helpers/removeUndefined";
+import { FieldAssignmentFilter, GetAllAssignmentParams, disableAssignmentrById, fetchAllAssignments } from "../../../services/assignment.service";
+import { Assignment, AssignmentState } from "../../../types/assignment";
+import { ListPageState } from "../../../types/common";
+import { UserType } from "../../../types/user";
 
 const ClickableTableRow = styled(TableRow)(({ theme }) => ({
     cursor: "pointer",
@@ -87,7 +83,7 @@ const TABLE_HEAD: TableHeadInfo[] = [
 ]
 
 
-const AssignmentListPage = () => {
+const AssignmentListPageAdmin = () => {
     const navigate = useNavigate();
     const defaultSortOrder: Order = "asc"
     const { user } = useAuth();
@@ -403,32 +399,16 @@ const AssignmentListPage = () => {
                                         <CustomTableCell onClick={(event) => handleRowClick(event, assignment)}>{toStandardFormat(assignment.assignedDate)}</CustomTableCell>
                                         <CustomTableCell onClick={(event) => handleRowClick(event, assignment)}>{assignment.state}</CustomTableCell>
                                         <StyledTableCell align="center">
-                                            {user?.role === UserType.Admin &&
-                                                <>
-                                                    <IconButton 
-                                                    disabled={assignment.state !== AssignmentState.WaitingForAcceptance}
-                                                    onClick={() => handleEditClick(assignment)}>
-                                                        <Edit color={assignment.state === AssignmentState.WaitingForAcceptance ? "primary" : "disabled"} />
-                                                    </IconButton>
-                                                    <IconButton
-                                                        disabled={assignment.state !== AssignmentState.WaitingForAcceptance}
-                                                        onClick={(event) => handleDeleteClick(event, assignment)}>
-                                                        <HighlightOff color={assignment.state === AssignmentState.WaitingForAcceptance ? "primary" : "disabled"} />
-                                                    </IconButton>
-                                                </>}
-                                            {user?.role === UserType.Staff &&
-                                                <>
-                                                    <NoStyleLink to={routeNames.assignment.edit(assignment.id)}>
-                                                        <IconButton disabled={assignment.state.toString() !== "Waiting For Acceptance"}>
-                                                            <Check color={assignment.state === AssignmentState.WaitingForAcceptance ? "primary" : "disabled"} />
-                                                        </IconButton>
-                                                    </NoStyleLink>
-                                                    <IconButton
-                                                        disabled={assignment.state.toString() !== "Waiting For Acceptance"}
-                                                        onClick={(event) => handleDeleteClick(event, assignment)}>
-                                                        <Close color={assignment.state === AssignmentState.WaitingForAcceptance ? "primary" : "disabled"} />
-                                                    </IconButton>
-                                                </>}
+                                            <IconButton
+                                                disabled={assignment.state !== AssignmentState.WaitingForAcceptance}
+                                                onClick={() => handleEditClick(assignment)}>
+                                                <Edit color={assignment.state === AssignmentState.WaitingForAcceptance ? "primary" : "disabled"} />
+                                            </IconButton>
+                                            <IconButton
+                                                disabled={assignment.state !== AssignmentState.WaitingForAcceptance}
+                                                onClick={(event) => handleDeleteClick(event, assignment)}>
+                                                <HighlightOff color={assignment.state === AssignmentState.WaitingForAcceptance ? "primary" : "disabled"} />
+                                            </IconButton>
                                             <IconButton disabled={assignment.state === AssignmentState.WaitingForAcceptance}>
                                                 <Refresh color={assignment.state !== AssignmentState.WaitingForAcceptance ? "info" : "disabled"} />
                                             </IconButton>
@@ -496,4 +476,4 @@ const AssignmentListPage = () => {
     )
 }
 
-export default AssignmentListPage;
+export default AssignmentListPageAdmin;
