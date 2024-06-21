@@ -466,7 +466,7 @@ const AssetListPage: FC<ListPageProps> = ({ alertString }) => {
                     <CustomTableCell
                       onClick={(event) => handleRowClick(event, asset)}
                     >
-                      {asset.state}
+                      {addSpacesToCamelCase(AssetState[asset.state])}
                     </CustomTableCell>
                     {asset.state.toString() === "Assigned" && (
                       <StyledTableCell align="center">
