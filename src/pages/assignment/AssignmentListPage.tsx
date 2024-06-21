@@ -2,7 +2,7 @@ import { Alert, Box, Button, Divider, FormControl, Grid, IconButton, InputBase, 
 import { MouseEvent, ReactNode, useEffect, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { Assignment, AssignmentState } from "../../types/assignment";
-import { Edit, HighlightOff, Search } from "@mui/icons-material";
+import { Check, Close, Edit, HighlightOff, Refresh, Search } from "@mui/icons-material";
 import { NoStyleLink } from "../../components/noStyleLink";
 import { routeNames } from "../../constants/routeName";
 import { DatePicker } from "@mui/x-date-pickers";
@@ -19,6 +19,10 @@ import { CustomPopover } from "../../components/popover";
 import { toStandardFormat } from "../../helpers/formatDate";
 import { useLocation } from "react-router-dom";
 import { ListPageState } from "../../types/common";
+import { LoadingButton } from "@mui/lab";
+import { log } from "console";
+import { AxiosError } from "axios";
+import { ApiResponse } from "../../services/user.service";
 
 const ClickableTableRow = styled(TableRow)(({ theme }) => ({
     cursor: "pointer",
@@ -129,10 +133,10 @@ const AssignmentListPage = () => {
             const data = await fetchAllAssignments(params);
             _setAssignments(data.data);
             setTotalCount(data.totalCount)
-        } catch (error) {
-            // if(error.response.data.statusCode === 404){
-            // _setAssignments([]);
-            // }
+        } catch (error: any) {
+            if (error.response.data.statusCode === 404) {
+                _setAssignments([]);
+            }
         } finally {
             setIsFetching(false);
         }
@@ -186,8 +190,10 @@ const AssignmentListPage = () => {
         setSelected(assignment);
     }
 
-    function handleDeleteClick(event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, user: import("../../types/user").JWTPayload | null): void {
-        throw new Error("Function not implemented.");
+    function handleDeleteClick(event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, assignment: Assignment): void {
+        setDeleteAnchorEl(event.currentTarget);
+        setSelected(assignment);
+        setCanDisable(true);
     }
 
     const handleChangePage = (_: unknown, newPage: number) => {
@@ -212,7 +218,7 @@ const AssignmentListPage = () => {
             if (result) {
                 handleClosePopover()
                 getAssignments()
-                setAlert(`Assignment of asset ${selected?.assetName} is disabled`)
+                setAlert(`Assignment of asset ${selected?.assetName} is deleted`)
             }
         } catch (error) {
             console.error(error)
@@ -279,6 +285,29 @@ const AssignmentListPage = () => {
                     This is a assignment that is not waiting for acceptance.
                     You can only delete assignment without this status.
                 </Typography>
+            </Box>
+        )
+    }
+
+    const renderAssignmentDeleteDialog = (): ReactNode => {
+        return (
+            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                <Typography variant="body1" gutterBottom>
+                    Do you want to delete this assignment?
+                </Typography>
+                <Box sx={{ display: 'flex', gap: '1rem', mt: '1rem' }}>
+                    <LoadingButton
+                        loading={isDisabling}
+                        type="submit"
+                        variant="contained"
+                        onClick={deleteAssignment}
+                    >
+                        Delete
+                    </LoadingButton>
+                    <Button variant="outlined" onClick={handleClosePopover}>
+                        Cancel
+                    </Button>
+                </Box>
             </Box>
         )
     }
@@ -369,14 +398,34 @@ const AssignmentListPage = () => {
                                         <CustomTableCell onClick={(event) => handleRowClick(event, assignment)}>{toStandardFormat(assignment.assignedDate)}</CustomTableCell>
                                         <CustomTableCell onClick={(event) => handleRowClick(event, assignment)}>{assignment.state}</CustomTableCell>
                                         <StyledTableCell align="center">
-                                            <NoStyleLink to={routeNames.assignment.edit(assignment.id)}>
-                                                <IconButton>
-                                                    <Edit />
-                                                </IconButton>
-                                            </NoStyleLink>
-
-                                            <IconButton onClick={(event) => handleDeleteClick(event, user)}>
-                                                <HighlightOff color="primary" />
+                                            {user?.role === UserType.Admin &&
+                                                <>
+                                                    <NoStyleLink to={routeNames.assignment.edit(assignment.id)}>
+                                                        <IconButton disabled={assignment.state !== AssignmentState.WaitingForAcceptance}>
+                                                        <Edit color={assignment.state !== AssignmentState.WaitingForAcceptance ? "disabled" : "primary"} />
+                                                        </IconButton>
+                                                    </NoStyleLink>
+                                                    <IconButton
+                                                        disabled={assignment.state !== AssignmentState.WaitingForAcceptance}
+                                                        onClick={(event) => handleDeleteClick(event, assignment)}>
+                                                        <HighlightOff color="primary" />
+                                                    </IconButton>
+                                                </>}
+                                            {user?.role === UserType.Staff &&
+                                                <>
+                                                    <NoStyleLink to={routeNames.assignment.edit(assignment.id)}>
+                                                        <IconButton disabled={assignment.state.toString() !== "Waiting For Acceptance"}>
+                                                            <Check color={assignment.state === AssignmentState.WaitingForAcceptance ? "primary" : "disabled"} />
+                                                        </IconButton>
+                                                    </NoStyleLink>
+                                                    <IconButton
+                                                        disabled={assignment.state.toString() !== "Waiting For Acceptance"}
+                                                        onClick={(event) => handleDeleteClick(event, assignment)}>
+                                                        <Close color={assignment.state === AssignmentState.WaitingForAcceptance ? "primary" : "disabled"} />
+                                                    </IconButton>
+                                                </>}
+                                            <IconButton disabled={assignment.state === AssignmentState.WaitingForAcceptance}>
+                                                <Refresh color={assignment.state !== AssignmentState.WaitingForAcceptance ? "info" : "disabled"} />
                                             </IconButton>
                                         </StyledTableCell>
                                     </ClickableTableRow>
@@ -419,7 +468,7 @@ const AssignmentListPage = () => {
                         onChange={handleChangePage}
                     />
                 </Box>
-            </RootBox>
+            </RootBox >
             <CustomPopover
                 elAnchor={rowAnchorEl}
                 open={Boolean(rowAnchorEl)}
@@ -433,7 +482,7 @@ const AssignmentListPage = () => {
                 open={Boolean(deleteAnchorEl)}
                 handleClose={handleClosePopover}
                 renderTitle={() => canDisable ? <span>Are you sure?</span> : <span>Can not disable user</span>}
-                renderDescription={canDisable ? renderAssignmentDetailDialog : renderCannotDisableDialog}
+                renderDescription={canDisable ? renderAssignmentDeleteDialog : renderCannotDisableDialog}
                 boxProps={{ sx: { maxWidth: '25rem' } }}
             >
 

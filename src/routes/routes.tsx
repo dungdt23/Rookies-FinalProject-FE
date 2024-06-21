@@ -128,6 +128,10 @@ export const staffRoutes: RouteObject[] = [
                         path: routeNames.index,
                         element: <HomePage />
                     },
+                    {
+                        path: routeNames.assignment.list,
+                        element: <AssignmentListPage />
+                    }
                 ]
             }
         ]
