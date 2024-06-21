@@ -14,14 +14,14 @@ import { useTheme } from '@mui/material/styles';
 import { FC, useEffect, useState } from 'react';
 import SimpleBar from 'simplebar-react';
 import 'simplebar-react/dist/simplebar.min.css';
-import { SearchBar } from '../../components/form';
-import { CircularProgressWrapper } from '../../components/loading';
-import { ClickableTableRow, CustomTableCell, CustomTableHead, StyledTableCell } from '../../components/table';
-import { Order, TableHeadInfo } from '../../components/table/CustomTableHead';
-import { removeUndefinedValues } from '../../helpers/removeUndefined';
-import { AssetFieldFilter, fetchAllAssets, GetAllAssetParams } from '../../services/asset.service';
-import { Asset, AssetState } from '../../types/asset';
-import { SortOrder } from '../../types/common';
+import { SearchBar } from '../../../components/form';
+import { CircularProgressWrapper } from '../../../components/loading';
+import { ClickableTableRow, CustomTableCell, CustomTableHead, StyledTableCell } from '../../../components/table';
+import { Order, TableHeadInfo } from '../../../components/table/CustomTableHead';
+import { removeUndefinedValues } from '../../../helpers/removeUndefined';
+import { AssetFieldFilter, fetchAllAssets, GetAllAssetParams } from '../../../services/asset.service';
+import { Asset, AssetState } from '../../../types/asset';
+import { SortOrder } from '../../../types/common';
 
 const TABLE_HEAD: TableHeadInfo[] = [
     {
