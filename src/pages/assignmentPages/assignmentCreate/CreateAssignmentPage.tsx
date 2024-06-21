@@ -81,8 +81,9 @@ const CreateAssignmentPage: FC = () => {
         setUserDialog(true);
     }
 
-    const handleUserDialogClose = () => {
+    const handleUserDialogClose = async () => {
         setUserDialog(false);
+        await formik.validateField('user')
         formik.setFieldTouched('user', true)
     }
 
@@ -90,17 +91,20 @@ const CreateAssignmentPage: FC = () => {
         setAssetDialog(true);
     }
 
-    const handleAssetDialogClose = () => {
+    const handleAssetDialogClose = async () => {
         setAssetDialog(false);
+        await formik.validateField('asset')
         formik.setFieldTouched('asset', true)
     }
 
     const handleSelectUser = (user: User | null) => {
         formik.setFieldValue('user', user);
+        formik.validateField('user')
     };
 
     const handleSelectAsset = (asset: Asset | null): void => {
         formik.setFieldValue('asset', asset);
+        formik.validateField('asset')
     };
 
     return (

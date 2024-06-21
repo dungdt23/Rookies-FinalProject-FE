@@ -51,6 +51,7 @@ import {
 import { fetchAllCategory } from "../../../services/category.service";
 import { Asset, AssetState } from "../../../types/asset";
 import { ListPageProps, ListPageState, SortOrder } from "../../../types/common";
+import { addSpacesToCamelCase } from '../../../helpers/helper';
 
 const ClickableTableRow = styled(TableRow)(({ theme }) => ({
   cursor: "pointer",
@@ -239,57 +240,53 @@ const AssetListPage: FC<ListPageProps> = ({ alertString }) => {
     }
   };
 
-  const renderAssetDetailDialog = (): ReactNode => {
-    if (!selected) return null;
-    const assetDetails = [
-      {
-        label: "Asset Code: ",
-        value: selected?.assetCode,
-      },
-      {
-        label: "Asset Name: ",
-        value: selected?.assetName,
-      },
-      {
-        label: "Category: ",
-        value: selected?.category,
-      },
-      {
-        label: "Location: ",
-        value: selected?.location,
-      },
-      {
-        label: "Specification: ",
-        value: selected?.specification,
-      },
-      {
-        label: "Installed Date: ",
-        value: toStandardFormat(selected?.installedDate),
-      },
-      {
-        label: "State: ",
-        value: selected?.state,
-      },
-    ];
-    return (
-      <Box>
-        {assetDetails.map((item) => (
-          <Grid container spacing={2} key={item.label}>
-            <Grid item xs={4}>
-              <Typography variant="body1" gutterBottom>
-                {item.label}
-              </Typography>
-            </Grid>
-            <Grid item xs={8}>
-              <Typography variant="body1" gutterBottom>
-                {item.value}
-              </Typography>
-            </Grid>
-          </Grid>
-        ))}
-      </Box>
-    );
-  };
+    const renderAssetDetailDialog = (): ReactNode => {
+        if (!selected) return null;
+        const assetDetails = [
+            {
+                label: "Asset Code: ",
+                value: selected?.assetCode,
+            },
+            {
+                label: "Asset Name: ",
+                value: selected?.assetName,
+            },
+            {
+                label: "Category: ",
+                value: selected?.category,
+            },
+            {
+                label: "Location: ",
+                value: selected?.location,
+            },
+            {
+                label: "Specification: ",
+                value: selected?.specification,
+            },
+            {
+                label: "Installed Date: ",
+                value: toStandardFormat(selected?.installedDate),
+            },
+            {
+                label: "State: ",
+                value: addSpacesToCamelCase(AssetState[selected?.state]),
+            },
+        ];
+        return (
+            <Box>
+                {assetDetails.map((item) => (
+                    <Grid container spacing={2} key={item.label}>
+                        <Grid item xs={4}>
+                            <Typography variant="body1" gutterBottom>{item.label}</Typography>
+                        </Grid>
+                        <Grid item xs={8}>
+                            <Typography variant="body1" gutterBottom>{item.value}</Typography>
+                        </Grid>
+                    </Grid>
+                ))}
+            </Box>
+        );
+    };
 
   const handleStateFilter = (event: SelectChangeEvent) => {
     setAssetState(event.target.value as AssetState | "");
@@ -469,7 +466,7 @@ const AssetListPage: FC<ListPageProps> = ({ alertString }) => {
                     <CustomTableCell
                       onClick={(event) => handleRowClick(event, asset)}
                     >
-                      {asset.state}
+                      {addSpacesToCamelCase(AssetState[asset.state])}
                     </CustomTableCell>
                     {asset.state.toString() === "Assigned" && (
                       <StyledTableCell align="center">
