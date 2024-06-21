@@ -37,9 +37,7 @@ import {
   PrefixNameFilter,
 } from "../../../services/category.service";
 import { Asset, AssetState, CreateAssetRequest } from "../../../types/asset";
-import {
-  Category,
-} from "../../../types/category";
+import { Category } from "../../../types/category";
 import { ListPageState } from "../../../types/common";
 import { toISOStringWithoutTimezone } from "../../../helpers/helper";
 
@@ -48,19 +46,16 @@ const RootBox = styled(Box)(() => ({
   margin: "auto",
 }));
 
-// Set dayjs locale if needed
 dayjs.locale("en");
 
-// Custom validation function using dayjs
 const isPastDate = (date: Dayjs) => dayjs(date).isBefore(dayjs(), "day");
 
-// Validation schema
 const validationSchema = yup.object({
   assetName: yup
     .string()
     .required("Please enter asset name")
-    .min(2, 'The asset name length should be 2-100 characters')
-    .max(100, 'The asset name length should be 2-100 characters'),
+    .min(2, "The asset name length should be 2-100 characters")
+    .max(100, "The asset name length should be 2-100 characters"),
   categoryId: yup.string().required("Category is required"),
   installedDate: yup
     .object()
@@ -83,6 +78,19 @@ const validationSchema = yup.object({
       [AssetState.Available, AssetState.NotAvailable],
       "Invalid state value"
     ),
+});
+
+const categoryValidationSchema = yup.object({
+  prefix: yup
+    .string()
+    .required("Please enter prefix")
+    .min(2, "Prefix must be at least 2 characters")
+    .max(4, "Prefix must be at most 4 characters"),
+  categoryName: yup
+    .string()
+    .required("Please enter category name")
+    .min(0, "Category Name must be at least 0 characters")
+    .max(200, "Category Name must be at most 200 characters"),
 });
 
 const debounce = (func: Function, delay: number) => {
@@ -299,21 +307,21 @@ const CreateAssetPage: FC = () => {
                   helperText={
                     formik.touched.specification && formik.errors.specification
                   }
+                  multiline
+                  rows={3}
                 />
               </Grid>
               <Grid item xs={12}>
                 <FormControl
-                  required
                   error={formik.touched.state && Boolean(formik.errors.state)}
-                  component="fieldset"
                 >
                   <FormLabel id="state">State</FormLabel>
                   <RadioGroup
-                    id="state"
+                    row
+                    aria-labelledby="state"
                     name="state"
                     value={formik.values.state}
                     onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
                   >
                     <FormControlLabel
                       value={AssetState.Available}
@@ -323,89 +331,110 @@ const CreateAssetPage: FC = () => {
                     <FormControlLabel
                       value={AssetState.NotAvailable}
                       control={<Radio />}
-                      label="Not available"
+                      label="Not Available"
                     />
                   </RadioGroup>
-                  {formik.touched.state && formik.errors.state && (
-                    <Typography variant="caption" color="error">
-                      {formik.errors.state}
-                    </Typography>
-                  )}
                 </FormControl>
               </Grid>
-              <Grid item xs={12}>
-                <Box sx={{ display: "flex", gap: "1rem" }}>
+            </Grid>
+            <Box mt={3}>
+              <Grid container spacing={1}>
+                <Grid item>
                   <LoadingButton
                     loading={isSubmitting}
                     type="submit"
                     variant="contained"
-                    disabled={!(formik.isValid && formik.dirty)}
+                    color="primary"
                   >
                     Save
                   </LoadingButton>
+                </Grid>
+                <Grid item>
                   <NoStyleLink to={routeNames.asset.list}>
-                    <Button variant="outlined">Cancel</Button>
+                    <Button variant="outlined" color="primary">
+                      Cancel
+                    </Button>
                   </NoStyleLink>
-                </Box>
+                </Grid>
               </Grid>
-            </Grid>
+            </Box>
           </form>
         </Stack>
       </RootBox>
+
       <Dialog open={open} onClose={handleCreateCategoryClose}>
         <DialogTitle>Create a new category</DialogTitle>
         <DialogContent>
           <DialogContentText>
             Please fill in the following fields to create a new category.
           </DialogContentText>
-          <TextField
-            autoFocus
-            margin="dense"
-            id="prefix"
-            name="prefix"
-            label="Prefix"
-            type="text"
-            fullWidth
-            value={newCategory.prefix}
-            onChange={handleCreateCategoryChange}
-            error={!isUnique.prefix && newCategory.prefix !== ""}
-            helperText={
-              !isUnique.prefix && newCategory.prefix !== ""
-                ? "Prefix must be unique"
-                : ""
-            }
-          />
-          <TextField
-            margin="dense"
-            id="categoryName"
-            name="categoryName"
-            label="Category Name"
-            type="text"
-            fullWidth
-            value={newCategory.categoryName}
-            onChange={handleCreateCategoryChange}
-            error={!isUnique.categoryName && newCategory.categoryName !== ""}
-            helperText={
-              !isUnique.categoryName && newCategory.categoryName !== ""
-                ? "Category Name must be unique"
-                : ""
-            }
-          />
+          <form onSubmit={formik.handleSubmit}>
+            <TextField
+              autoFocus
+              margin="dense"
+              id="prefix"
+              name="prefix"
+              label="Prefix"
+              type="text"
+              fullWidth
+              value={newCategory.prefix}
+              onChange={handleCreateCategoryChange}
+              error={Boolean(
+                newCategory.prefix.length < 2 || newCategory.prefix.length > 4
+              )}
+              helperText={
+                newCategory.prefix.length < 2
+                  ? "Prefix must be at least 2 characters"
+                  : newCategory.prefix.length > 4
+                  ? "Prefix must be at most 4 characters"
+                  : !isUnique.prefix && newCategory.prefix !== ""
+                  ? "Prefix must be unique"
+                  : ""
+              }
+            />
+            <TextField
+              margin="dense"
+              id="categoryName"
+              name="categoryName"
+              label="Category Name"
+              type="text"
+              fullWidth
+              value={newCategory.categoryName}
+              onChange={handleCreateCategoryChange}
+              error={Boolean(newCategory.categoryName.length > 200)}
+              helperText={
+                newCategory.categoryName.length > 200
+                  ? "Category Name must be at most 200 characters"
+                  : !isUnique.categoryName && newCategory.categoryName !== ""
+                  ? "Category Name must be unique"
+                  : ""
+              }
+            />
+            <DialogActions>
+              <Button onClick={handleCreateCategoryClose} color="primary">
+                Cancel
+              </Button>
+              <Button
+                type="button"
+                color="primary"
+                variant="contained"
+                onClick={handleCreateCategorySubmit}
+                sx={{ backgroundColor: "red" }}
+                disabled={
+                  !(
+                    newCategory.prefix.length >= 2 &&
+                    newCategory.prefix.length <= 4 &&
+                    isUnique.prefix &&
+                    newCategory.categoryName.length <= 200 &&
+                    isUnique.categoryName
+                  )
+                }
+              >
+                Create
+              </Button>
+            </DialogActions>
+          </form>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCreateCategoryClose} color="primary">
-            Cancel
-          </Button>
-          <Button
-            onClick={handleCreateCategorySubmit}
-            color="primary"
-            variant="contained"
-            sx={{ backgroundColor: "red" }}
-            disabled={!(isUnique.prefix && isUnique.categoryName)}
-          >
-            Create
-          </Button>
-        </DialogActions>
       </Dialog>
     </>
   );
