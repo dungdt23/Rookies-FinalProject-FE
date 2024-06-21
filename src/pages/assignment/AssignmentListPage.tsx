@@ -17,12 +17,13 @@ import { CustomTableCell, StyledTableCell } from "../../components/table";
 import { theme } from "../../constants/appTheme";
 import { CustomPopover } from "../../components/popover";
 import { toStandardFormat } from "../../helpers/formatDate";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { ListPageState } from "../../types/common";
 import { LoadingButton } from "@mui/lab";
 import { log } from "console";
 import { AxiosError } from "axios";
 import { ApiResponse } from "../../services/user.service";
+import { nameof } from "../../helpers/helper";
 
 const ClickableTableRow = styled(TableRow)(({ theme }) => ({
     cursor: "pointer",
@@ -87,6 +88,7 @@ const TABLE_HEAD: TableHeadInfo[] = [
 
 
 const AssignmentListPage = () => {
+    const navigate = useNavigate();
     const defaultSortOrder: Order = "asc"
     const { user } = useAuth();
     const [assignments, _setAssignments] = useState<Assignment[]>([]);
@@ -196,6 +198,10 @@ const AssignmentListPage = () => {
         setCanDisable(true);
     }
 
+    const handleEditClick = (assignment: Assignment) => {
+        navigate(routeNames.assignment.edit(assignment.id));
+    }
+
     const handleChangePage = (_: unknown, newPage: number) => {
         setPage(newPage);
     }
@@ -225,7 +231,6 @@ const AssignmentListPage = () => {
         }
         setIsDisabling(false);
     }
-
     const renderAssignmentDetailDialog = (): ReactNode => {
         if (!selected) return null;
         const assignmentDetails = [
@@ -400,15 +405,15 @@ const AssignmentListPage = () => {
                                         <StyledTableCell align="center">
                                             {user?.role === UserType.Admin &&
                                                 <>
-                                                    <NoStyleLink to={routeNames.assignment.edit(assignment.id)}>
-                                                        <IconButton disabled={assignment.state !== AssignmentState.WaitingForAcceptance}>
-                                                        <Edit color={assignment.state !== AssignmentState.WaitingForAcceptance ? "disabled" : "primary"} />
-                                                        </IconButton>
-                                                    </NoStyleLink>
+                                                    <IconButton 
+                                                    disabled={assignment.state !== AssignmentState.WaitingForAcceptance}
+                                                    onClick={() => handleEditClick(assignment)}>
+                                                        <Edit color={assignment.state === AssignmentState.WaitingForAcceptance ? "primary" : "disabled"} />
+                                                    </IconButton>
                                                     <IconButton
                                                         disabled={assignment.state !== AssignmentState.WaitingForAcceptance}
                                                         onClick={(event) => handleDeleteClick(event, assignment)}>
-                                                        <HighlightOff color="primary" />
+                                                        <HighlightOff color={assignment.state === AssignmentState.WaitingForAcceptance ? "primary" : "disabled"} />
                                                     </IconButton>
                                                 </>}
                                             {user?.role === UserType.Staff &&
