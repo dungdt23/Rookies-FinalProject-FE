@@ -1,29 +1,26 @@
-import { Alert, Box, Button, Divider, FormControl, Grid, IconButton, InputBase, InputLabel, MenuItem, Pagination, Paper, Select, SelectChangeEvent, Table, TableBody, TableContainer, TableRow, Typography, styled } from "@mui/material";
-import { MouseEvent, ReactNode, useEffect, useRef, useState } from "react";
-import { Helmet } from "react-helmet-async";
-import { Assignment, AssignmentState } from "../../types/assignment";
 import { Check, Close, Edit, HighlightOff, Refresh, Search } from "@mui/icons-material";
-import { NoStyleLink } from "../../components/noStyleLink";
-import { routeNames } from "../../constants/routeName";
+import { LoadingButton } from "@mui/lab";
+import { Alert, Box, Button, Divider, FormControl, Grid, IconButton, InputBase, InputLabel, MenuItem, Pagination, Paper, Select, SelectChangeEvent, Table, TableBody, TableContainer, TableRow, Typography, styled } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
-import { CircularProgressWrapper } from "../../components/loading";
-import CustomTableHead, { Order, TableHeadInfo } from "../../components/table/CustomTableHead";
-import { FieldAssignmentFilter, GetAllAssignmentParams, disableAssignmentrById, fetchAllAssignments } from "../../services/assignment.service";
-import { removeUndefinedValues } from "../../helpers/removeUndefined";
-import { UserType } from "../../types/user";
-import { useAuth } from "../../contexts/AuthContext";
-import { CustomTableCell, StyledTableCell } from "../../components/table";
-import { theme } from "../../constants/appTheme";
-import { CustomPopover } from "../../components/popover";
-import { toStandardFormat } from "../../helpers/formatDate";
+import { MouseEvent, ReactNode, useEffect, useRef, useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { useLocation, useNavigate } from "react-router-dom";
+import { CircularProgressWrapper } from "../../components/loading";
+import { NoStyleLink } from "../../components/noStyleLink";
+import { CustomPopover } from "../../components/popover";
+import { CustomTableCell, StyledTableCell } from "../../components/table";
+import CustomTableHead, { Order, TableHeadInfo } from "../../components/table/CustomTableHead";
+import { theme } from "../../constants/appTheme";
+import { routeNames } from "../../constants/routeName";
+import { useAuth } from "../../contexts/AuthContext";
+import { toStandardFormat } from "../../helpers/formatDate";
+import { addSpacesToCamelCase } from '../../helpers/helper';
+import { removeUndefinedValues } from "../../helpers/removeUndefined";
+import { FieldAssignmentFilter, GetAllAssignmentParams, disableAssignmentrById, fetchAllAssignments } from "../../services/assignment.service";
+import { Assignment, AssignmentState } from "../../types/assignment";
 import { ListPageState } from "../../types/common";
-import { LoadingButton } from "@mui/lab";
-import { log } from "console";
-import { AxiosError } from "axios";
-import { ApiResponse } from "../../services/user.service";
-import { nameof } from "../../helpers/helper";
+import { UserType } from "../../types/user";
 
 const ClickableTableRow = styled(TableRow)(({ theme }) => ({
     cursor: "pointer",
@@ -260,7 +257,7 @@ const AssignmentListPage = () => {
             },
             {
                 label: "State: ",
-                value: AssignmentState[selected?.state],
+                value: addSpacesToCamelCase(addSpacesToCamelCase(AssignmentState[selected?.state])),
             },
             {
                 label: "Note: ",
@@ -401,13 +398,13 @@ const AssignmentListPage = () => {
                                         <CustomTableCell onClick={(event) => handleRowClick(event, assignment)}>{assignment.assignedTo}</CustomTableCell>
                                         <CustomTableCell onClick={(event) => handleRowClick(event, assignment)}>{assignment.assignedBy}</CustomTableCell>
                                         <CustomTableCell onClick={(event) => handleRowClick(event, assignment)}>{toStandardFormat(assignment.assignedDate)}</CustomTableCell>
-                                        <CustomTableCell onClick={(event) => handleRowClick(event, assignment)}>{assignment.state}</CustomTableCell>
+                                        <CustomTableCell onClick={(event) => handleRowClick(event, assignment)}>{addSpacesToCamelCase(AssignmentState[assignment.state])}</CustomTableCell>
                                         <StyledTableCell align="center">
                                             {user?.role === UserType.Admin &&
                                                 <>
-                                                    <IconButton 
-                                                    disabled={assignment.state !== AssignmentState.WaitingForAcceptance}
-                                                    onClick={() => handleEditClick(assignment)}>
+                                                    <IconButton
+                                                        disabled={assignment.state !== AssignmentState.WaitingForAcceptance}
+                                                        onClick={() => handleEditClick(assignment)}>
                                                         <Edit color={assignment.state === AssignmentState.WaitingForAcceptance ? "primary" : "disabled"} />
                                                     </IconButton>
                                                     <IconButton

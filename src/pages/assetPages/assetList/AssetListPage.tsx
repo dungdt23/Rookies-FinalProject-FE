@@ -19,6 +19,7 @@ import { AssetFieldFilter, deleteAssetById, fetchAllAssets as fetchAllAssets, Ge
 import { fetchAllCategory } from "../../../services/category.service";
 import { Asset, AssetState } from '../../../types/asset';
 import { ListPageProps, ListPageState, SortOrder } from "../../../types/common";
+import { addSpacesToCamelCase } from '../../../helpers/helper';
 
 const ClickableTableRow = styled(TableRow)(({ theme }) => ({
     cursor: "pointer",
@@ -232,7 +233,7 @@ const AssetListPage: FC<ListPageProps> = ({ alertString }) => {
             },
             {
                 label: "State: ",
-                value: selected?.state,
+                value: addSpacesToCamelCase(AssetState[selected?.state]),
             },
         ];
         return (
@@ -383,7 +384,7 @@ const AssetListPage: FC<ListPageProps> = ({ alertString }) => {
                                         <CustomTableCell onClick={(event) => handleRowClick(event, asset)}>{asset.assetCode}</CustomTableCell>
                                         <CustomTableCell onClick={(event) => handleRowClick(event, asset)}>{asset.assetName}</CustomTableCell>
                                         <CustomTableCell onClick={(event) => handleRowClick(event, asset)}>{asset.category}</CustomTableCell>
-                                        <CustomTableCell onClick={(event) => handleRowClick(event, asset)}>{asset.state}</CustomTableCell>
+                                        <CustomTableCell onClick={(event) => handleRowClick(event, asset)}>{addSpacesToCamelCase(AssetState[asset.state])}</CustomTableCell>
                                         <StyledTableCell align="center">
                                             <NoStyleLink to={routeNames.asset.edit(asset.id)}>
                                                 <IconButton>
