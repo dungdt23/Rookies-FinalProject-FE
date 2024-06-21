@@ -6,3 +6,7 @@ export function nameof<T>(key: keyof T): string {
 export function toISOStringWithoutTimezone(date: Dayjs) {
     return dayjs(date).format('YYYY-MM-DDTHH:mm:ss.SSS')
 }
+
+export function addSpacesToCamelCase(str) {
+    return str.replace(/([a-z])([A-Z])/g, '$1 $2');
+}

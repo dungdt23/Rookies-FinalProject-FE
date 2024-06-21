@@ -14,13 +14,13 @@ import { useTheme } from '@mui/material/styles';
 import { FC, useEffect, useState } from 'react';
 import SimpleBar from 'simplebar-react';
 import 'simplebar-react/dist/simplebar.min.css';
-import { SearchBar } from '../../components/form';
-import { CircularProgressWrapper } from '../../components/loading';
-import { ClickableTableRow, CustomTableCell, CustomTableHead, StyledTableCell } from '../../components/table';
-import { Order, TableHeadInfo } from '../../components/table/CustomTableHead';
-import { removeUndefinedValues } from '../../helpers/removeUndefined';
-import { fetchAllUsers, GetAllUserParams, UserFieldFilter } from '../../services/user.service';
-import { User } from '../../types/user';
+import { SearchBar } from '../../../components/form';
+import { CircularProgressWrapper } from '../../../components/loading';
+import { ClickableTableRow, CustomTableCell, CustomTableHead, StyledTableCell } from '../../../components/table';
+import { Order, TableHeadInfo } from '../../../components/table/CustomTableHead';
+import { removeUndefinedValues } from '../../../helpers/removeUndefined';
+import { fetchAllUsers, GetAllUserParams, UserFieldFilter } from '../../../services/user.service';
+import { User } from '../../../types/user';
 
 const TABLE_HEAD: TableHeadInfo[] = [
     {

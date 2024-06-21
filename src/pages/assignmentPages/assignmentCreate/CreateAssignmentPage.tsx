@@ -8,14 +8,14 @@ import { FC, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 import * as yup from 'yup';
-import { NoStyleLink } from '../../components/noStyleLink';
-import { routeNames } from '../../constants/routeName';
-import { toISOStringWithoutTimezone } from '../../helpers/helper';
-import { createAssignment, CreateAssignmentRequest } from '../../services/assignment.service';
-import { Asset } from '../../types/asset';
-import { Assignment } from '../../types/assignment';
-import { ListPageState } from '../../types/common';
-import { User } from '../../types/user';
+import { NoStyleLink } from '../../../components/noStyleLink';
+import { routeNames } from '../../../constants/routeName';
+import { toISOStringWithoutTimezone } from '../../../helpers/helper';
+import { createAssignment, CreateAssignmentRequest } from '../../../services/assignment.service';
+import { Asset } from '../../../types/asset';
+import { Assignment } from '../../../types/assignment';
+import { ListPageState } from '../../../types/common';
+import { User } from '../../../types/user';
 import AssetSelectionDialog from './AssetSelectionDialog';
 import UserSelectionDialog from './UserSelectionDialog';
 
@@ -26,7 +26,6 @@ const RootBox = styled(Box)(() => ({
 
 // Custom validation functions using dayjs
 const isAfterOrEqual = (a: Dayjs, b: Dayjs) => dayjs(a).add(1, 'day').isAfter(b);
-const isWeekday = (date: Dayjs) => dayjs(date).day() !== 0 && dayjs(date).day() !== 6;
 
 // Validation schema
 const validationSchema = yup.object({
@@ -34,8 +33,8 @@ const validationSchema = yup.object({
     user: yup.object().nullable().required('Please select a user'),
     note: yup.string().max(500, "The note's length should not exceed 500 characters."),
     assignedDate: yup.object().nullable().required('Please choose assigned date')
-        .test('is-weekday', 'Assigned date is Saturday or Sunday. Please select a different date', function (value) {
-            return isWeekday(value as Dayjs);
+        .test('is-present-or-future', 'The Assigned date is in the future. Please select another date.', function (value) {
+            return isAfterOrEqual(value as Dayjs, dayjs())
         }),
 });
 
@@ -43,16 +42,14 @@ const CreateAssignmentPage: FC = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const navigate = useNavigate();
     const [userDialog, setUserDialog] = useState<boolean>(false);
-    const [selectedUser, setSelectedUser] = useState<User | null>(null);
     const [assetDialog, setAssetDialog] = useState<boolean>(false);
-    const [selectedAsset, setSelectedAsset] = useState<Asset | null>(null);
 
     const formik = useFormik({
         initialValues: {
             asset: null as Asset | null,
             user: null as User | null,
             note: '',
-            assignedDate: null as Dayjs | null,
+            assignedDate: dayjs() as Dayjs | null,
         },
         validationSchema: validationSchema,
         onSubmit: async (values) => {
@@ -86,6 +83,7 @@ const CreateAssignmentPage: FC = () => {
 
     const handleUserDialogClose = () => {
         setUserDialog(false);
+        formik.setFieldTouched('user', true)
     }
 
     const handleAssetTextfieldClick = () => {
@@ -94,15 +92,14 @@ const CreateAssignmentPage: FC = () => {
 
     const handleAssetDialogClose = () => {
         setAssetDialog(false);
+        formik.setFieldTouched('asset', true)
     }
 
     const handleSelectUser = (user: User | null) => {
-        setSelectedUser(user);
         formik.setFieldValue('user', user);
     };
 
     const handleSelectAsset = (asset: Asset | null): void => {
-        setSelectedAsset(asset);
         formik.setFieldValue('asset', asset);
     };
 
@@ -124,8 +121,8 @@ const CreateAssignmentPage: FC = () => {
                                     fullWidth
                                     label="User"
                                     placeholder='User'
-                                    value={selectedUser ? `${selectedUser.lastName} ${selectedUser.firstName}` : ""}
-                                    InputLabelProps={{ shrink: Boolean(selectedUser) }}
+                                    value={formik.values.user ? `${formik.values.user.lastName} ${formik.values.user.firstName}` : ""}
+                                    InputLabelProps={{ shrink: Boolean(formik.values.user) }}
                                     onClick={handleUserTextfieldClick}
                                     InputProps={{
                                         readOnly: true,
@@ -152,10 +149,10 @@ const CreateAssignmentPage: FC = () => {
                                     id="asset"
                                     fullWidth
                                     label="Asset"
-                                    value={selectedAsset ? selectedAsset.assetName : ""}
+                                    value={formik.values.asset ? formik.values.asset.assetName : ""}
                                     placeholder='Asset'
                                     onClick={handleAssetTextfieldClick}
-                                    InputLabelProps={{ shrink: Boolean(selectedAsset) }}
+                                    InputLabelProps={{ shrink: Boolean(formik.values.user) }}
                                     InputProps={{
                                         readOnly: true,
                                         endAdornment: (
@@ -178,6 +175,7 @@ const CreateAssignmentPage: FC = () => {
                             <Grid item xs={12}>
                                 <DatePicker
                                     format="DD/MM/YYYY"
+                                    minDate={dayjs()}
                                     value={formik.values.assignedDate}
                                     onChange={(value) => dayjs(value).isValid() && formik.setFieldValue('assignedDate', value, true)}
                                     slotProps={{
@@ -196,10 +194,12 @@ const CreateAssignmentPage: FC = () => {
                             <Grid item xs={12} >
                                 <TextField
                                     fullWidth
+                                    multiline
+                                    rows={4}
                                     id="note"
                                     name="note"
                                     label="Note"
-                                    value={formik.values.note}
+                                    value={formik.values.note}  
                                     onChange={formik.handleChange}
                                     onBlur={formik.handleBlur}
                                     error={formik.touched.note && Boolean(formik.errors.note)}
