@@ -1,4 +1,4 @@
-import { Edit, HighlightOff } from "@mui/icons-material";
+import { Edit, HighlightOff, Search } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
 import {
   Alert,
@@ -15,17 +15,16 @@ import {
   Paper,
   Select,
   SelectChangeEvent,
-  styled,
   Table,
   TableBody,
   TableContainer,
   TableRow,
   Typography,
+  styled,
 } from "@mui/material";
 import { FC, MouseEvent, ReactNode, useEffect, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useLocation } from "react-router-dom";
-import { SearchBar } from "../../../components/form";
 import { CircularProgressWrapper } from "../../../components/loading";
 import { NoStyleLink } from "../../../components/noStyleLink";
 import { CustomPopover } from "../../../components/popover";
