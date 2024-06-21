@@ -84,6 +84,7 @@ const TABLE_HEAD: TableHeadInfo[] = [
   {
     id: AssetFieldFilter[AssetFieldFilter.category],
     label: "Category",
+    sortable: true,
   },
   {
     id: AssetFieldFilter[AssetFieldFilter.state],
@@ -232,7 +233,7 @@ const AssetListPage: FC<ListPageProps> = ({ alertString }) => {
 
   const handleSearchSubmit = () => {
     if (inputRef.current) {
-      const searchQuery = inputRef.current.value;
+      const searchQuery = inputRef.current.value.trim();
       setSearch(searchQuery);
       setPage(1); // Reset to the first page on search
     }
