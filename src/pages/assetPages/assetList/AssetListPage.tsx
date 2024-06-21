@@ -45,7 +45,7 @@ import { removeUndefinedValues } from "../../../helpers/removeUndefined";
 import {
   AssetFieldFilter,
   deleteAssetById,
-  fetchAllAsset as fetchAllAssets,
+  fetchAllAssets,
   GetAllAssetParams,
 } from "../../../services/asset.service";
 import { fetchAllCategory } from "../../../services/category.service";
