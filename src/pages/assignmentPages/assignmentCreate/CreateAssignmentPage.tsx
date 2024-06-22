@@ -130,7 +130,6 @@ const CreateAssignmentPage: FC = () => {
                                     onClick={handleUserTextfieldClick}
                                     InputProps={{
                                         readOnly: true,
-                                        
                                         endAdornment: (
                                             <InputAdornment position="end">
                                                 <>
@@ -156,7 +155,7 @@ const CreateAssignmentPage: FC = () => {
                                     value={formik.values.asset ? formik.values.asset.assetName : ""}
                                     placeholder='Asset'
                                     onClick={handleAssetTextfieldClick}
-                                    InputLabelProps={{ shrink: Boolean(formik.values.user) }}
+                                    InputLabelProps={{ shrink: Boolean(formik.values.asset) }}
                                     InputProps={{
                                         readOnly: true,
                                         endAdornment: (
