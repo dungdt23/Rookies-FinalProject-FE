@@ -119,12 +119,12 @@ const CreateUserPage: FC = () => {
     return (
         <>
             <Helmet>
-                <title>Create User</title>
+                <title>Create New User</title>
             </Helmet>
             <RootBox>
                 <Stack spacing={3}>
                     <Typography variant="h6" gutterBottom color="primary">
-                        Create User
+                        Create New User
                     </Typography>
                     <form onSubmit={formik.handleSubmit}>
                         <Grid container spacing={3}>

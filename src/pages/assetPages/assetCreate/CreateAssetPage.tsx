@@ -209,12 +209,12 @@ const CreateAssetPage: FC = () => {
   return (
     <>
       <Helmet>
-        <title>Create Asset</title>
+        <title>Create An Asset</title>
       </Helmet>
       <RootBox>
         <Stack spacing={3}>
           <Typography variant="h6" gutterBottom color="primary">
-            Create Asset
+            Create An Asset
           </Typography>
           <form onSubmit={formik.handleSubmit}>
             <Grid container spacing={3}>

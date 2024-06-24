@@ -140,7 +140,7 @@ const AssetSelectionDialog: FC<AssetSelectionDialogProps> = ({ open, onClose, se
                 },
             }}
         >
-            <DialogTitle>Select Asset</DialogTitle>
+            <DialogTitle>Select A Asset</DialogTitle>
             <Box sx={{ display: "flex", flexDirection: "column", p: "0 1rem 1rem 1rem", gap: "0.5rem" }}>
                 <SearchBar
                     placeholderSearch='Search asset by code and name'
