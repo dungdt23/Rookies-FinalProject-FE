@@ -48,23 +48,33 @@ const RootBox = styled(Box)(() => ({
 
 dayjs.locale("en");
 
-const isPastDate = (date: Dayjs) => dayjs(date).isBefore(dayjs(), "day");
+const isPastDate = (date: any) =>
+  dayjs(date).isBefore(dayjs(), "day") || dayjs(date).isSame(dayjs(), "day");
+const isValidDate = (date: any) => dayjs(date).isValid();
 
 const validationSchema = yup.object({
   assetName: yup
     .string()
     .required("Please enter asset name")
     .min(2, "The asset name length should be 2-200 characters")
-    .max(200, "The asset name length should be 2-200 characters"),
+    .max(200, "The asset name length should be 2-200 characters")
+    .test(
+      "no-only-spaces",
+      "Please enter Asset name",
+      (value) => value.trim().length > 0
+    ),
   categoryId: yup.string().required("Category is required"),
   installedDate: yup
-    .object()
+    .mixed()
     .required("Please enter installed date")
+    .test("is-valid-date", "Please enter a valid date", function (value) {
+      return isValidDate(value);
+    })
     .test(
       "is-past-date",
-      "Installed date must be in the past",
+      "Installed date must be in present or in the past",
       function (value) {
-        return isPastDate(value as Dayjs);
+        return isValidDate(value) && isPastDate(value);
       }
     ),
   specification: yup
@@ -163,6 +173,8 @@ const CreateAssetPage: FC = () => {
 
   const handleCreateCategorySubmit = async () => {
     try {
+      newCategory.categoryName = newCategory.categoryName.trim();
+      newCategory.prefix = newCategory.prefix.trim();
       const response = await createCategory(newCategory);
       setCategories([...categories, response.data]);
       setNewCategory({ prefix: "", categoryName: "" });
@@ -181,13 +193,14 @@ const CreateAssetPage: FC = () => {
       state: AssetState.Available,
     },
     validationSchema: validationSchema,
+    validateOnMount: true,
     onSubmit: async (values) => {
       setIsSubmitting(true);
       const payload = {
-        assetName: values.assetName,
+        assetName: values.assetName.trim(),
         categoryId: values.categoryId,
         installedDate: toISOStringWithoutTimezone(values.installedDate!),
-        specification: values.specification,
+        specification: values.specification.trim(),
         state: Number(values.state),
       } as CreateAssetRequest;
       try {
@@ -208,13 +221,15 @@ const CreateAssetPage: FC = () => {
 
   const handleInstalledDateChanges = (value: Dayjs | null) => {
     if (dayjs(value).isValid()) {
-      formik.setFieldValue('installedDate', value, true)
+      formik.setFieldValue("installedDate", value, true);
+    } else {
+      formik.setFieldValue("installedDate", null, true);
     }
-  }
+  };
 
   const handleInstalledDateBlur = () => {
-    formik.setFieldTouched('installedDate', true)
-  }
+    formik.setFieldTouched("installedDate", true);
+  };
 
   return (
     <>
@@ -280,8 +295,9 @@ const CreateAssetPage: FC = () => {
                 </TextField>
               </Grid>
               <Grid item xs={12}>
-              <DatePicker
+                <DatePicker
                   format="DD/MM/YYYY"
+                  maxDate={dayjs()}
                   value={formik.values.installedDate}
                   onChange={handleInstalledDateChanges}
                   slotProps={{
@@ -290,8 +306,12 @@ const CreateAssetPage: FC = () => {
                       name: "installedDate",
                       label: "Installed Date",
                       onBlur: handleInstalledDateBlur,
-                      error: formik.touched.installedDate && Boolean(formik.errors.installedDate),
-                      helperText: formik.touched.installedDate && formik.errors.installedDate,
+                      error:
+                        formik.touched.installedDate &&
+                        Boolean(formik.errors.installedDate),
+                      helperText:
+                        formik.touched.installedDate &&
+                        formik.errors.installedDate,
                       fullWidth: true,
                       required: true,
                     },
@@ -353,6 +373,7 @@ const CreateAssetPage: FC = () => {
                     type="submit"
                     variant="contained"
                     color="primary"
+                    disabled={!formik.isValid || formik.isSubmitting}
                   >
                     Save
                   </LoadingButton>
@@ -376,13 +397,13 @@ const CreateAssetPage: FC = () => {
           <DialogContentText>
             Please fill in the following fields to create a new category.
           </DialogContentText>
-          <form onSubmit={formik.handleSubmit}>
+          <form>
             <TextField
               autoFocus
               margin="dense"
               id="prefix"
               name="prefix"
-              label="Prefix"
+              label="Prefix *"
               type="text"
               fullWidth
               value={newCategory.prefix}
@@ -395,16 +416,23 @@ const CreateAssetPage: FC = () => {
                   ? "Prefix must be at least 2 characters"
                   : newCategory.prefix.length > 4
                   ? "Prefix must be at most 4 characters"
+                  : /\s/.test(newCategory.prefix)
+                  ? "Prefix should not contain spaces"
                   : !isUnique.prefix && newCategory.prefix !== ""
                   ? "Prefix is already existed. Please enter a different prefix (EL, CM)"
+                  : !/^[a-zA-Z]+$/.test(newCategory.prefix)
+                  ? "Category prefix should only contain alphabets"
                   : ""
               }
+              FormHelperTextProps={{
+                sx: { color: "red" },
+              }}
             />
             <TextField
               margin="dense"
               id="categoryName"
               name="categoryName"
-              label="Category Name"
+              label="Category Name *"
               type="text"
               fullWidth
               value={newCategory.categoryName}
@@ -413,10 +441,17 @@ const CreateAssetPage: FC = () => {
               helperText={
                 newCategory.categoryName.length > 200
                   ? "Category Name must be at most 200 characters"
+                  : newCategory.categoryName.trim().length < 2
+                  ? "Category Name must be at least 2 characters"
+                  : newCategory.categoryName.trim().length === 0
+                  ? "Please enter a category prefix"
                   : !isUnique.categoryName && newCategory.categoryName !== ""
                   ? "Category is already existed. Please enter a different category (Electronic, Computer)"
                   : ""
               }
+              FormHelperTextProps={{
+                sx: { color: "red" },
+              }}
             />
             <DialogActions>
               <Button onClick={handleCreateCategoryClose} color="primary">
@@ -430,11 +465,14 @@ const CreateAssetPage: FC = () => {
                 sx={{ backgroundColor: "red" }}
                 disabled={
                   !(
-                    newCategory.prefix.length >= 2 &&
+                    newCategory.prefix.trim().length >= 2 &&
                     newCategory.prefix.length <= 4 &&
+                    !/\s/.test(newCategory.prefix) &&
                     isUnique.prefix &&
                     newCategory.categoryName.length <= 200 &&
-                    isUnique.categoryName
+                    newCategory.categoryName.trim().length >= 2 &&
+                    isUnique.categoryName &&
+                    /^[a-zA-Z]+$/.test(newCategory.prefix)
                   )
                 }
               >
