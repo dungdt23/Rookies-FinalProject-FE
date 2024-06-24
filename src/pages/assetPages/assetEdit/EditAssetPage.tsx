@@ -77,11 +77,11 @@ const EditAssetPage: FC = () => {
   const navigate = useNavigate();
 
   const fetchAssetDetails = useCallback(async () => {
-    
+
     try {
       const response = await fetchAssetById(assetId!);
       const asset = response.data;
-      
+
       formik.setValues({
         assetName: asset.assetName,
         installedDate: dayjs(asset.installedDate),
@@ -147,6 +147,16 @@ const EditAssetPage: FC = () => {
     },
   });
 
+  const handleInstalledDateChanges = (value: Dayjs | null) => {
+    if (dayjs(value).isValid()) {
+      formik.setFieldValue('installedDate', value, true)
+    }
+  }
+
+  const handleInstalledDateBlur = () => {
+    formik.setFieldTouched('installedDate', true)
+  }
+
   return (
     <>
       <Helmet>
@@ -199,17 +209,15 @@ const EditAssetPage: FC = () => {
                 <DatePicker
                   format="DD/MM/YYYY"
                   value={formik.values.installedDate}
-                  onChange={(value) =>
-                    dayjs(value).isValid() &&
-                    formik.setFieldValue("installedDate", value, true)
-                  }
+                  onChange={handleInstalledDateChanges}
                   slotProps={{
                     textField: {
                       id: "installedDate",
                       name: "installedDate",
                       label: "Installed Date",
-                      error: Boolean(formik.errors.installedDate),
-                      helperText: formik.errors.installedDate,
+                      onBlur: handleInstalledDateBlur,
+                      error: formik.touched.installedDate && Boolean(formik.errors.installedDate),
+                      helperText: formik.touched.installedDate && formik.errors.installedDate,
                       fullWidth: true,
                       required: true,
                     },

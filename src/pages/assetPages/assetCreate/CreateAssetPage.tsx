@@ -206,6 +206,16 @@ const CreateAssetPage: FC = () => {
     },
   });
 
+  const handleInstalledDateChanges = (value: Dayjs | null) => {
+    if (dayjs(value).isValid()) {
+      formik.setFieldValue('installedDate', value, true)
+    }
+  }
+
+  const handleInstalledDateBlur = () => {
+    formik.setFieldTouched('installedDate', true)
+  }
+
   return (
     <>
       <Helmet>
@@ -270,20 +280,18 @@ const CreateAssetPage: FC = () => {
                 </TextField>
               </Grid>
               <Grid item xs={12}>
-                <DatePicker
+              <DatePicker
                   format="DD/MM/YYYY"
                   value={formik.values.installedDate}
-                  onChange={(value) =>
-                    dayjs(value).isValid() &&
-                    formik.setFieldValue("installedDate", value, true)
-                  }
+                  onChange={handleInstalledDateChanges}
                   slotProps={{
                     textField: {
                       id: "installedDate",
                       name: "installedDate",
                       label: "Installed Date",
-                      error: Boolean(formik.errors.installedDate),
-                      helperText: formik.errors.installedDate,
+                      onBlur: handleInstalledDateBlur,
+                      error: formik.touched.installedDate && Boolean(formik.errors.installedDate),
+                      helperText: formik.touched.installedDate && formik.errors.installedDate,
                       fullWidth: true,
                       required: true,
                     },

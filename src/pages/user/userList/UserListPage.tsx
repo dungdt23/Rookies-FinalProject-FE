@@ -421,7 +421,7 @@ const UserListPage: FC = () => {
                     <CustomTableCell
                       onClick={(event) => handleRowClick(event, user)}
                     >
-                      {user.lastName + " " + user.firstName}
+                      {user.firstName + " " + user.lastName}
                     </CustomTableCell>
                     <CustomTableCell
                       onClick={(event) => handleRowClick(event, user)}

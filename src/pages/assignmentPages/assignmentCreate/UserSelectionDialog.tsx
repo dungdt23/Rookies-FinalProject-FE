@@ -172,7 +172,7 @@ const UserSelectionDialog: FC<UserSelectionDialogProps> = ({ open, onClose, sele
                                                 />
                                             </StyledTableCell>
                                             <CustomTableCell onClick={() => handleRowClick(user)}>{user.staffCode}</CustomTableCell>
-                                            <CustomTableCell onClick={() => handleRowClick(user)}>{user.lastName + ' ' + user.firstName}</CustomTableCell>
+                                            <CustomTableCell onClick={() => handleRowClick(user)}>{user.firstName + ' ' + user.lastName}</CustomTableCell>
                                             <CustomTableCell onClick={() => handleRowClick(user)}>{user.type}</CustomTableCell>
                                         </ClickableTableRow>
                                     ))}
