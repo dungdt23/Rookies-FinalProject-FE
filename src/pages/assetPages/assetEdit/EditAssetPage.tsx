@@ -156,6 +156,15 @@ const EditAssetPage: FC = () => {
     },
   });
 
+  const handleInstalledDateChanges = (value: Dayjs | null) => {
+    if (dayjs(value).isValid()) {
+      formik.setFieldValue('installedDate', value, true)
+    }
+  }
+
+  const handleInstalledDateBlur = () => {
+    formik.setFieldTouched('installedDate', true)
+  }
   return (
     <>
       <Helmet>
@@ -207,6 +216,7 @@ const EditAssetPage: FC = () => {
               <Grid item xs={12}>
                 <DatePicker
                   format="DD/MM/YYYY"
+                  maxDate={dayjs()}
                   value={formik.values.installedDate}
                   onChange={(value) =>
                     formik.setFieldValue("installedDate", value)

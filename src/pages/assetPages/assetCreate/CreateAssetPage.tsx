@@ -67,7 +67,7 @@ const validationSchema = yup.object({
   installedDate: yup
     .mixed()
     .required("Please enter installed date")
-    .test("is-valid-date", "Please enter installed date", function (value) {
+    .test("is-valid-date", "Please enter a valid date", function (value) {
       return isValidDate(value);
     })
     .test(
@@ -221,13 +221,15 @@ const CreateAssetPage: FC = () => {
 
   const handleInstalledDateChanges = (value: Dayjs | null) => {
     if (dayjs(value).isValid()) {
-      formik.setFieldValue('installedDate', value, true)
+      formik.setFieldValue("installedDate", value, true);
+    } else {
+      formik.setFieldValue("installedDate", null, true);
     }
-  }
+  };
 
   const handleInstalledDateBlur = () => {
-    formik.setFieldTouched('installedDate', true)
-  }
+    formik.setFieldTouched("installedDate", true);
+  };
 
   return (
     <>
@@ -293,8 +295,9 @@ const CreateAssetPage: FC = () => {
                 </TextField>
               </Grid>
               <Grid item xs={12}>
-              <DatePicker
+                <DatePicker
                   format="DD/MM/YYYY"
+                  maxDate={dayjs()}
                   value={formik.values.installedDate}
                   onChange={handleInstalledDateChanges}
                   slotProps={{
@@ -303,8 +306,12 @@ const CreateAssetPage: FC = () => {
                       name: "installedDate",
                       label: "Installed Date",
                       onBlur: handleInstalledDateBlur,
-                      error: formik.touched.installedDate && Boolean(formik.errors.installedDate),
-                      helperText: formik.touched.installedDate && formik.errors.installedDate,
+                      error:
+                        formik.touched.installedDate &&
+                        Boolean(formik.errors.installedDate),
+                      helperText:
+                        formik.touched.installedDate &&
+                        formik.errors.installedDate,
                       fullWidth: true,
                       required: true,
                     },
@@ -390,7 +397,7 @@ const CreateAssetPage: FC = () => {
           <DialogContentText>
             Please fill in the following fields to create a new category.
           </DialogContentText>
-          <form onSubmit={formik.handleSubmit}>
+          <form>
             <TextField
               autoFocus
               margin="dense"
