@@ -141,12 +141,22 @@ const EditAssignmentPage: FC = () => {
         formik.validateField('asset')
     };
 
+    const handleAssignedDateChanges = (value: Dayjs | null) => {
+        if (dayjs(value).isValid()) {
+            formik.setFieldValue('assignedDate', value, true)
+        }
+    }
+
+    const handleAssignedDateBlur = () => {
+        formik.setFieldTouched('assignedDate', true)
+    }
+
     if (isFetching) {
         return <Typography>Loading...</Typography>;
     }
 
     if (!assignment) {
-        return <Error404/>;
+        return <Error404 />;
     }
 
     return (
@@ -167,12 +177,12 @@ const EditAssignmentPage: FC = () => {
                                     fullWidth
                                     label="User"
                                     placeholder='User'
-                                    value={formik.values.user ? `${formik.values.user.lastName} ${formik.values.user.firstName}` : ""}
+                                    value={formik.values.user ? `${formik.values.user.firstName} ${formik.values.user.lastName}` : ""}
                                     InputLabelProps={{ shrink: Boolean(formik.values.user) }}
                                     onClick={handleUserTextfieldClick}
                                     InputProps={{
                                         readOnly: true,
-                                        
+
                                         endAdornment: (
                                             <InputAdornment position="end">
                                                 <>
@@ -223,14 +233,15 @@ const EditAssignmentPage: FC = () => {
                                     format="DD/MM/YYYY"
                                     minDate={dayjs()}
                                     value={formik.values.assignedDate}
-                                    onChange={(value) => dayjs(value).isValid() && formik.setFieldValue('assignedDate', value, true)}
+                                    onChange={handleAssignedDateChanges}
                                     slotProps={{
                                         textField: {
                                             id: "assignedDate",
                                             name: "assignedDate",
                                             label: "Assigned Date",
-                                            error: Boolean(formik.errors.assignedDate),
-                                            helperText: formik.errors.assignedDate,
+                                            onBlur: handleAssignedDateBlur,
+                                            error: formik.touched.assignedDate && Boolean(formik.errors.assignedDate),
+                                            helperText: formik.touched.assignedDate && formik.errors.assignedDate,
                                             fullWidth: true,
                                             required: true,
                                         }
@@ -245,7 +256,7 @@ const EditAssignmentPage: FC = () => {
                                     id="note"
                                     name="note"
                                     label="Note"
-                                    value={formik.values.note}  
+                                    value={formik.values.note}
                                     onChange={formik.handleChange}
                                     onBlur={formik.handleBlur}
                                     error={formik.touched.note && Boolean(formik.errors.note)}

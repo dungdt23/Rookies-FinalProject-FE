@@ -12,10 +12,10 @@ import * as yup from 'yup';
 import { NoStyleLink } from '../../../components/noStyleLink';
 import { routeNames } from '../../../constants/routeName';
 import { useAuth } from '../../../contexts/AuthContext';
+import { toISOStringWithoutTimezone } from '../../../helpers/helper';
 import { CreateUserRequest, createUser } from '../../../services/user.service';
 import { ListPageState } from '../../../types/common';
 import { User, UserGender, UserType } from '../../../types/user';
-import { toISOStringWithoutTimezone } from '../../../helpers/helper';
 
 export interface Role {
     id: string;
@@ -96,7 +96,7 @@ const CreateUserPage: FC = () => {
                 lastName: values.lastName,
                 joinedDate: toISOStringWithoutTimezone(values.joinedDate!),
                 dateOfBirth: toISOStringWithoutTimezone(values.dateOfBirth!),
-                gender: values.gender,
+                gender: values.gender as UserGender,
                 locationId: user?.locationId,
                 type: values.userType,
             } as CreateUserRequest;
@@ -114,7 +114,28 @@ const CreateUserPage: FC = () => {
                 setIsSubmitting(false);
             }
         },
-    });    
+    });
+
+    const handleDoBChanges = (value: Dayjs | null) => {
+        if (dayjs(value).isValid()) {
+            formik.setFieldValue('dateOfBirth', value, true)
+        }
+    }
+
+    const handleDobBlur = () => {
+        formik.setFieldTouched('dateOfBirth', true)
+    }
+
+    const handleJoinedDateChanges = (value: Dayjs | null) => {
+        if (dayjs(value).isValid()) {
+            formik.setFieldTouched('joinedDate', true)
+            formik.setFieldValue('joinedDate', value, true)
+        }
+    }
+
+    const handleJoinedDateBlur = () => {
+        formik.setFieldTouched('joinedDate', true)
+    }
 
     return (
         <>
@@ -161,14 +182,15 @@ const CreateUserPage: FC = () => {
                                     disableFuture
                                     format="DD/MM/YYYY"
                                     value={formik.values.dateOfBirth}
-                                    onChange={(value) => dayjs(value).isValid() && formik.setFieldValue('dateOfBirth', value, true)}
+                                    onChange={handleDoBChanges}
                                     slotProps={{
                                         textField: {
                                             id: "dateOfBirth",
                                             name: "dateOfBirth",
                                             label: "Date of Birth",
-                                            error: Boolean(formik.errors.dateOfBirth),
-                                            helperText: formik.errors.dateOfBirth,
+                                            onBlur: handleDobBlur,
+                                            error: formik.touched.dateOfBirth && Boolean(formik.errors.dateOfBirth),
+                                            helperText: formik.touched.dateOfBirth && formik.errors.dateOfBirth,
                                             fullWidth: true,
                                             required: true,
                                         }
@@ -203,14 +225,15 @@ const CreateUserPage: FC = () => {
                                 <DatePicker
                                     format="DD/MM/YYYY"
                                     value={formik.values.joinedDate}
-                                    onChange={(value) => dayjs(value).isValid() && formik.setFieldValue('joinedDate', value, true)}
+                                    onChange={handleJoinedDateChanges}
                                     slotProps={{
                                         textField: {
                                             id: "joinedDate",
                                             name: "joinedDate",
                                             label: "Joined Date",
-                                            error: Boolean(formik.errors.joinedDate),
-                                            helperText: formik.errors.joinedDate,
+                                            onBlur: handleJoinedDateBlur,
+                                            error: formik.touched.joinedDate && Boolean(formik.errors.joinedDate),
+                                            helperText: formik.touched.joinedDate && formik.errors.joinedDate,
                                             fullWidth: true,
                                             required: true,
                                         }
