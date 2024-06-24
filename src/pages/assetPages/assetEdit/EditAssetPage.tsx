@@ -86,12 +86,11 @@ const EditAssetPage: FC = () => {
   const navigate = useNavigate();
 
   const fetchAssetDetails = useCallback(async () => {
-    
+
     try {
       const response = await fetchAssetById(assetId!);
       const asset = response.data;
-      console.log(asset);
-      
+
       formik.setValues({
         assetName: asset.assetName,
         installedDate: dayjs(asset.installedDate),
@@ -134,7 +133,6 @@ const EditAssetPage: FC = () => {
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       setIsSubmitting(true);
-      console.log(currentCategory?.id);
       const payload = {
         assetName: values.assetName.trim(),
         categoryId: currentCategory?.id || "",
@@ -196,7 +194,7 @@ const EditAssetPage: FC = () => {
                   id="categoryId"
                   name="categoryId"
                   label="Category"
-                  value={currentCategory?.id || ""}
+                  value={currentCategory?.id ?? ""}
                   disabled={Boolean(currentCategory)}
                 >
                   {categories.map((category) => (
@@ -218,13 +216,14 @@ const EditAssetPage: FC = () => {
                       id: "installedDate",
                       name: "installedDate",
                       label: "Installed Date",
-                      error: Boolean(formik.errors.installedDate),
-                      helperText: formik.errors.installedDate,
+                      onBlur: handleInstalledDateBlur,
+                      error: formik.touched.installedDate && Boolean(formik.errors.installedDate),
+                      helperText: formik.touched.installedDate && formik.errors.installedDate,
                       fullWidth: true,
                       required: true,
                     },
                   }}
-                />
+                /> 
               </Grid>
               <Grid item xs={12}>
                 <TextField

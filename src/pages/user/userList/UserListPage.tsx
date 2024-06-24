@@ -1,18 +1,15 @@
-import { Edit, HighlightOff, Search } from "@mui/icons-material";
+import { Edit, HighlightOff } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
 import {
   Alert,
   Box,
   Button,
-  Divider,
   FormControl,
   Grid,
   IconButton,
-  InputBase,
   InputLabel,
   MenuItem,
   Pagination,
-  Paper,
   Select,
   SelectChangeEvent,
   Table,
@@ -20,11 +17,12 @@ import {
   TableContainer,
   TableRow,
   Typography,
-  styled,
+  styled
 } from "@mui/material";
-import { FC, MouseEvent, ReactNode, useEffect, useRef, useState } from "react";
+import { FC, MouseEvent, ReactNode, useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useLocation } from "react-router-dom";
+import { SearchBar } from "../../../components/form";
 import { CircularProgressWrapper } from "../../../components/loading";
 import { NoStyleLink } from "../../../components/noStyleLink";
 import { CustomPopover } from "../../../components/popover";
@@ -124,7 +122,6 @@ const UserListPage: FC = () => {
   const [canDisable, setCanDisable] = useState<boolean>(true);
   const location = useLocation();
 
-  const inputRef = useRef<HTMLInputElement | null>(null);
   const placeholderSearch = "Search user by code and name";
 
   const state: ListPageState<User> | undefined = location.state;
@@ -217,18 +214,10 @@ const UserListPage: FC = () => {
     setDeleteAnchorEl(null);
   };
 
-  const handleSearchSubmit = () => {
-    if (inputRef.current) {
-      const searchQuery = inputRef.current.value;
-      setSearch(searchQuery);
-      setPage(1); // Reset to the first page on search
-    }
-  };
-
-  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter") {
-      handleSearchSubmit();
-    }
+  const handleSearchSubmit = (searchTerm: string) => {
+    const searchQuery = searchTerm;
+    setSearch(searchQuery);
+    setPage(1); // Reset to the first page on search
   };
 
   const renderUserDetailDialog = (): ReactNode => {
@@ -389,32 +378,10 @@ const UserListPage: FC = () => {
             </Select>
           </FormControl>
           <Box display={"flex"}>
-            <Paper
-              variant="outlined"
-              sx={{
-                padding: "0 0.5rem",
-                display: "flex",
-                alignItems: "center",
-                minWidth: "20rem",
-              }}
-            >
-              <InputBase
-                inputRef={inputRef}
-                sx={{ ml: 1, flex: 1 }}
-                placeholder={placeholderSearch}
-                inputProps={{ "aria-label": "search google maps" }}
-                onKeyUp={handleKeyPress}
-              />
-              <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
-              <IconButton
-                type="button"
-                sx={{ p: "10px" }}
-                aria-label="search"
-                onClick={handleSearchSubmit}
-              >
-                <Search />
-              </IconButton>
-            </Paper>
+            <SearchBar
+              placeholderSearch={placeholderSearch}
+              onSearchSubmit={handleSearchSubmit}
+            />
             <NoStyleLink to={routeNames.user.create}>
               <Button
                 sx={{ marginLeft: "1rem", p: "0 1.5rem", height: "100%" }}
@@ -521,13 +488,14 @@ const UserListPage: FC = () => {
             </Table>
           </CircularProgressWrapper>
         </StyledTableContainer>
-        <Box display="flex" justifyContent="center" p={2}>
-          <Pagination
-            count={Math.ceil(totalCount / pageSize)}
-            page={page}
-            onChange={handleChangePage}
-          />
-        </Box>
+        {totalCount !== 0
+          && <Box display="flex" justifyContent="center" p={2}>
+            <Pagination
+              count={Math.ceil(totalCount / pageSize)}
+              page={page}
+              onChange={handleChangePage}
+            />
+          </Box>}
       </RootBox>
       <CustomPopover
         elAnchor={rowAnchorEl}

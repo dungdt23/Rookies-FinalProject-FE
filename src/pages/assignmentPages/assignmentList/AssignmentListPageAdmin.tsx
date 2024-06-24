@@ -1,11 +1,12 @@
-import { Edit, HighlightOff, Refresh, Search } from "@mui/icons-material";
+import { Edit, HighlightOff, Refresh } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
-import { Alert, Box, Button, Divider, FormControl, Grid, IconButton, InputBase, InputLabel, MenuItem, Pagination, Paper, Select, SelectChangeEvent, Table, TableBody, TableContainer, TableRow, Typography, styled } from "@mui/material";
+import { Alert, Box, Button, Divider, FormControl, Grid, IconButton, InputLabel, MenuItem, Pagination, Select, SelectChangeEvent, Table, TableBody, TableContainer, TableRow, Typography, styled } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
-import { MouseEvent, ReactNode, useEffect, useRef, useState } from "react";
+import { MouseEvent, ReactNode, useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useLocation, useNavigate } from "react-router-dom";
+import { SearchBar } from "../../../components/form";
 import { CircularProgressWrapper } from "../../../components/loading";
 import { NoStyleLink } from "../../../components/noStyleLink";
 import { CustomPopover } from "../../../components/popover";
@@ -92,7 +93,7 @@ const AssignmentListPageAdmin = () => {
     const [order, setOrder] = useState<Order>(defaultSortOrder);
     const [orderBy, setOrderBy] = useState<string>(TABLE_HEAD[0].id);
     const [page, setPage] = useState<number>(1);
-    const [pageSize, setPageSize] = useState<number>(15);
+    const [pageSize] = useState<number>(15);
     const [assignedDate, setAssignedDate] = useState<Dayjs | null>();
     const [clearDate, setClearDate] = useState<boolean>(false);
     const [isFetching, setIsFetching] = useState<boolean>(false);
@@ -104,7 +105,6 @@ const AssignmentListPageAdmin = () => {
     const location = useLocation();
 
 
-    const inputRef = useRef<HTMLInputElement | null>(null);
     const placeholderSearch = "Search assignment by asset and asssignee";
 
     const state: ListPageState<Assignment> | undefined = location.state;
@@ -149,18 +149,10 @@ const AssignmentListPageAdmin = () => {
         }
     }, [clearDate])
 
-    const handleSearchSubmit = () => {
-        if (inputRef.current) {
-            const searchQuery = inputRef.current.value;
-            setSearch(searchQuery);
-            setPage(1); // Reset to the first page on search
-        }
-    };
-
-    const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
-        if (event.key === 'Enter') {
-            handleSearchSubmit();
-        }
+    const handleSearchSubmit = (searchTerm: string) => {
+        const searchQuery = searchTerm;
+        setSearch(searchQuery);
+        setPage(1); // Reset to the first page on search
     };
 
     const handleStateFilter = (event: SelectChangeEvent) => {
@@ -348,22 +340,10 @@ const AssignmentListPageAdmin = () => {
                         </Box>
                     </FormControl>
                     <Box display={'flex'}>
-                        <Paper
-                            variant="outlined"
-                            sx={{ padding: '0 0.5rem', display: 'flex', alignItems: 'center', minWidth: '20rem' }}
-                        >
-                            <InputBase
-                                inputRef={inputRef}
-                                sx={{ ml: 1, flex: 1, minWidth: "20rem" }}
-                                placeholder={placeholderSearch}
-                                inputProps={{ 'aria-label': 'search google maps' }}
-                                onKeyUp={handleKeyPress}
-                            />
-                            <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
-                            <IconButton type="button" sx={{ p: '10px' }} aria-label="search" onClick={handleSearchSubmit}>
-                                <Search />
-                            </IconButton>
-                        </Paper>
+                        <SearchBar
+                            placeholderSearch={placeholderSearch}
+                            onSearchSubmit={handleSearchSubmit}
+                        />
                         <NoStyleLink to={routeNames.assignment.create}>
                             <Button sx={{ marginLeft: "1rem", p: '0 1.5rem', height: '100%' }} variant="contained" color="primary">
                                 Create New Assignment
@@ -444,13 +424,14 @@ const AssignmentListPageAdmin = () => {
                         </Table>
                     </CircularProgressWrapper>
                 </StyledTableContainer>
-                <Box display="flex" justifyContent="center" p={2}>
-                    <Pagination
-                        count={Math.ceil(totalCount / pageSize)}
-                        page={page}
-                        onChange={handleChangePage}
-                    />
-                </Box>
+                {totalCount !== 0
+                    && <Box display="flex" justifyContent="center" p={2}>
+                        <Pagination
+                            count={Math.ceil(totalCount / pageSize)}
+                            page={page}
+                            onChange={handleChangePage}
+                        />
+                    </Box>}
             </RootBox >
             <CustomPopover
                 elAnchor={rowAnchorEl}

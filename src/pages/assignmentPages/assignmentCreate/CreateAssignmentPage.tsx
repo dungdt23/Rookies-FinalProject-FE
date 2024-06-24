@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import * as yup from 'yup';
 import { NoStyleLink } from '../../../components/noStyleLink';
 import { routeNames } from '../../../constants/routeName';
-import { toISOStringWithoutTimezone } from '../../../helpers/helper';
+import { nameof, toISOStringWithoutTimezone } from '../../../helpers/helper';
 import { createAssignment, CreateAssignmentRequest } from '../../../services/assignment.service';
 import { Asset } from '../../../types/asset';
 import { Assignment } from '../../../types/assignment';
@@ -107,15 +107,25 @@ const CreateAssignmentPage: FC = () => {
         formik.validateField('asset')
     };
 
+    const handleAssignedDateChanges = (value: Dayjs | null) => {
+        if (dayjs(value).isValid()) {
+            formik.setFieldValue('assignedDate', value, true)
+        }
+    }
+
+    const handleAssignedDateBlur = () => {
+        formik.setFieldTouched('assignedDate', true)
+    }
+
     return (
         <>
             <Helmet>
-                <title>Create Assignment</title>
+                <title>Create An Assignment</title>
             </Helmet>
             <RootBox>
                 <Stack spacing={3}>
                     <Typography variant="h6" gutterBottom color="primary">
-                        Create Assignment
+                        Create An Assignment
                     </Typography>
                     <form onSubmit={formik.handleSubmit}>
                         <Grid container spacing={3}>
@@ -125,7 +135,7 @@ const CreateAssignmentPage: FC = () => {
                                     fullWidth
                                     label="User"
                                     placeholder='User'
-                                    value={formik.values.user ? `${formik.values.user.lastName} ${formik.values.user.firstName}` : ""}
+                                    value={formik.values.user ? `${formik.values.user.firstName} ${formik.values.user.lastName}` : ""}
                                     InputLabelProps={{ shrink: Boolean(formik.values.user) }}
                                     onClick={handleUserTextfieldClick}
                                     InputProps={{
@@ -180,14 +190,15 @@ const CreateAssignmentPage: FC = () => {
                                     format="DD/MM/YYYY"
                                     minDate={dayjs()}
                                     value={formik.values.assignedDate}
-                                    onChange={(value) => dayjs(value).isValid() && formik.setFieldValue('assignedDate', value, true)}
+                                    onChange={handleAssignedDateChanges}
                                     slotProps={{
                                         textField: {
                                             id: "assignedDate",
                                             name: "assignedDate",
                                             label: "Assigned Date",
-                                            error: Boolean(formik.errors.assignedDate),
-                                            helperText: formik.errors.assignedDate,
+                                            onBlur: handleAssignedDateBlur,
+                                            error: formik.touched.assignedDate && Boolean(formik.errors.assignedDate),
+                                            helperText: formik.touched.assignedDate && formik.errors.assignedDate,
                                             fullWidth: true,
                                             required: true,
                                         }
@@ -202,7 +213,7 @@ const CreateAssignmentPage: FC = () => {
                                     id="note"
                                     name="note"
                                     label="Note"
-                                    value={formik.values.note}  
+                                    value={formik.values.note}
                                     onChange={formik.handleChange}
                                     onBlur={formik.handleBlur}
                                     error={formik.touched.note && Boolean(formik.errors.note)}

@@ -140,7 +140,7 @@ const AssetSelectionDialog: FC<AssetSelectionDialogProps> = ({ open, onClose, se
                 },
             }}
         >
-            <DialogTitle>Select Asset</DialogTitle>
+            <DialogTitle>Select A Asset</DialogTitle>
             <Box sx={{ display: "flex", flexDirection: "column", p: "0 1rem 1rem 1rem", gap: "0.5rem" }}>
                 <SearchBar
                     placeholderSearch='Search asset by code and name'
@@ -210,13 +210,14 @@ const AssetSelectionDialog: FC<AssetSelectionDialogProps> = ({ open, onClose, se
                         </Box>
                     </CircularProgressWrapper>
                 </SimpleBar>
-                <Box display="flex" justifyContent="center" >
-                    <Pagination
-                        count={Math.ceil(totalCount / pageSize)}
-                        page={page}
-                        onChange={handleChangePage}
-                    />
-                </Box>
+                {totalCount !== 0
+                    && <Box display="flex" justifyContent="center" p={2}>
+                        <Pagination
+                            count={Math.ceil(totalCount / pageSize)}
+                            page={page}
+                            onChange={handleChangePage}
+                        />
+                    </Box>}
                 <Box sx={{ display: 'flex', gap: '1rem', justifyContent: "right" }}>
                     <Button
                         type="submit"

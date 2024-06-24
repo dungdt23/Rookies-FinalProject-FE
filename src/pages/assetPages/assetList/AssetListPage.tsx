@@ -234,61 +234,59 @@ const AssetListPage: FC<ListPageProps> = ({ alertString }) => {
     setDeleteAnchorEl(null);
   };
 
-  const handleSearchSubmit = () => {
-    if (inputRef.current) {
-      const searchQuery = inputRef.current.value.trim();
-      setSearch(searchQuery);
-      setPage(1); // Reset to the first page on search
-    }
+  const handleSearchSubmit = (searchTerm: string) => {
+    const searchQuery = searchTerm;
+    setSearch(searchQuery);
+    setPage(1); // Reset to the first page on search
   };
 
-    const renderAssetDetailDialog = (): ReactNode => {
-        if (!selected) return null;
-        const assetDetails = [
-            {
-                label: "Asset Code: ",
-                value: selected?.assetCode,
-            },
-            {
-                label: "Asset Name: ",
-                value: selected?.assetName,
-            },
-            {
-                label: "Category: ",
-                value: selected?.category,
-            },
-            {
-                label: "Location: ",
-                value: selected?.location,
-            },
-            {
-                label: "Specification: ",
-                value: selected?.specification,
-            },
-            {
-                label: "Installed Date: ",
-                value: toStandardFormat(selected?.installedDate),
-            },
-            {
-                label: "State: ",
-                value: addSpacesToCamelCase(AssetState[selected?.state]),
-            },
-        ];
-        return (
-            <Box>
-                {assetDetails.map((item) => (
-                    <Grid container spacing={2} key={item.label}>
-                        <Grid item xs={4}>
-                            <Typography variant="body1" gutterBottom>{item.label}</Typography>
-                        </Grid>
-                        <Grid item xs={8}>
-                            <Typography variant="body1" gutterBottom>{item.value}</Typography>
-                        </Grid>
-                    </Grid>
-                ))}
-            </Box>
-        );
-    };
+  const renderAssetDetailDialog = (): ReactNode => {
+    if (!selected) return null;
+    const assetDetails = [
+      {
+        label: "Asset Code: ",
+        value: selected?.assetCode,
+      },
+      {
+        label: "Asset Name: ",
+        value: selected?.assetName,
+      },
+      {
+        label: "Category: ",
+        value: selected?.category,
+      },
+      {
+        label: "Location: ",
+        value: selected?.location,
+      },
+      {
+        label: "Specification: ",
+        value: selected?.specification,
+      },
+      {
+        label: "Installed Date: ",
+        value: toStandardFormat(selected?.installedDate),
+      },
+      {
+        label: "State: ",
+        value: addSpacesToCamelCase(AssetState[selected?.state]),
+      },
+    ];
+    return (
+      <Box>
+        {assetDetails.map((item) => (
+          <Grid container spacing={2} key={item.label}>
+            <Grid item xs={4}>
+              <Typography variant="body1" gutterBottom>{item.label}</Typography>
+            </Grid>
+            <Grid item xs={8}>
+              <Typography variant="body1" gutterBottom>{item.value}</Typography>
+            </Grid>
+          </Grid>
+        ))}
+      </Box>
+    );
+  };
 
   const handleStateFilter = (event: SelectChangeEvent) => {
     setAssetState(event.target.value as AssetState | "");
@@ -533,13 +531,14 @@ const AssetListPage: FC<ListPageProps> = ({ alertString }) => {
             </Table>
           </CircularProgressWrapper>
         </StyledTableContainer>
-        <Box display="flex" justifyContent="center" p={2}>
-          <Pagination
-            count={Math.ceil(totalCount / pageSize)}
-            page={page}
-            onChange={handleChangePage}
-          />
-        </Box>
+        {totalCount !== 0
+          && <Box display="flex" justifyContent="center" p={2}>
+            <Pagination
+              count={Math.ceil(totalCount / pageSize)}
+              page={page}
+              onChange={handleChangePage}
+            />
+          </Box>}
       </RootBox>
       <CustomPopover
         elAnchor={rowAnchorEl}

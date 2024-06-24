@@ -1,11 +1,12 @@
-import { Check, Close, Refresh, Search } from "@mui/icons-material";
+import { Check, Close, Refresh } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
-import { Alert, Box, Button, Divider, FormControl, Grid, IconButton, InputBase, InputLabel, MenuItem, Pagination, Paper, Select, SelectChangeEvent, Table, TableBody, TableContainer, TableRow, Typography, styled } from "@mui/material";
+import { Alert, Box, Button, Divider, FormControl, Grid, IconButton, InputLabel, MenuItem, Pagination, Select, SelectChangeEvent, Table, TableBody, TableContainer, TableRow, Typography, styled } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
-import { MouseEvent, ReactNode, useEffect, useRef, useState } from "react";
+import { MouseEvent, ReactNode, useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useLocation } from "react-router-dom";
+import { SearchBar } from "../../../components/form";
 import { CircularProgressWrapper } from "../../../components/loading";
 import { CustomPopover } from "../../../components/popover";
 import { CustomTableCell, StyledTableCell } from "../../../components/table";
@@ -14,7 +15,7 @@ import { theme } from "../../../constants/appTheme";
 import { toStandardFormat } from "../../../helpers/formatDate";
 import { addSpacesToCamelCase } from "../../../helpers/helper";
 import { removeUndefinedValues } from "../../../helpers/removeUndefined";
-import { FieldAssignmentFilter, GetAllAssignmentParams, RespondAssignmentRequest, disableAssignmentrById, fetchAllAssignments, respondAssignmentById } from "../../../services/assignment.service";
+import { FieldAssignmentFilter, GetAllAssignmentParams, RespondAssignmentRequest, fetchAllAssignments, respondAssignmentById } from "../../../services/assignment.service";
 import { Assignment, AssignmentState } from "../../../types/assignment";
 import { ListPageState } from "../../../types/common";
 
@@ -89,7 +90,7 @@ const AssignmentListPageStaff = () => {
     const [order, setOrder] = useState<Order>(defaultSortOrder);
     const [orderBy, setOrderBy] = useState<string>(TABLE_HEAD[0].id);
     const [page, setPage] = useState<number>(1);
-    const [pageSize, setPageSize] = useState<number>(15);
+    const [pageSize] = useState<number>(15);
     const [assignedDate, setAssignedDate] = useState<Dayjs | null>();
     const [clearDate, setClearDate] = useState<boolean>(false);
     const [isFetching, setIsFetching] = useState<boolean>(false);
@@ -102,7 +103,6 @@ const AssignmentListPageStaff = () => {
     const location = useLocation();
 
 
-    const inputRef = useRef<HTMLInputElement | null>(null);
     const placeholderSearch = "Search assignment by asset and asssignee";
 
     const state: ListPageState<Assignment> | undefined = location.state;
@@ -147,18 +147,10 @@ const AssignmentListPageStaff = () => {
         }
     }, [clearDate])
 
-    const handleSearchSubmit = () => {
-        if (inputRef.current) {
-            const searchQuery = inputRef.current.value;
-            setSearch(searchQuery);
-            setPage(1); // Reset to the first page on search
-        }
-    };
-
-    const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
-        if (event.key === 'Enter') {
-            handleSearchSubmit();
-        }
+    const handleSearchSubmit = (searchTerm: string) => {
+        const searchQuery = searchTerm;
+        setSearch(searchQuery);
+        setPage(1); // Reset to the first page on search
     };
 
     const handleStateFilter = (event: SelectChangeEvent) => {
@@ -207,26 +199,6 @@ const AssignmentListPageStaff = () => {
         setRowAnchorEl(null);
         setRespondAnchorEl(null);
     };
-
-    const deleteAssignment = async () => {
-        setIsDisabling(true);
-        if (!selected) {
-            setIsDisabling(false);
-            return
-        }
-        try {
-            const result = await disableAssignmentrById(selected?.id);
-            setCanRespond(result)
-            if (result) {
-                handleClosePopover()
-                getAssignments()
-                setAlert(`Assignment of asset ${selected?.assetName} is denied`)
-            }
-        } catch (error) {
-            console.error(error)
-        }
-        setIsDisabling(false);
-    }
 
     const respondAssignment = async () => {
         setIsDisabling(true);
@@ -364,22 +336,10 @@ const AssignmentListPageStaff = () => {
                         </Box>
                     </FormControl>
                     <Box display={'flex'}>
-                        <Paper
-                            variant="outlined"
-                            sx={{ padding: '0 0.5rem', display: 'flex', alignItems: 'center', minWidth: '20rem' }}
-                        >
-                            <InputBase
-                                inputRef={inputRef}
-                                sx={{ ml: 1, flex: 1, minWidth: "20rem" }}
-                                placeholder={placeholderSearch}
-                                inputProps={{ 'aria-label': 'search google maps' }}
-                                onKeyUp={handleKeyPress}
-                            />
-                            <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
-                            <IconButton type="button" sx={{ p: '10px' }} aria-label="search" onClick={handleSearchSubmit}>
-                                <Search />
-                            </IconButton>
-                        </Paper>
+                        <SearchBar
+                            placeholderSearch={placeholderSearch}
+                            onSearchSubmit={handleSearchSubmit}
+                        />
                     </Box>
 
                 </Box>
@@ -455,13 +415,14 @@ const AssignmentListPageStaff = () => {
                         </Table>
                     </CircularProgressWrapper>
                 </StyledTableContainer>
-                <Box display="flex" justifyContent="center" p={2}>
-                    <Pagination
-                        count={Math.ceil(totalCount / pageSize)}
-                        page={page}
-                        onChange={handleChangePage}
-                    />
-                </Box>
+                {totalCount !== 0
+                    && <Box display="flex" justifyContent="center" p={2}>
+                        <Pagination
+                            count={Math.ceil(totalCount / pageSize)}
+                            page={page}
+                            onChange={handleChangePage}
+                        />
+                    </Box>}
             </RootBox >
             <CustomPopover
                 elAnchor={rowAnchorEl}

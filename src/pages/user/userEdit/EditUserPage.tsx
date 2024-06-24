@@ -115,14 +115,11 @@ const EditUserPage: FC = () => {
         onSubmit: async (values) => {
             setIsSubmitting(true);
             const payload = {
-                firstName: values.firstName,
-                lastName: values.lastName,
                 joinedDate: toISOStringWithoutTimezone(values.joinedDate!),
                 dateOfBirth: toISOStringWithoutTimezone(values.dateOfBirth!),
                 gender: values.gender,
                 type: values.userType,
             } as EditUserRequest;
-            console.log(values.joinedDate, values.joinedDate?.toISOString())
             try {
                 const response = await editUserById(userId!, payload);
                 const listUserPageState = {
@@ -137,6 +134,27 @@ const EditUserPage: FC = () => {
             }
         },
     });
+
+    const handleDoBChanges = (value: Dayjs | null) => {
+        if (dayjs(value).isValid()) {
+            formik.setFieldValue('dateOfBirth', value, true)
+        }
+    }
+
+    const handleDobBlur = () => {
+        formik.setFieldTouched('dateOfBirth', true)
+    }
+
+    const handleJoinedDateChanges = (value: Dayjs | null) => {
+        if (dayjs(value).isValid()) {
+            formik.setFieldTouched('joinedDate', true)
+            formik.setFieldValue('joinedDate', value, true)
+        }
+    }
+
+    const handleJoinedDateBlur = () => {
+        formik.setFieldTouched('joinedDate', true)
+    }
 
     if (isFetching) {
         return <Typography>Loading...</Typography>;
@@ -161,30 +179,28 @@ const EditUserPage: FC = () => {
                         <Grid container spacing={3}>
                             <Grid item xs={12} sm={6}>
                                 <TextField
-                                    required
                                     fullWidth
                                     id="firstName"
                                     name="firstName"
                                     label="First Name"
+                                    variant="filled"
                                     value={formik.values.firstName}
-                                    onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}
-                                    error={formik.touched.firstName && Boolean(formik.errors.firstName)}
-                                    helperText={formik.touched.firstName && formik.errors.firstName}
+                                    InputProps={{
+                                        readOnly: true
+                                    }}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6}>
                                 <TextField
-                                    required
                                     fullWidth
                                     id="lastName"
                                     name="lastName"
                                     label="Last Name"
                                     value={formik.values.lastName}
-                                    onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}
-                                    error={formik.touched.lastName && Boolean(formik.errors.lastName)}
-                                    helperText={formik.touched.lastName && formik.errors.lastName}
+                                    variant="filled"
+                                    InputProps={{
+                                        readOnly: true
+                                    }}
                                 />
                             </Grid>
                             <Grid item xs={12}>
@@ -192,14 +208,15 @@ const EditUserPage: FC = () => {
                                     disableFuture
                                     format="DD/MM/YYYY"
                                     value={formik.values.dateOfBirth}
-                                    onChange={(value) => dayjs(value).isValid() && formik.setFieldValue('dateOfBirth', value, true)}
+                                    onChange={handleDoBChanges}
                                     slotProps={{
                                         textField: {
                                             id: "dateOfBirth",
                                             name: "dateOfBirth",
                                             label: "Date of Birth",
-                                            error: Boolean(formik.errors.dateOfBirth),
-                                            helperText: formik.errors.dateOfBirth,
+                                            onBlur: handleDobBlur,
+                                            error: formik.touched.dateOfBirth && Boolean(formik.errors.dateOfBirth),
+                                            helperText: formik.touched.dateOfBirth && formik.errors.dateOfBirth,
                                             fullWidth: true,
                                             required: true,
                                         }
@@ -234,14 +251,15 @@ const EditUserPage: FC = () => {
                                 <DatePicker
                                     format="DD/MM/YYYY"
                                     value={formik.values.joinedDate}
-                                    onChange={(value) => dayjs(value).isValid() && formik.setFieldValue('joinedDate', value, true)}
+                                    onChange={handleJoinedDateChanges}
                                     slotProps={{
                                         textField: {
                                             id: "joinedDate",
                                             name: "joinedDate",
                                             label: "Joined Date",
-                                            error: Boolean(formik.errors.joinedDate),
-                                            helperText: formik.errors.joinedDate,
+                                            onBlur: handleJoinedDateBlur,
+                                            error: formik.touched.joinedDate && Boolean(formik.errors.joinedDate),
+                                            helperText: formik.touched.joinedDate && formik.errors.joinedDate,
                                             fullWidth: true,
                                             required: true,
                                         }

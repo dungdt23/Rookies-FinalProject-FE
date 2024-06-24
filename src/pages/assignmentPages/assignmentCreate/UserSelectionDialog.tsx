@@ -138,7 +138,7 @@ const UserSelectionDialog: FC<UserSelectionDialogProps> = ({ open, onClose, sele
                 },
             }}
         >
-            <DialogTitle>Select User</DialogTitle>
+            <DialogTitle>Select A User</DialogTitle>
             <Box sx={{ display: "flex", flexDirection: "column", p: "0 1rem 1rem 1rem", gap: "0.5rem" }}>
                 <SearchBar
                     placeholderSearch='Search user by code and name'
@@ -172,7 +172,7 @@ const UserSelectionDialog: FC<UserSelectionDialogProps> = ({ open, onClose, sele
                                                 />
                                             </StyledTableCell>
                                             <CustomTableCell onClick={() => handleRowClick(user)}>{user.staffCode}</CustomTableCell>
-                                            <CustomTableCell onClick={() => handleRowClick(user)}>{user.lastName + ' ' + user.firstName}</CustomTableCell>
+                                            <CustomTableCell onClick={() => handleRowClick(user)}>{user.firstName + ' ' + user.lastName}</CustomTableCell>
                                             <CustomTableCell onClick={() => handleRowClick(user)}>{user.type}</CustomTableCell>
                                         </ClickableTableRow>
                                     ))}
@@ -208,13 +208,14 @@ const UserSelectionDialog: FC<UserSelectionDialogProps> = ({ open, onClose, sele
                         </Box>
                     </CircularProgressWrapper>
                 </SimpleBar>
-                <Box display="flex" justifyContent="center" >
-                    <Pagination
-                        count={Math.ceil(totalCount / pageSize)}
-                        page={page}
-                        onChange={handleChangePage}
-                    />
-                </Box>
+                {totalCount !== 0
+                    && <Box display="flex" justifyContent="center" p={2}>
+                        <Pagination
+                            count={Math.ceil(totalCount / pageSize)}
+                            page={page}
+                            onChange={handleChangePage}
+                        />
+                    </Box>}
                 <Box sx={{ display: 'flex', gap: '1rem', justifyContent: "right" }}>
                     <Button
                         type="submit"
