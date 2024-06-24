@@ -1,11 +1,12 @@
-import { Edit, HighlightOff, Refresh, Search } from "@mui/icons-material";
+import { Edit, HighlightOff, Refresh } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
-import { Alert, Box, Button, Divider, FormControl, Grid, IconButton, InputBase, InputLabel, MenuItem, Pagination, Paper, Select, SelectChangeEvent, Table, TableBody, TableContainer, TableRow, Typography, styled } from "@mui/material";
+import { Alert, Box, Button, Divider, FormControl, Grid, IconButton, InputLabel, MenuItem, Pagination, Select, SelectChangeEvent, Table, TableBody, TableContainer, TableRow, Typography, styled } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
-import { MouseEvent, ReactNode, useEffect, useRef, useState } from "react";
+import { MouseEvent, ReactNode, useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useLocation, useNavigate } from "react-router-dom";
+import { SearchBar } from "../../../components/form";
 import { CircularProgressWrapper } from "../../../components/loading";
 import { NoStyleLink } from "../../../components/noStyleLink";
 import { CustomPopover } from "../../../components/popover";
@@ -19,7 +20,6 @@ import { removeUndefinedValues } from "../../../helpers/removeUndefined";
 import { FieldAssignmentFilter, GetAllAssignmentParams, disableAssignmentrById, fetchAllAssignments } from "../../../services/assignment.service";
 import { Assignment, AssignmentState } from "../../../types/assignment";
 import { ListPageState } from "../../../types/common";
-import { SearchBar } from "../../../components/form";
 
 const ClickableTableRow = styled(TableRow)(({ theme }) => ({
     cursor: "pointer",
@@ -93,7 +93,7 @@ const AssignmentListPageAdmin = () => {
     const [order, setOrder] = useState<Order>(defaultSortOrder);
     const [orderBy, setOrderBy] = useState<string>(TABLE_HEAD[0].id);
     const [page, setPage] = useState<number>(1);
-    const [pageSize, setPageSize] = useState<number>(15);
+    const [pageSize] = useState<number>(15);
     const [assignedDate, setAssignedDate] = useState<Dayjs | null>();
     const [clearDate, setClearDate] = useState<boolean>(false);
     const [isFetching, setIsFetching] = useState<boolean>(false);
@@ -105,7 +105,6 @@ const AssignmentListPageAdmin = () => {
     const location = useLocation();
 
 
-    const inputRef = useRef<HTMLInputElement | null>(null);
     const placeholderSearch = "Search assignment by asset and asssignee";
 
     const state: ListPageState<Assignment> | undefined = location.state;
@@ -425,13 +424,14 @@ const AssignmentListPageAdmin = () => {
                         </Table>
                     </CircularProgressWrapper>
                 </StyledTableContainer>
-                <Box display="flex" justifyContent="center" p={2}>
-                    <Pagination
-                        count={Math.ceil(totalCount / pageSize)}
-                        page={page}
-                        onChange={handleChangePage}
-                    />
-                </Box>
+                {totalCount !== 0
+                    && <Box display="flex" justifyContent="center" p={2}>
+                        <Pagination
+                            count={Math.ceil(totalCount / pageSize)}
+                            page={page}
+                            onChange={handleChangePage}
+                        />
+                    </Box>}
             </RootBox >
             <CustomPopover
                 elAnchor={rowAnchorEl}
