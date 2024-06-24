@@ -210,13 +210,14 @@ const AssetSelectionDialog: FC<AssetSelectionDialogProps> = ({ open, onClose, se
                         </Box>
                     </CircularProgressWrapper>
                 </SimpleBar>
-                <Box display="flex" justifyContent="center" >
-                    <Pagination
-                        count={Math.ceil(totalCount / pageSize)}
-                        page={page}
-                        onChange={handleChangePage}
-                    />
-                </Box>
+                {totalCount !== 0
+                    && <Box display="flex" justifyContent="center" p={2}>
+                        <Pagination
+                            count={Math.ceil(totalCount / pageSize)}
+                            page={page}
+                            onChange={handleChangePage}
+                        />
+                    </Box>}
                 <Box sx={{ display: 'flex', gap: '1rem', justifyContent: "right" }}>
                     <Button
                         type="submit"

@@ -1,18 +1,15 @@
-import { Edit, HighlightOff, Search } from "@mui/icons-material";
+import { Edit, HighlightOff } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
 import {
   Alert,
   Box,
   Button,
-  Divider,
   FormControl,
   Grid,
   IconButton,
-  InputBase,
   InputLabel,
   MenuItem,
   Pagination,
-  Paper,
   Select,
   SelectChangeEvent,
   Table,
@@ -20,11 +17,12 @@ import {
   TableContainer,
   TableRow,
   Typography,
-  styled,
+  styled
 } from "@mui/material";
-import { FC, MouseEvent, ReactNode, useEffect, useRef, useState } from "react";
+import { FC, MouseEvent, ReactNode, useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useLocation } from "react-router-dom";
+import { SearchBar } from "../../../components/form";
 import { CircularProgressWrapper } from "../../../components/loading";
 import { NoStyleLink } from "../../../components/noStyleLink";
 import { CustomPopover } from "../../../components/popover";
@@ -49,7 +47,6 @@ import {
 } from "../../../services/user.service";
 import { ListPageState } from "../../../types/common";
 import { User, UserGender, UserType } from "../../../types/user";
-import { SearchBar } from "../../../components/form";
 
 const ClickableTableRow = styled(TableRow)(({ theme }) => ({
   cursor: "pointer",
@@ -125,7 +122,6 @@ const UserListPage: FC = () => {
   const [canDisable, setCanDisable] = useState<boolean>(true);
   const location = useLocation();
 
-  const inputRef = useRef<HTMLInputElement | null>(null);
   const placeholderSearch = "Search user by code and name";
 
   const state: ListPageState<User> | undefined = location.state;
@@ -425,7 +421,7 @@ const UserListPage: FC = () => {
                     <CustomTableCell
                       onClick={(event) => handleRowClick(event, user)}
                     >
-                      {user.firstName + " " + user.lastName}
+                      {user.lastName + " " + user.firstName}
                     </CustomTableCell>
                     <CustomTableCell
                       onClick={(event) => handleRowClick(event, user)}
@@ -492,13 +488,14 @@ const UserListPage: FC = () => {
             </Table>
           </CircularProgressWrapper>
         </StyledTableContainer>
-        <Box display="flex" justifyContent="center" p={2}>
-          <Pagination
-            count={Math.ceil(totalCount / pageSize)}
-            page={page}
-            onChange={handleChangePage}
-          />
-        </Box>
+        {totalCount !== 0
+          && <Box display="flex" justifyContent="center" p={2}>
+            <Pagination
+              count={Math.ceil(totalCount / pageSize)}
+              page={page}
+              onChange={handleChangePage}
+            />
+          </Box>}
       </RootBox>
       <CustomPopover
         elAnchor={rowAnchorEl}
