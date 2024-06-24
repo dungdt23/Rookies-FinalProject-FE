@@ -37,23 +37,32 @@ const RootBox = styled(Box)(() => ({
 
 dayjs.locale("en");
 
-const isPastDate = (date: Dayjs) => dayjs(date).isBefore(dayjs(), "day");
+const isPastDate = (date: any) =>
+  dayjs(date).isBefore(dayjs(), "day") || dayjs(date).isSame(dayjs(), "day");
+const isValidDate = (date: any) => dayjs(date).isValid();
 
 const validationSchema = yup.object({
   assetName: yup
     .string()
     .required("Please enter asset name")
     .min(2, 'The asset name length should be 2-200 characters')
-    .max(200, 'The asset name length should be 2-200 characters'),
-  //categoryId: yup.string().required("Category is required"),
-  installedDate: yup
-    .object()
+    .max(200, 'The asset name length should be 2-200 characters')
+    .test(
+      "no-only-spaces",
+      "Please enter Asset name",
+      (value) => value.trim().length > 0
+    ),
+    installedDate: yup
+    .mixed()
     .required("Please enter installed date")
+    .test("is-valid-date", "Please enter installed date", function (value) {
+      return isValidDate(value);
+    })
     .test(
       "is-past-date",
-      "Installed date must be in the past",
+      "Installed date must be in present or in the past",
       function (value) {
-        return isPastDate(value as Dayjs);
+        return isValidDate(value) && isPastDate(value);
       }
     ),
   specification: yup
@@ -127,10 +136,10 @@ const EditAssetPage: FC = () => {
       setIsSubmitting(true);
       console.log(currentCategory?.id);
       const payload = {
-        assetName: values.assetName,
+        assetName: values.assetName.trim(),
         categoryId: currentCategory?.id || "",
         installedDate: toISOStringWithoutTimezone(values.installedDate!),
-        specification: values.specification,
+        specification: values.specification.trim(),
         state: Number(values.state),
       } as CreateAssetRequest;
       try {
@@ -202,8 +211,7 @@ const EditAssetPage: FC = () => {
                   format="DD/MM/YYYY"
                   value={formik.values.installedDate}
                   onChange={(value) =>
-                    dayjs(value).isValid() &&
-                    formik.setFieldValue("installedDate", value, true)
+                    formik.setFieldValue("installedDate", value)
                   }
                   slotProps={{
                     textField: {

@@ -165,6 +165,8 @@ const AssetListPage: FC<ListPageProps> = ({ alertString }) => {
   const setAssets = (assets: Asset[]) => {
     if (!bool && state?.presetEntry) {
       // add presetEntry into assets
+      console.log(state.presetEntry);
+      
       let newArr = [state.presetEntry, ...assets];
       let uniqueAssets = Array.from(
         new Map(newArr.map((asset) => [asset.id, asset])).values()
@@ -470,11 +472,9 @@ const AssetListPage: FC<ListPageProps> = ({ alertString }) => {
                     </CustomTableCell>
                     {asset.state === AssetState.Assigned && (
                       <StyledTableCell align="center">
-                        <NoStyleLink to={routeNames.asset.edit(asset.id)}>
                           <IconButton disabled>
                             <Edit />
                           </IconButton>
-                        </NoStyleLink>
                         <IconButton
                           disabled
                           onClick={(event) => handleDeleteClick(event, asset)}
