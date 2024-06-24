@@ -115,14 +115,11 @@ const EditUserPage: FC = () => {
         onSubmit: async (values) => {
             setIsSubmitting(true);
             const payload = {
-                firstName: values.firstName,
-                lastName: values.lastName,
                 joinedDate: toISOStringWithoutTimezone(values.joinedDate!),
                 dateOfBirth: toISOStringWithoutTimezone(values.dateOfBirth!),
                 gender: values.gender,
                 type: values.userType,
             } as EditUserRequest;
-            console.log(values.joinedDate, values.joinedDate?.toISOString())
             try {
                 const response = await editUserById(userId!, payload);
                 const listUserPageState = {
@@ -161,30 +158,28 @@ const EditUserPage: FC = () => {
                         <Grid container spacing={3}>
                             <Grid item xs={12} sm={6}>
                                 <TextField
-                                    required
                                     fullWidth
                                     id="firstName"
                                     name="firstName"
                                     label="First Name"
+                                    variant="filled"
                                     value={formik.values.firstName}
-                                    onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}
-                                    error={formik.touched.firstName && Boolean(formik.errors.firstName)}
-                                    helperText={formik.touched.firstName && formik.errors.firstName}
+                                    InputProps={{
+                                        readOnly: true
+                                    }}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6}>
                                 <TextField
-                                    required
                                     fullWidth
                                     id="lastName"
                                     name="lastName"
                                     label="Last Name"
                                     value={formik.values.lastName}
-                                    onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}
-                                    error={formik.touched.lastName && Boolean(formik.errors.lastName)}
-                                    helperText={formik.touched.lastName && formik.errors.lastName}
+                                    variant="filled"
+                                    InputProps={{
+                                        readOnly: true
+                                    }}
                                 />
                             </Grid>
                             <Grid item xs={12}>

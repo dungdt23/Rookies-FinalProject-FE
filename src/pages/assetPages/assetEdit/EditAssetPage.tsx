@@ -81,7 +81,6 @@ const EditAssetPage: FC = () => {
     try {
       const response = await fetchAssetById(assetId!);
       const asset = response.data;
-      console.log(asset);
       
       formik.setValues({
         assetName: asset.assetName,
@@ -125,10 +124,9 @@ const EditAssetPage: FC = () => {
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       setIsSubmitting(true);
-      console.log(currentCategory?.id);
       const payload = {
         assetName: values.assetName,
-        categoryId: currentCategory?.id || "",
+        categoryId: currentCategory?.id ?? "",
         installedDate: toISOStringWithoutTimezone(values.installedDate!),
         specification: values.specification,
         state: Number(values.state),
@@ -187,7 +185,7 @@ const EditAssetPage: FC = () => {
                   id="categoryId"
                   name="categoryId"
                   label="Category"
-                  value={currentCategory?.id || ""}
+                  value={currentCategory?.id ?? ""}
                   disabled={Boolean(currentCategory)}
                 >
                   {categories.map((category) => (

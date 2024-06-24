@@ -36,8 +36,6 @@ export interface CreateUserRequest {
 }
 
 export interface EditUserRequest {
-    firstName: string,
-    lastName: string,
     dateOfBirth: string,
     gender: UserGender,
     joinedDate: string,

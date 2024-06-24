@@ -114,10 +114,7 @@ const CreateUserPage: FC = () => {
                 setIsSubmitting(false);
             }
         },
-    });
-
-    console.log(formik.values.dateOfBirth);
-    
+    });    
 
     return (
         <>
