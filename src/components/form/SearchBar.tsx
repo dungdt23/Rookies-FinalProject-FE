@@ -26,6 +26,7 @@ const SearchBar = forwardRef<HTMLInputElement, SearchBarProps>(
             },
         });
 
+
         const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
             if (event.key === 'Enter') {
                 formik.handleSubmit();

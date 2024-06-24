@@ -17,6 +17,7 @@ import { removeUndefinedValues } from "../../../helpers/removeUndefined";
 import { FieldAssignmentFilter, GetAllAssignmentParams, RespondAssignmentRequest, disableAssignmentrById, fetchAllAssignments, respondAssignmentById } from "../../../services/assignment.service";
 import { Assignment, AssignmentState } from "../../../types/assignment";
 import { ListPageState } from "../../../types/common";
+import { SearchBar } from "../../../components/form";
 
 const ClickableTableRow = styled(TableRow)(({ theme }) => ({
     cursor: "pointer",
@@ -147,18 +148,10 @@ const AssignmentListPageStaff = () => {
         }
     }, [clearDate])
 
-    const handleSearchSubmit = () => {
-        if (inputRef.current) {
-            const searchQuery = inputRef.current.value;
-            setSearch(searchQuery);
-            setPage(1); // Reset to the first page on search
-        }
-    };
-
-    const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
-        if (event.key === 'Enter') {
-            handleSearchSubmit();
-        }
+    const handleSearchSubmit = (searchTerm: string) => {
+        const searchQuery = searchTerm;
+        setSearch(searchQuery);
+        setPage(1); // Reset to the first page on search
     };
 
     const handleStateFilter = (event: SelectChangeEvent) => {
@@ -364,22 +357,10 @@ const AssignmentListPageStaff = () => {
                         </Box>
                     </FormControl>
                     <Box display={'flex'}>
-                        <Paper
-                            variant="outlined"
-                            sx={{ padding: '0 0.5rem', display: 'flex', alignItems: 'center', minWidth: '20rem' }}
-                        >
-                            <InputBase
-                                inputRef={inputRef}
-                                sx={{ ml: 1, flex: 1, minWidth: "20rem" }}
-                                placeholder={placeholderSearch}
-                                inputProps={{ 'aria-label': 'search google maps' }}
-                                onKeyUp={handleKeyPress}
-                            />
-                            <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
-                            <IconButton type="button" sx={{ p: '10px' }} aria-label="search" onClick={handleSearchSubmit}>
-                                <Search />
-                            </IconButton>
-                        </Paper>
+                        <SearchBar
+                            placeholderSearch={placeholderSearch}
+                            onSearchSubmit={handleSearchSubmit}
+                        />
                     </Box>
 
                 </Box>

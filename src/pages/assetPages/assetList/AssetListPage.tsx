@@ -232,12 +232,10 @@ const AssetListPage: FC<ListPageProps> = ({ alertString }) => {
     setDeleteAnchorEl(null);
   };
 
-  const handleSearchSubmit = () => {
-    if (inputRef.current) {
-      const searchQuery = inputRef.current.value.trim();
-      setSearch(searchQuery);
-      setPage(1); // Reset to the first page on search
-    }
+  const handleSearchSubmit = (searchTerm: string) => {
+    const searchQuery = searchTerm;
+    setSearch(searchQuery);
+    setPage(1); // Reset to the first page on search
   };
 
     const renderAssetDetailDialog = (): ReactNode => {
