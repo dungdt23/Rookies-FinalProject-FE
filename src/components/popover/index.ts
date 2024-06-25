@@ -1,2 +1,2 @@
-import CustomPopover from './Popover';
+import CustomPopover from './CustomPopover';
 export {CustomPopover}
