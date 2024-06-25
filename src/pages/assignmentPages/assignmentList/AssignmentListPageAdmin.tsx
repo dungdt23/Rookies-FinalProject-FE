@@ -105,7 +105,7 @@ const AssignmentListPageAdmin = () => {
     const location = useLocation();
 
 
-    const placeholderSearch = "Search assignment by asset and asssignee";
+    const placeholderSearch = "Search by asset code, name and asssignee";
 
     const state: ListPageState<Assignment> | undefined = location.state;
 
@@ -114,7 +114,7 @@ const AssignmentListPageAdmin = () => {
     const getAssignments = async () => {
         setIsFetching(true);
         let params: GetAllAssignmentParams = {
-            searchString: search ? search as string : undefined,
+            searchString: search === "" ? search : undefined,
             isAscending: order === "asc",
             fieldFilter: FieldAssignmentFilter[orderBy as keyof typeof FieldAssignmentFilter],
             index: page,
@@ -160,7 +160,7 @@ const AssignmentListPageAdmin = () => {
     };
 
     const handleAssignedDateChange = (value: dayjs.Dayjs | null) => {
-        setAssignedDate(value as Dayjs | null);
+        setAssignedDate(value);
     }
 
     function onRequestSort(property: string): void {
@@ -254,7 +254,7 @@ const AssignmentListPageAdmin = () => {
             }
         ]
         return (
-            <Box>
+            <Box sx={{maxWidth: "30rem"}}>
                 {assignmentDetails.map((item) => (
                     <Grid container spacing={2} key={item.label}>
                         <Grid item xs={4}>
@@ -440,7 +440,6 @@ const AssignmentListPageAdmin = () => {
                 handleClose={handleClosePopover}
                 renderTitle={() => <span>Detailed Assignment Information</span>}
                 renderDescription={renderAssignmentDetailDialog}
-                boxProps={{ sx: { minWidth: '25rem' } }}
             />
             <CustomPopover
                 elAnchor={deleteAnchorEl}

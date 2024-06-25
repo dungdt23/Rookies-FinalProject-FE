@@ -261,7 +261,7 @@ const UserListPage: FC = () => {
       },
     ];
     return (
-      <Box>
+      <Box sx={{ minWidth: "25rem", maxWidth: "30rem" }}>
         {userDetails.map((item) => (
           <Grid container spacing={2} key={item.label}>
             <Grid item xs={4}>
@@ -382,7 +382,7 @@ const UserListPage: FC = () => {
               placeholderSearch={placeholderSearch}
               onSearchSubmit={handleSearchSubmit}
               TextFieldProps={{ sx: { minWidth: "20rem" } }}
-              />
+            />
             <NoStyleLink to={routeNames.user.create}>
               <Button
                 sx={{ marginLeft: "1rem", p: "0 1.5rem", height: "100%" }}
@@ -504,7 +504,6 @@ const UserListPage: FC = () => {
         handleClose={handleClosePopover}
         renderTitle={() => <span>Detailed User Information</span>}
         renderDescription={renderUserDetailDialog}
-        boxProps={{ sx: { minWidth: "25rem" } }}
       />
       <CustomPopover
         elAnchor={deleteAnchorEl}
