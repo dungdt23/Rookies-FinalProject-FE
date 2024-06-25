@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import * as yup from 'yup';
 import { NoStyleLink } from '../../../components/noStyleLink';
 import { routeNames } from '../../../constants/routeName';
-import { nameof, toISOStringWithoutTimezone } from '../../../helpers/helper';
+import { toISOStringWithoutTimezone } from '../../../helpers/helper';
 import { createAssignment, CreateAssignmentRequest } from '../../../services/assignment.service';
 import { Asset } from '../../../types/asset';
 import { Assignment } from '../../../types/assignment';
@@ -33,7 +33,7 @@ const validationSchema = yup.object({
     user: yup.object().nullable().required('Please select a user'),
     note: yup.string().max(500, "The note's length should not exceed 500 characters."),
     assignedDate: yup.object().nullable().required('Please choose assigned date')
-        .test('is-present-or-future', 'The Assigned date is in the future. Please select another date.', function (value) {
+        .test('is-present-or-future', 'The Assigned date is in the past. Please select another date.', function (value) {
             return isAfterOrEqual(value as Dayjs, dayjs())
         }),
 });

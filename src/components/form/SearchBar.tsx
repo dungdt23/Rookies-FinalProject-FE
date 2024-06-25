@@ -1,5 +1,5 @@
 import { Search as SearchIcon } from '@mui/icons-material';
-import { Divider, IconButton, InputAdornment, TextField } from '@mui/material';
+import { Box, Divider, IconButton, InputAdornment, TextField } from '@mui/material';
 import { useFormik } from 'formik';
 import React, { forwardRef } from 'react';
 import * as Yup from 'yup';
@@ -8,10 +8,11 @@ interface SearchBarProps {
     placeholderSearch: string;
     onSearchSubmit: (searchTerm: string) => void;
     inputRef?: React.Ref<HTMLInputElement>;
+    TextFieldProps?: React.ComponentProps<typeof TextField>
 }
 
 const SearchBar = forwardRef<HTMLInputElement, SearchBarProps>(
-    ({ placeholderSearch, onSearchSubmit, inputRef }, ref) => {
+    ({ placeholderSearch, onSearchSubmit, inputRef , TextFieldProps}, ref) => {
         const formik = useFormik({
             initialValues: {
                 searchTerm: ''
@@ -34,7 +35,7 @@ const SearchBar = forwardRef<HTMLInputElement, SearchBarProps>(
         };
 
         return (
-            <form onSubmit={formik.handleSubmit} style={{ minWidth: '20rem', display: 'flex', alignItems: 'center', flex: 1 }}>
+            <Box style={{ display: 'flex', alignItems: 'center' }}>
                 <TextField
                     inputRef={inputRef || ref}
                     sx={{ flex: 1 }}
@@ -54,6 +55,7 @@ const SearchBar = forwardRef<HTMLInputElement, SearchBarProps>(
                                         type="submit"
                                         sx={{ p: '10px' }}
                                         aria-label="search"
+                                        onClick={() => formik.handleSubmit()}
                                     >
                                         <SearchIcon />
                                     </IconButton>
@@ -62,8 +64,9 @@ const SearchBar = forwardRef<HTMLInputElement, SearchBarProps>(
                         ),
                     }}
                     onKeyUp={handleKeyPress}
+                    {...TextFieldProps}
                 />
-            </form>
+            </Box>
         );
     }
 );

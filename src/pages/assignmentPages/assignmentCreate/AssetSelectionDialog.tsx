@@ -95,6 +95,7 @@ const AssetSelectionDialog: FC<AssetSelectionDialogProps> = ({ open, onClose, se
         if (open) {
             getAssets();
         } else {
+            setSearch('');
             setAssets([])
         }
     }, [open, page, order, orderBy, search]);

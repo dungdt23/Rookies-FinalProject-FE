@@ -36,7 +36,7 @@ const validationSchema = yup.object({
     user: yup.object().nullable().required('Please select a user'),
     note: yup.string().max(500, "The note's length should not exceed 500 characters."),
     assignedDate: yup.object().nullable().required('Please choose assigned date')
-        .test('is-present-or-future', 'The Assigned date is in the future. Please select another date.', function (value) {
+        .test('is-present-or-future', 'The Assigned date is in the past. Please select another date.', function (value) {
             return isAfterOrEqual(value as Dayjs, dayjs())
         }),
 });
@@ -150,6 +150,9 @@ const EditAssignmentPage: FC = () => {
     const handleAssignedDateBlur = () => {
         formik.setFieldTouched('assignedDate', true)
     }
+
+    console.log(formik.touched.assignedDate && Boolean(formik.errors.assignedDate));
+    
 
     if (isFetching) {
         return <Typography>Loading...</Typography>;
