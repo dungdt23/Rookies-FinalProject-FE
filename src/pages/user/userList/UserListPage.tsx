@@ -381,7 +381,8 @@ const UserListPage: FC = () => {
             <SearchBar
               placeholderSearch={placeholderSearch}
               onSearchSubmit={handleSearchSubmit}
-            />
+              TextFieldProps={{ sx: { minWidth: "20rem" } }}
+              />
             <NoStyleLink to={routeNames.user.create}>
               <Button
                 sx={{ marginLeft: "1rem", p: "0 1.5rem", height: "100%" }}

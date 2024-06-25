@@ -345,7 +345,7 @@ const AssetListPage: FC<ListPageProps> = ({ alertString }) => {
           assignment
           <br />
           If the asset is not able to be used anymore please update its state in{" "}
-          <Link to={routeNames.asset.edit(selected?.id || "")}>
+          <Link to={routeNames.asset.edit(selected?.id ?? "")}>
             Edit Asset Page
           </Link>
         </Typography>
@@ -416,6 +416,7 @@ const AssetListPage: FC<ListPageProps> = ({ alertString }) => {
               ref={inputRef}
               placeholderSearch={placeholderSearch}
               onSearchSubmit={handleSearchSubmit}
+              TextFieldProps={{ sx: { minWidth: "20rem" } }}
             />
             <NoStyleLink to={routeNames.asset.create}>
               <Button

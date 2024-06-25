@@ -112,11 +112,11 @@ export const adminRoutes: RouteObject[] = [
 
 export const guestRoutes: RouteObject[] = [
     {
-        element: <RequireAuth allowedTypes={[UserType.Staff, UserType.Admin]} />,
+        element: <AdminLayout />,
         children: [
             {
                 path: routeNames.index,
-                element: <></>
+                element: <HomePage />
             },
         ]
     },
@@ -131,11 +131,7 @@ export const staffRoutes: RouteObject[] = [
                 element: <AdminLayout />,
                 children: [
                     {
-                        path: routeNames.index,
-                        element: <HomePage />
-                    },
-                    {
-                        path: routeNames.assignment.list,
+                        path: routeNames.assignment.staffList,
                         element: <AssignmentListPageStaff />
                     }
                 ]
