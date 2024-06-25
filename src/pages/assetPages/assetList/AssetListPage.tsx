@@ -4,6 +4,7 @@ import {
   Alert,
   Box,
   Button,
+  Divider,
   FormControl,
   Grid,
   IconButton,
@@ -273,7 +274,7 @@ const AssetListPage: FC<ListPageProps> = ({ alertString }) => {
       },
     ];
     return (
-      <Box>
+      <Box sx={{maxWidth: "30rem"}}>
         {assetDetails.map((item) => (
           <Grid container spacing={2} key={item.label}>
             <Grid item xs={4}>
@@ -284,6 +285,15 @@ const AssetListPage: FC<ListPageProps> = ({ alertString }) => {
             </Grid>
           </Grid>
         ))}
+        <Divider/>
+        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+          <Typography variant="h6">Assignment history:</Typography>
+          <Typography variant="subtitle2">Time: Lorem | Assignment: Lorem</Typography>
+          <Typography variant="subtitle2">Time: Lorem | Assignment: Lorem</Typography>
+          <Typography variant="subtitle2">Time: Lorem | Assignment: Lorem</Typography>
+          <Typography variant="subtitle2">Time: Lorem | Assignment: Lorem</Typography>
+          <Typography variant="subtitle2">Time: Lorem | Assignment: Lorem</Typography>
+        </Box>
       </Box>
     );
   };
@@ -547,7 +557,6 @@ const AssetListPage: FC<ListPageProps> = ({ alertString }) => {
         handleClose={handleClosePopover}
         renderTitle={() => <span>Detailed Asset Information</span>}
         renderDescription={renderAssetDetailDialog}
-        boxProps={{ sx: { minWidth: "25rem", maxWidth: "30rem" } }}
       />
       <CustomPopover
         elAnchor={deleteAnchorEl}
