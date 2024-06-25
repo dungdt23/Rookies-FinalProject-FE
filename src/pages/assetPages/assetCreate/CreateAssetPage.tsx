@@ -83,6 +83,7 @@ const validationSchema = yup.object({
   specification: yup
     .string()
     .required("Please enter specification")
+    .min(2, "Specification length should be 2-500 characters")
     .max(500, "Specification length can't be more than 500 characters.")
     .test(
       "no-only-spaces",
