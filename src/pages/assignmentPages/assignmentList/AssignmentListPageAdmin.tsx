@@ -114,7 +114,7 @@ const AssignmentListPageAdmin = () => {
     const getAssignments = async () => {
         setIsFetching(true);
         let params: GetAllAssignmentParams = {
-            searchString: search === "" ? search : undefined,
+            searchString: search !== "" ? search : undefined,
             isAscending: order === "asc",
             fieldFilter: FieldAssignmentFilter[orderBy as keyof typeof FieldAssignmentFilter],
             index: page,

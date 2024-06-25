@@ -14,7 +14,7 @@ import { routeNames } from '../../../constants/routeName';
 import { editUserById, EditUserRequest, fetchUserById } from '../../../services/user.service';
 import { User, UserGender, UserType } from '../../../types/user';
 import { ListPageState } from '../../../types/common';
-import { toISOStringWithoutTimezone } from '../../../helpers/helper';
+import { isValidDate, isWithinAllowedRange, toISOStringWithoutTimezone } from '../../../helpers/helper';
 
 export interface Role {
     id: string;
@@ -49,16 +49,28 @@ const validationSchema = yup.object({
         .matches(unicodeAlphabetRegex, 'Last name should contain alphabetic characters.')
         .min(2, 'The last name length should be 2-100 characters')
         .max(100, 'The Last Name length should be 2-100 characters'),
-    dateOfBirth: yup.object()
+    dateOfBirth: yup.mixed()
         .required('Please choose date of birth')
+        .test('is-valid', 'Please enter a valid date.', function (value) {
+            return isValidDate(value)
+        })
+        .test('is-within-range', 'Please enter a valid date.', function (value) {
+            return isWithinAllowedRange(value as Dayjs)
+        })
         .test('is-future', 'The date of birth is in the future. Please select a different date', function (value) {
             return !isFuture(value as Dayjs);
         })
         .test('is-18-or-older', 'User is under 18. Please select a different date', function (value) {
             return !isUnder18(value as Dayjs);
         }),
-    joinedDate: yup.object()
+    joinedDate: yup.mixed()
         .required('Please choose joined date')
+        .test('is-valid', 'Please enter a valid date.', function (value) {
+            return isValidDate(value)
+        })
+        .test('is-within-range', 'Please enter a valid date.', function (value) {
+            return isWithinAllowedRange(value as Dayjs)
+        })
         .test('is-after-dob', 'Joined date is not later than Date of Birth. Please select a different date', function (value, context) {
             return isAfterOrEqual(value as Dayjs, context.parent.dateOfBirth as Dayjs);
         })
@@ -136,9 +148,8 @@ const EditUserPage: FC = () => {
     });
 
     const handleDoBChanges = (value: Dayjs | null) => {
-        if (dayjs(value).isValid()) {
-            formik.setFieldValue('dateOfBirth', value, true)
-        }
+        formik.setFieldTouched('dateOfBirth', true)
+        formik.setFieldValue('dateOfBirth', value, true)
     }
 
     const handleDobBlur = () => {
@@ -146,10 +157,8 @@ const EditUserPage: FC = () => {
     }
 
     const handleJoinedDateChanges = (value: Dayjs | null) => {
-        if (dayjs(value).isValid()) {
-            formik.setFieldTouched('joinedDate', true)
-            formik.setFieldValue('joinedDate', value, true)
-        }
+        formik.setFieldTouched('joinedDate', true)
+        formik.setFieldValue('joinedDate', value, true)
     }
 
     const handleJoinedDateBlur = () => {
