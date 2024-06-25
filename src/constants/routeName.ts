@@ -18,6 +18,7 @@ export const routeNames = {
     assignment: {
         list: "/assignments",
         create: "/assignments/create",
-        edit: (assignmentId: string): string => `/assignments/edit/${assignmentId}`
+        edit: (assignmentId: string): string => `/assignments/edit/${assignmentId}`,
+        staffList: "/"
     }
 }

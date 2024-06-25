@@ -1,9 +1,11 @@
 import { Box, List, ListItem, ListItemText, styled, Typography } from '@mui/material';
 import { FC, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { SidebarItem, menuItems as sidebarItems } from './sidebarItems';
+import { SidebarItem, adminSidebarItems, guestSidebarItems, staffSidebarItems } from './sidebarItems';
 import { Logo } from '../../components/logo';
 import { theme } from '../../constants/appTheme';
+import { useAuth } from '../../contexts/AuthContext';
+import { UserType } from '../../types/user';
 
 const StyledListItem = styled(ListItem)<{ active: boolean }>(({ theme, active }) => ({
     backgroundColor: active ? theme.palette.primary.main : theme.palette.lightGrey.main,
@@ -20,12 +22,11 @@ const StyledList = styled(List)(() => ({
     minWidth: '15rem',
 }))
 
-
-
 const Sidebar: FC = () => {
     const location = useLocation();
     const [activeItem, setActiveItem] = useState<string>(location.pathname);
     const navigate = useNavigate();
+    const { user } = useAuth();
 
     const handleItemClick = (item: SidebarItem) => {
         if (item.to) {
@@ -34,6 +35,17 @@ const Sidebar: FC = () => {
         }
     };
 
+    const getSidebarItems = (): SidebarItem[] => {
+        switch (user?.role) {
+            case UserType.Admin:
+                return adminSidebarItems;
+            case UserType.Staff:
+                return staffSidebarItems;
+            default:
+                return guestSidebarItems;
+        }
+    }
+
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
@@ -41,7 +53,7 @@ const Sidebar: FC = () => {
                 <Typography fontSize='1.2rem' fontWeight='700' color={theme.palette.primary.main}>Online Asset Management</Typography>
             </Box>
             <StyledList>
-                {sidebarItems.map((item) => (
+                {getSidebarItems().map((item) => (
                     <StyledListItem
                         key={item.label}
                         active={activeItem === item.to}

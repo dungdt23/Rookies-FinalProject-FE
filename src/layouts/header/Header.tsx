@@ -1,7 +1,11 @@
-import { Box, Breadcrumbs, styled, Typography } from "@mui/material";
+import { Box, Breadcrumbs, Button, styled, Typography } from "@mui/material";
 import { FC, useState } from "react";
 import { NoStyleLink } from "../../components/noStyleLink";
 import AccountPopover from "./AccountPopover";
+import { useAuth } from "../../contexts/AuthContext";
+import { Link } from "react-router-dom";
+import { routeNames } from "../../constants/routeName";
+import { theme } from "../../constants/appTheme";
 
 interface BreadcrumbsInfo {
     label: string,
@@ -27,8 +31,8 @@ const RootBox = styled(Box)(({ theme }) => ({
 }))
 
 const Header: FC = () => {
-    //@ts-ignore
     const [history, setHistory] = useState<BreadcrumbsInfo[]>(HeaderMockInfo)
+    const { user } = useAuth();
     return (
         <RootBox className="header">
             <Breadcrumbs separator=">" aria-label="breadcrumb">
@@ -40,7 +44,8 @@ const Header: FC = () => {
                     );
                 })}
             </Breadcrumbs>
-            <AccountPopover/>
+            {user ? <AccountPopover /> 
+            : <Button component={Link} to={routeNames.login} sx={{color: theme.palette.common.white}}>Login</Button>}
         </RootBox>
     )
 }
