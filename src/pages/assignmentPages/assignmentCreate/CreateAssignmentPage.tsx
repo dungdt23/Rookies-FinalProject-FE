@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import * as yup from 'yup';
 import { NoStyleLink } from '../../../components/noStyleLink';
 import { routeNames } from '../../../constants/routeName';
-import { toISOStringWithoutTimezone } from '../../../helpers/helper';
+import { isValidDate, isWithinAllowedRange, toISOStringWithoutTimezone } from '../../../helpers/helper';
 import { createAssignment, CreateAssignmentRequest } from '../../../services/assignment.service';
 import { Asset } from '../../../types/asset';
 import { Assignment } from '../../../types/assignment';
@@ -26,16 +26,23 @@ const RootBox = styled(Box)(() => ({
 
 // Custom validation functions using dayjs
 const isAfterOrEqual = (a: Dayjs, b: Dayjs) => dayjs(a).add(1, 'day').isAfter(b);
+const maxAssignedDate = dayjs('2099-12-31')
 
 // Validation schema
 const validationSchema = yup.object({
     asset: yup.object().nullable().required('Please select an asset'),
     user: yup.object().nullable().required('Please select a user'),
     note: yup.string().max(500, "The note's length should not exceed 500 characters."),
-    assignedDate: yup.object().nullable().required('Please choose assigned date')
+    assignedDate: yup.mixed().nullable().required('Please choose assigned date')
+        .test('is-valid', 'Please enter a valid date.', function (value) {
+            return isValidDate(value)
+        })
+        .test('is-within-range', 'Please enter a valid date.', function (value) {
+            return isWithinAllowedRange(value as Dayjs)
+        })
         .test('is-present-or-future', 'The Assigned date is in the past. Please select another date.', function (value) {
             return isAfterOrEqual(value as Dayjs, dayjs())
-        }),
+        })
 });
 
 const CreateAssignmentPage: FC = () => {
@@ -108,9 +115,8 @@ const CreateAssignmentPage: FC = () => {
     };
 
     const handleAssignedDateChanges = (value: Dayjs | null) => {
-        if (dayjs(value).isValid()) {
-            formik.setFieldValue('assignedDate', value, true)
-        }
+        formik.setFieldTouched('assignedDate', true)
+        formik.setFieldValue('assignedDate', value, true)
     }
 
     const handleAssignedDateBlur = () => {
@@ -142,14 +148,12 @@ const CreateAssignmentPage: FC = () => {
                                         readOnly: true,
                                         endAdornment: (
                                             <InputAdornment position="end">
-                                                <>
-                                                    <IconButton
-                                                        sx={{ p: '10px' }}
-                                                        aria-label="search"
-                                                    >
-                                                        <Search />
-                                                    </IconButton>
-                                                </>
+                                                <IconButton
+                                                    sx={{ p: '10px' }}
+                                                    aria-label="search"
+                                                >
+                                                    <Search />
+                                                </IconButton>
                                             </InputAdornment>
                                         )
                                     }}
@@ -170,14 +174,12 @@ const CreateAssignmentPage: FC = () => {
                                         readOnly: true,
                                         endAdornment: (
                                             <InputAdornment position="end">
-                                                <>
-                                                    <IconButton
-                                                        sx={{ p: '10px' }}
-                                                        aria-label="search"
-                                                    >
-                                                        <Search />
-                                                    </IconButton>
-                                                </>
+                                                <IconButton
+                                                    sx={{ p: '10px' }}
+                                                    aria-label="search"
+                                                >
+                                                    <Search />
+                                                </IconButton>
                                             </InputAdornment>
                                         )
                                     }}
@@ -189,6 +191,7 @@ const CreateAssignmentPage: FC = () => {
                                 <DatePicker
                                     format="DD/MM/YYYY"
                                     minDate={dayjs()}
+                                    maxDate={maxAssignedDate}
                                     value={formik.values.assignedDate}
                                     onChange={handleAssignedDateChanges}
                                     slotProps={{
