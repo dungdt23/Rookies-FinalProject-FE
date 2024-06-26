@@ -90,11 +90,15 @@ const UserSelectionDialog: FC<UserSelectionDialogProps> = ({ open, handleClose, 
     };
 
     useEffect(() => {
+        getUsers();
+    }, [page, order, orderBy, search]);
+
+    useEffect(() => {
         if (open) {
             setSelected(preSelected ?? null);
             getUsers();
         }
-    }, [open, page, order, orderBy, search]);
+    }, [open])
 
     const handleCancelClick = () => {
         handleClose()
