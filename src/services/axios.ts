@@ -2,6 +2,7 @@ import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from "ax
 import { AxiosConstants } from "../constants/axiosConstants";
 import { LocalStorageConstants } from "../constants/localStorage";
 import { routeNames } from "../constants/routeName";
+import { logout, useAuth } from "../contexts/AuthContext";
 
 const axiosInstance = axios.create({
     baseURL: AxiosConstants.AXIOS_BASEURL,
@@ -43,8 +44,8 @@ axiosInstance.interceptors.response.use(
         // Any status codes that fall outside the range of 2xx cause this function to trigger
         if (error.response && error.response.status === 401 && window.location.pathname !== routeNames.login) {
             // Handle unauthorized errors (e.g., redirect to login)
-            console.log(window.location.href);
             console.error('Unauthorized, redirecting to login...');
+            logout();
             window.location.href = routeNames.login;
         }
         // You can add other error handling logic here

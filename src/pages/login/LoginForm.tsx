@@ -57,6 +57,9 @@ const LoginForm: React.FC = () => {
                     helperText={formik.touched.username && formik.errors.username}
                     required
                     autoFocus
+                    InputLabelProps={{
+                        shrink: true
+                    }}
                 />
 
                 <TextField
@@ -77,6 +80,9 @@ const LoginForm: React.FC = () => {
                                 </IconButton>
                             </InputAdornment>
                         ),
+                    }}
+                    InputLabelProps={{
+                        shrink: true
                     }}
                 />
             </Stack>
