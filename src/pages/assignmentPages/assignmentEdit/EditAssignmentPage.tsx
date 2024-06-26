@@ -54,9 +54,7 @@ type RouteParams = {
 
 const EditAssignmentPage: FC = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [user, setUser] = useState<User | null>(null);
     const [assignment, setAssignment] = useState<Assignment | null>(null);
-    const [asset, setAsset] = useState<Asset | null>(null);
     const navigate = useNavigate();
     const [userDialog, setUserDialog] = useState<boolean>(false);
     const [assetDialog, setAssetDialog] = useState<boolean>(false);
@@ -68,11 +66,14 @@ const EditAssignmentPage: FC = () => {
         if (assignmentId) {
             try {
                 const response = await fetchAssignmentById(assignmentId);
-                const user = await fetchUserById(response.data.assigneeId)
-                setUser(user.data);
-                const asset = await fetchAssetById(response.data.assetId)
-                setAsset(asset.data);
                 setAssignment(response.data)
+                const user = await fetchUserById(response.data.assigneeId)
+                formik.setFieldValue('user', user.data, true)
+                const asset = await fetchAssetById(response.data.assetId)
+                formik.setFieldValue('asset', asset.data, true)
+                formik.setFieldValue('note', response.data.note, true)
+                formik.setFieldValue('assignedDate', dayjs(response.data.assignedDate), true)
+                formik.setFieldTouched('assignedDate', true)
             } catch (error) {
                 console.error(error);
             }
@@ -86,12 +87,12 @@ const EditAssignmentPage: FC = () => {
 
     const formik = useFormik({
         initialValues: {
-            asset: asset as Asset | null,
-            user: user as User | null,
-            note: assignment?.note,
-            assignedDate: dayjs(assignment?.assignedDate) as Dayjs | null,
+            asset: null as Asset | null,
+            user: null as User | null,
+            note: '',
+            assignedDate: null as Dayjs | null,
         },
-        enableReinitialize: true, // Enable reinitializing of form values when initialValues change
+        enableReinitialize: true,
         validationSchema: validationSchema,
         onSubmit: async (values) => {
             setIsSubmitting(true);
@@ -157,9 +158,6 @@ const EditAssignmentPage: FC = () => {
         formik.setFieldTouched('assignedDate', true)
     }
 
-    console.log(formik.touched.assignedDate && Boolean(formik.errors.assignedDate));
-
-
     if (isFetching) {
         return <Typography>Loading...</Typography>;
     }
@@ -168,6 +166,8 @@ const EditAssignmentPage: FC = () => {
         return <Error404 />;
     }
 
+    console.log(formik.touched.assignedDate, formik.errors.assignedDate);
+    
     return (
         <>
             <Helmet>
@@ -182,6 +182,7 @@ const EditAssignmentPage: FC = () => {
                         <Grid container spacing={3}>
                             <Grid item xs={12}>
                                 <TextField
+                                    required
                                     id="user"
                                     fullWidth
                                     label="User"
@@ -211,6 +212,7 @@ const EditAssignmentPage: FC = () => {
                             </Grid>
                             <Grid item xs={12}>
                                 <TextField
+                                    required
                                     id="asset"
                                     fullWidth
                                     label="Asset"
@@ -295,15 +297,15 @@ const EditAssignmentPage: FC = () => {
             </RootBox>
             <UserSelectionDialog
                 open={userDialog}
-                onClose={handleUserDialogClose}
+                handleClose={handleUserDialogClose}
                 onSelectSave={handleSelectUser}
-                selected={user || undefined}
+                selected={formik.values.user || undefined}
             />
             <AssetSelectionDialog
                 open={assetDialog}
-                onClose={handleAssetDialogClose}
+                handleClose={handleAssetDialogClose}
                 onSelectSave={handleSelectAsset}
-                selected={asset || undefined}
+                selected={formik.values.asset || undefined}
             />
         </>
     );

@@ -136,6 +136,7 @@ const CreateAssignmentPage: FC = () => {
                         <Grid container spacing={3}>
                             <Grid item xs={12}>
                                 <TextField
+                                    required
                                     id="user"
                                     fullWidth
                                     label="User"
@@ -162,6 +163,7 @@ const CreateAssignmentPage: FC = () => {
                             </Grid>
                             <Grid item xs={12}>
                                 <TextField
+                                    required
                                     id="asset"
                                     fullWidth
                                     label="Asset"
@@ -244,12 +246,13 @@ const CreateAssignmentPage: FC = () => {
             </RootBox>
             <UserSelectionDialog
                 open={userDialog}
-                onClose={handleUserDialogClose}
+                selected={formik.values.user || undefined}
+                handleClose={handleUserDialogClose}
                 onSelectSave={handleSelectUser}
             />
             <AssetSelectionDialog
                 open={assetDialog}
-                onClose={handleAssetDialogClose}
+                handleClose={handleAssetDialogClose}
                 onSelectSave={handleSelectAsset}
             />
         </>
