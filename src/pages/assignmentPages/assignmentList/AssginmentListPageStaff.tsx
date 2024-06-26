@@ -321,7 +321,7 @@ const AssignmentListPageStaff = () => {
                                 </MenuItem>
                                 <MenuItem value="WaitingForAcceptance">Waiting For Acceptance</MenuItem>
                                 <MenuItem value="Accepted">Accepted</MenuItem>
-                                <MenuItem value="Rejected">Rejected</MenuItem>
+                                <MenuItem value="Declined">Declined</MenuItem>
                             </Select>
                             <Divider sx={{ height: 0, m: 1 }} orientation="vertical" />
                             <DatePicker
