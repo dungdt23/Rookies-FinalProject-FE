@@ -2,7 +2,7 @@ import CancelPresentationRoundedIcon from '@mui/icons-material/CancelPresentatio
 import { Box, BoxProps, Divider, IconButton, Paper, Popper, styled, Typography } from "@mui/material";
 import { FC, ReactNode, useEffect, useRef } from "react";
 
-interface PopperProps {
+interface CustomPopperProps {
     elAnchor: HTMLElement | null;
     open: boolean;
     handleClose: () => void;
@@ -29,7 +29,7 @@ const ContentBox = styled(Box)(({ theme }) => ({
     borderBottomRightRadius: theme.shape.borderRadius, // Apply border radius to match the Paper component
 }));
 
-const CustomPopper: FC<PopperProps> = ({ elAnchor, open, handleClose, renderTitle, renderDescription, boxProps, ...props }) => {
+const CustomPopper: FC<CustomPopperProps> = ({ elAnchor, open, handleClose, renderTitle, renderDescription, boxProps, ...props }) => {
     const popperRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
