@@ -253,6 +253,7 @@ const CreateAssignmentPage: FC = () => {
             />
             <AssetSelectionDialog
                 open={assetDialog}
+                selected={formik.values.asset || undefined}
                 handleClose={handleAssetDialogClose}
                 onSelectSave={handleSelectAsset}
             />

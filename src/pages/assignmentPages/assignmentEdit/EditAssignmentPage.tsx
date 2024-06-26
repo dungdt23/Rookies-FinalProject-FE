@@ -166,8 +166,6 @@ const EditAssignmentPage: FC = () => {
         return <Error404 />;
     }
 
-    console.log(formik.touched.assignedDate, formik.errors.assignedDate);
-    
     return (
         <>
             <Helmet>

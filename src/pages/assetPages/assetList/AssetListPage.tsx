@@ -426,7 +426,7 @@ const AssetListPage: FC<ListPageProps> = ({ alertString }) => {
               ref={inputRef}
               placeholderSearch={placeholderSearch}
               onSearchSubmit={handleSearchSubmit}
-              TextFieldProps={{ sx: { minWidth: "20rem" } }}
+              TextFieldProps={{ sx: { minWidth: "21rem" } }}
             />
             <NoStyleLink to={routeNames.asset.create}>
               <Button
