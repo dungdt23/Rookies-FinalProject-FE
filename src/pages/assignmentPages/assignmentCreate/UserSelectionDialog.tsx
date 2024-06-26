@@ -48,21 +48,21 @@ const TABLE_HEAD: TableHeadInfo[] = [
 
 interface UserSelectionDialogProps {
     open: boolean;
-    onClose: () => void;
+    handleClose: () => void;
     selected?: User;
     onSelectSave: (user: User | null) => void;
 }
 
-const UserSelectionDialog: FC<UserSelectionDialogProps> = ({ open, onClose, selected: preSelected, onSelectSave }) => {
+const UserSelectionDialog: FC<UserSelectionDialogProps> = ({ open, handleClose, selected: preSelected, onSelectSave }) => {
     const defaultSortOrder: Order = "asc"
     const theme = useTheme();
     const [users, setUsers] = useState<User[]>([]);
     const [isFetching, setIsFetching] = useState(false);
-    const [selected, setSelected] = useState<User | null>(preSelected || null);
+    const [selected, setSelected] = useState<User | null>(preSelected ?? null);
     const [page, setPage] = useState(1);
     const [totalCount, setTotalCount] = useState(0);
-    const [order, setOrder] = useState<'asc' | 'desc'>('asc');
-    const [orderBy, setOrderBy] = useState<string>('name');
+    const [order, setOrder] = useState<Order>('asc');
+    const [orderBy, setOrderBy] = useState<string>(UserFieldFilter[UserFieldFilter.fullName]);
     const [search, setSearch] = useState('');
 
     const pageSize = 10;  // You can adjust the page size as needed
@@ -92,10 +92,24 @@ const UserSelectionDialog: FC<UserSelectionDialogProps> = ({ open, onClose, sele
     useEffect(() => {
         if (open) {
             getUsers();
-        } else {
-            setUsers([])
         }
     }, [open, page, order, orderBy, search]);
+
+    const handleCancelClick = () => {
+        handleClose()
+        onClose()
+    }
+
+    const onClose = () => {
+        setSelected(null)
+        setPage(1)
+        setUsers([])
+        setSearch('')
+        setOrder('asc')
+        setOrderBy(UserFieldFilter[UserFieldFilter.fullName])
+        setTotalCount(0)
+        setIsFetching(false)
+    }
 
     const handleRowClick = (user: User) => {
         setSelected(user);
@@ -112,7 +126,8 @@ const UserSelectionDialog: FC<UserSelectionDialogProps> = ({ open, onClose, sele
 
     const handleSave = () => {
         onSelectSave(selected)
-        onClose();
+        handleClose();
+        onClose()
     }
 
     const onRequestSort = (property: string) => {
@@ -128,7 +143,7 @@ const UserSelectionDialog: FC<UserSelectionDialogProps> = ({ open, onClose, sele
     return (
         <Dialog
             open={open}
-            onClose={onClose}
+            onClose={handleClose}
             sx={{
                 "& .MuiDialog-container": {
                     "& .MuiPaper-root": {
@@ -221,10 +236,11 @@ const UserSelectionDialog: FC<UserSelectionDialogProps> = ({ open, onClose, sele
                         type="submit"
                         variant="contained"
                         onClick={handleSave}
+                        disabled={!Boolean(selected)}
                     >
                         Save
                     </Button>
-                    <Button variant="outlined" onClick={onClose}>
+                    <Button variant="outlined" onClick={handleCancelClick}>
                         Cancel
                     </Button>
                 </Box>

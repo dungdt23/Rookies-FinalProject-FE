@@ -48,12 +48,12 @@ const TABLE_HEAD: TableHeadInfo[] = [
 
 interface AssetSelectionDialogProps {
     open: boolean;
-    onClose: () => void;
+    handleClose: () => void;
     selected?: Asset;
     onSelectSave: (asset: Asset | null) => void;
 }
 
-const AssetSelectionDialog: FC<AssetSelectionDialogProps> = ({ open, onClose, selected: preSelected, onSelectSave }) => {
+const AssetSelectionDialog: FC<AssetSelectionDialogProps> = ({ open, handleClose, selected: preSelected, onSelectSave }) => {
     const defaultSortOrder: Order = "asc"
     const theme = useTheme();
     const [assets, setAssets] = useState<Asset[]>([]);
@@ -61,9 +61,9 @@ const AssetSelectionDialog: FC<AssetSelectionDialogProps> = ({ open, onClose, se
     const [selected, setSelected] = useState<Asset | null>(preSelected || null);
     const [page, setPage] = useState(1);
     const [totalCount, setTotalCount] = useState(0);
-    const [order, setOrder] = useState<'asc' | 'desc'>('asc');
-    const [orderBy, setOrderBy] = useState<string>('name');
-    const [search, setSearch] = useState('');
+    const [order, setOrder] = useState<Order>('asc');
+    const [orderBy, setOrderBy] = useState<string>(AssetFieldFilter[AssetFieldFilter.assetCode]);
+    const [search, setSearch] = useState<string>('');
 
     const pageSize = 10;  // You can adjust the page size as needed
 
@@ -94,11 +94,13 @@ const AssetSelectionDialog: FC<AssetSelectionDialogProps> = ({ open, onClose, se
     useEffect(() => {
         if (open) {
             getAssets();
-        } else {
-            setSearch('');
-            setAssets([])
         }
     }, [open, page, order, orderBy, search]);
+    
+    const handleCancelClick = () => {
+        handleClose()
+        onClose()
+    }
 
     const handleRowClick = (asset: Asset) => {
         setSelected(asset);
@@ -115,7 +117,19 @@ const AssetSelectionDialog: FC<AssetSelectionDialogProps> = ({ open, onClose, se
 
     const handleSave = () => {
         onSelectSave(selected)
+        handleClose();
         onClose();
+    }
+
+    const onClose = () => {
+        setSelected(null)
+        setPage(1)
+        setAssets([])
+        setSearch('')
+        setOrder('asc')
+        setOrderBy(AssetFieldFilter[AssetFieldFilter.assetCode])
+        setTotalCount(0)
+        setIsFetching(false)
     }
 
     const onRequestSort = (property: string) => {
@@ -131,7 +145,7 @@ const AssetSelectionDialog: FC<AssetSelectionDialogProps> = ({ open, onClose, se
     return (
         <Dialog
             open={open}
-            onClose={onClose}
+            onClose={handleClose}
             sx={{
                 "& .MuiDialog-container": {
                     "& .MuiPaper-root": {
@@ -224,10 +238,11 @@ const AssetSelectionDialog: FC<AssetSelectionDialogProps> = ({ open, onClose, se
                         type="submit"
                         variant="contained"
                         onClick={handleSave}
+                        disabled={!Boolean(selected)}
                     >
                         Save
                     </Button>
-                    <Button variant="outlined" onClick={onClose}>
+                    <Button variant="outlined" onClick={handleCancelClick}>
                         Cancel
                     </Button>
                 </Box>
