@@ -91,6 +91,7 @@ const UserSelectionDialog: FC<UserSelectionDialogProps> = ({ open, handleClose, 
 
     useEffect(() => {
         if (open) {
+            setSelected(preSelected ?? null);
             getUsers();
         }
     }, [open, page, order, orderBy, search]);
@@ -101,7 +102,7 @@ const UserSelectionDialog: FC<UserSelectionDialogProps> = ({ open, handleClose, 
     }
 
     const onClose = () => {
-        setSelected(null)
+        setSelected(preSelected ?? null)
         setPage(1)
         setUsers([])
         setSearch('')

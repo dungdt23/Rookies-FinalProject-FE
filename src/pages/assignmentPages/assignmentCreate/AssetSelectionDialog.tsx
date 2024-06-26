@@ -94,6 +94,7 @@ const AssetSelectionDialog: FC<AssetSelectionDialogProps> = ({ open, handleClose
 
     useEffect(() => {
         if (open) {
+            setSelected(preSelected ?? null);
             getAssets();
         }
     }, [open, page, order, orderBy, search]);
@@ -123,7 +124,7 @@ const AssetSelectionDialog: FC<AssetSelectionDialogProps> = ({ open, handleClose
     }
 
     const onClose = () => {
-        setSelected(null)
+        setSelected(preSelected ?? null)
         setPage(1)
         setAssets([])
         setSearch('')
