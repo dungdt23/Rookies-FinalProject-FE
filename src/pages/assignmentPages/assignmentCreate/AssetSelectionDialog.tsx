@@ -42,6 +42,7 @@ const TABLE_HEAD: TableHeadInfo[] = [
     {
         id: AssetFieldFilter[AssetFieldFilter.category],
         label: "Category",
+        sortable: true,
     },
 ]
 

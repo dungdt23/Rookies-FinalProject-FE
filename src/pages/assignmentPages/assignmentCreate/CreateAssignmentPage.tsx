@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import * as yup from 'yup';
 import { NoStyleLink } from '../../../components/noStyleLink';
 import { routeNames } from '../../../constants/routeName';
-import { isValidDate, isWithinAllowedRange, toISOStringWithoutTimezone } from '../../../helpers/helper';
+import { isValidDate, isWithinAllowedRange, maxSelectDate, toISOStringWithoutTimezone } from '../../../helpers/helper';
 import { createAssignment, CreateAssignmentRequest } from '../../../services/assignment.service';
 import { Asset } from '../../../types/asset';
 import { Assignment } from '../../../types/assignment';
@@ -26,7 +26,6 @@ const RootBox = styled(Box)(() => ({
 
 // Custom validation functions using dayjs
 const isAfterOrEqual = (a: Dayjs, b: Dayjs) => dayjs(a).add(1, 'day').isAfter(b);
-const maxAssignedDate = dayjs('2099-12-31')
 
 // Validation schema
 const validationSchema = yup.object({
@@ -193,7 +192,7 @@ const CreateAssignmentPage: FC = () => {
                                 <DatePicker
                                     format="DD/MM/YYYY"
                                     minDate={dayjs()}
-                                    maxDate={maxAssignedDate}
+                                    maxDate={maxSelectDate}
                                     value={formik.values.assignedDate}
                                     onChange={handleAssignedDateChanges}
                                     slotProps={{

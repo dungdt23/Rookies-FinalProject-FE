@@ -50,7 +50,10 @@ dayjs.locale("en");
 
 const isPastDate = (date: any) =>
   dayjs(date).isBefore(dayjs(), "day") || dayjs(date).isSame(dayjs(), "day");
-const isValidDate = (date: any) => dayjs(date).isValid();
+const isValidDate = (date: any) => {
+  const parsedDate = dayjs(date);
+  return parsedDate.isValid() && parsedDate.year() > 1900;
+};
 
 const validationSchema = yup.object({
   assetName: yup
@@ -80,7 +83,13 @@ const validationSchema = yup.object({
   specification: yup
     .string()
     .required("Please enter specification")
-    .max(500, "Specification length can't be more than 500 characters."),
+    .min(2, "Specification length should be 2-500 characters")
+    .max(500, "Specification length can't be more than 500 characters.")
+    .test(
+      "no-only-spaces",
+      "Please enter specification",
+      (value) => value.trim().length > 0
+    ),
   state: yup
     .number()
     .required("Please enter state")
@@ -343,7 +352,7 @@ const CreateAssetPage: FC = () => {
                 <FormControl
                   error={formik.touched.state && Boolean(formik.errors.state)}
                 >
-                  <FormLabel id="state">State</FormLabel>
+                  <FormLabel id="state">State *</FormLabel>
                   <RadioGroup
                     row
                     aria-labelledby="state"

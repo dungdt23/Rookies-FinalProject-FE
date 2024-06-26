@@ -1,8 +1,8 @@
 import { jwtDecode } from 'jwt-decode';
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
-import { JWTPayload } from '../types/user';
 import { LocalStorageConstants } from '../constants/localStorage';
 import { ScreenLoader } from '../pages/screenLoader';
+import { JWTPayload } from '../types/user';
 
 interface AuthContextProps {
   user: JWTPayload | null;
@@ -12,6 +12,10 @@ interface AuthContextProps {
 }
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
+
+export const logout = () => {
+  localStorage.removeItem(LocalStorageConstants.TOKEN);
+}
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<JWTPayload | null>(null);
