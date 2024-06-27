@@ -280,7 +280,7 @@ const AssignmentListPageStaff = () => {
         return (
             <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                 <Typography variant="body1" gutterBottom>
-                    Do you want to {isAccept ? "accept" : "deny"} this assignment?
+                    Do you want to {isAccept ? "accept" : "decline"} this assignment?
                 </Typography>
                 <Box sx={{ display: 'flex', gap: '1rem', mt: '1rem' }}>
                     <LoadingButton
