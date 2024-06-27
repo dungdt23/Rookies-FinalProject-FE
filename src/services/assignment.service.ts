@@ -6,6 +6,7 @@ import { apiEndpoints } from "../constants/apiEndpoint";
 import { ApiResponse } from "./user.service";
 
 export interface GetAllAssignmentParams {
+    own?:boolean;
     searchString?: string;
     isAscending: boolean;
     fieldFilter?: FieldAssignmentFilter;
