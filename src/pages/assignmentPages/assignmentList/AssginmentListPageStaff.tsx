@@ -155,10 +155,17 @@ const AssignmentListPageStaff = () => {
 
     const handleStateFilter = (event: SelectChangeEvent) => {
         setAssignmentState(event.target.value as AssignmentState | "");
+        setPage(1);
     };
 
     const handleAssignedDateChange = (value: dayjs.Dayjs | null) => {
-        setAssignedDate(value as Dayjs | null);
+        if (dayjs(value).isValid()) {
+            setAssignedDate(value);
+            setPage(1);
+        } else {
+            setAssignedDate(null);
+            _setAssignments([]);
+        }
     }
 
     function onRequestSort(property: string): void {
@@ -321,13 +328,12 @@ const AssignmentListPageStaff = () => {
                                 </MenuItem>
                                 <MenuItem value="WaitingForAcceptance">Waiting For Acceptance</MenuItem>
                                 <MenuItem value="Accepted">Accepted</MenuItem>
-                                <MenuItem value="Declined">Declined</MenuItem>
                             </Select>
                             <Divider sx={{ height: 0, m: 1 }} orientation="vertical" />
                             <DatePicker
                                 format="DD/MM/YYYY"
                                 value={assignedDate}
-                                onChange={(value) => dayjs(value).isValid() && handleAssignedDateChange(value)}
+                                onChange={(value) => handleAssignedDateChange(value)}
                                 slotProps={{
                                     field: { clearable: true, onClear: () => setClearDate(true) }
                                 }}
