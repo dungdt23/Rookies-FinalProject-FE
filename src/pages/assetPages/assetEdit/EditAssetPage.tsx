@@ -92,20 +92,28 @@ const EditAssetPage: FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
   const [currentCategory, setCurrentCategory] = useState<Category | null>(null);
+  const [initialValues, setInitialValues] = useState({
+    assetName: "",
+    installedDate: null as Dayjs | null,
+    specification: "",
+    state: AssetState.Available,
+  });
   const navigate = useNavigate();
 
   const fetchAssetDetails = useCallback(async () => {
-
     try {
       const response = await fetchAssetById(assetId!);
       const asset = response.data;
 
-      formik.setValues({
+      const formValues = {
         assetName: asset.assetName,
         installedDate: dayjs(asset.installedDate),
         specification: asset.specification,
         state: asset.state,
-      });
+      };
+
+      setInitialValues(formValues);
+      formik.setValues(formValues);
 
       // Find and set the current category
       const fetchCategoryData = async () => {
@@ -133,12 +141,8 @@ const EditAssetPage: FC = () => {
   }, [fetchAssetDetails]);
 
   const formik = useFormik({
-    initialValues: {
-      assetName: "",
-      installedDate: null as Dayjs | null,
-      specification: "",
-      state: AssetState.Available,
-    },
+    initialValues: initialValues,
+    enableReinitialize: true,
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       setIsSubmitting(true);
@@ -174,6 +178,11 @@ const EditAssetPage: FC = () => {
   const handleInstalledDateBlur = () => {
     formik.setFieldTouched('installedDate', true)
   }
+
+  const hasFormChanged = () => {
+    return JSON.stringify(formik.values) !== JSON.stringify(initialValues);
+  }
+
   return (
     <>
       <Helmet>
@@ -319,7 +328,7 @@ const EditAssetPage: FC = () => {
                     loading={isSubmitting}
                     type="submit"
                     variant="contained"
-                    disabled={!(formik.isValid && formik.dirty)}
+                    disabled={!(formik.isValid && formik.dirty && hasFormChanged())}
                   >
                     Save
                   </LoadingButton>
@@ -336,4 +345,4 @@ const EditAssetPage: FC = () => {
   );
 };
 
-export default EditAssetPage
+export default EditAssetPage;
