@@ -1,5 +1,6 @@
 import { FC } from "react";
 import { Helmet } from "react-helmet-async";
+import AssignmentListPageStaff from "../assignmentPages/assignmentList/AssginmentListPageStaff";
 
 const HomePage: FC = () => {
     return (
@@ -7,7 +8,7 @@ const HomePage: FC = () => {
             <Helmet>
                 <title>Home</title>
             </Helmet>
-            <div>This is Home</div>
+            <AssignmentListPageStaff/>
         </>
     )
 }

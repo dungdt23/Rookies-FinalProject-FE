@@ -3,7 +3,7 @@ import { LoadingButton } from "@mui/lab";
 import { Alert, Box, Button, Divider, FormControl, Grid, IconButton, InputLabel, MenuItem, Pagination, Select, SelectChangeEvent, Table, TableBody, TableContainer, TableRow, Typography, styled } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
-import { MouseEvent, ReactNode, useEffect, useState } from "react";
+import { ChangeEventHandler, MouseEvent, ReactNode, useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useLocation, useNavigate } from "react-router-dom";
 import { SearchBar } from "../../../components/form";
@@ -381,9 +381,12 @@ const AssignmentListPageAdmin = () => {
                     <Box display={'flex'} >
                         <SearchBar
                             placeholderSearch={placeholderSearch}
-                            
                             onSearchSubmit={handleSearchSubmit}
-                            TextFieldProps={{ sx: { minWidth: "25rem" } }}
+                            TextFieldProps={
+                                { 
+                                    sx: { minWidth: "25rem" },
+                                }
+                            }
                         />
                         <NoStyleLink to={routeNames.assignment.create}>
                             <Button sx={{ marginLeft: "1rem", p: '0 1.5rem', height: '100%' }} variant="contained" color="primary">
