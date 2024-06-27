@@ -60,6 +60,8 @@ const EditAssignmentPage: FC = () => {
     const [assetDialog, setAssetDialog] = useState<boolean>(false);
     const [isFetching, setIsFetching] = useState<boolean>(true);
     const { assignmentId } = useParams<RouteParams>();
+    const [ user, setUser ] = useState<User | null>(null);
+    const [ asset, setAsset ] = useState<Asset | null>(null);
 
     const getAssignment = async () => {
         setIsFetching(true)
@@ -68,11 +70,9 @@ const EditAssignmentPage: FC = () => {
                 const response = await fetchAssignmentById(assignmentId);
                 setAssignment(response.data)
                 const user = await fetchUserById(response.data.assigneeId)
-                formik.setFieldValue('user', user.data, true)
+                setUser(user.data)
                 const asset = await fetchAssetById(response.data.assetId)
-                formik.setFieldValue('asset', asset.data, true)
-                formik.setFieldValue('note', response.data.note, true)
-                formik.setFieldValue('assignedDate', dayjs(response.data.assignedDate), true)
+                setAsset(asset.data)
                 formik.setFieldTouched('assignedDate', true)
             } catch (error) {
                 console.error(error);
@@ -87,10 +87,10 @@ const EditAssignmentPage: FC = () => {
 
     const formik = useFormik({
         initialValues: {
-            asset: null as Asset | null,
-            user: null as User | null,
-            note: '',
-            assignedDate: null as Dayjs | null,
+            asset: asset,
+            user: user,
+            note: assignment?.note,
+            assignedDate: dayjs(assignment?.assignedDate) as Dayjs | null,
         },
         enableReinitialize: true,
         validationSchema: validationSchema,
@@ -185,7 +185,7 @@ const EditAssignmentPage: FC = () => {
                                     fullWidth
                                     label="User"
                                     placeholder='User'
-                                    value={formik.values.user ? `${formik.values.user.firstName} ${formik.values.user.lastName}` : ""}
+                                    value={formik.values.user ? `${formik.values.user.staffCode} ${formik.values.user.firstName} ${formik.values.user.lastName}` : ""}
                                     InputLabelProps={{ shrink: Boolean(formik.values.user) }}
                                     onClick={handleUserTextfieldClick}
                                     InputProps={{
@@ -193,14 +193,12 @@ const EditAssignmentPage: FC = () => {
 
                                         endAdornment: (
                                             <InputAdornment position="end">
-                                                <>
-                                                    <IconButton
-                                                        sx={{ p: '10px' }}
-                                                        aria-label="search"
-                                                    >
-                                                        <Search />
-                                                    </IconButton>
-                                                </>
+                                                <IconButton
+                                                    sx={{ p: '10px' }}
+                                                    aria-label="search"
+                                                >
+                                                    <Search />
+                                                </IconButton>
                                             </InputAdornment>
                                         )
                                     }}
@@ -214,7 +212,7 @@ const EditAssignmentPage: FC = () => {
                                     id="asset"
                                     fullWidth
                                     label="Asset"
-                                    value={formik.values.asset ? formik.values.asset.assetName : ""}
+                                    value={formik.values.asset ? `${formik.values.asset.assetCode} ${formik.values.asset.assetName}` : ""}
                                     placeholder='Asset'
                                     onClick={handleAssetTextfieldClick}
                                     InputLabelProps={{ shrink: Boolean(formik.values.asset) }}
@@ -222,14 +220,12 @@ const EditAssignmentPage: FC = () => {
                                         readOnly: true,
                                         endAdornment: (
                                             <InputAdornment position="end">
-                                                <>
-                                                    <IconButton
-                                                        sx={{ p: '10px' }}
-                                                        aria-label="search"
-                                                    >
-                                                        <Search />
-                                                    </IconButton>
-                                                </>
+                                                <IconButton
+                                                    sx={{ p: '10px' }}
+                                                    aria-label="search"
+                                                >
+                                                    <Search />
+                                                </IconButton>
                                             </InputAdornment>
                                         )
                                     }}

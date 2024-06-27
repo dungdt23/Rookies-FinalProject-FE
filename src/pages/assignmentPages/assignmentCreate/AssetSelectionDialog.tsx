@@ -244,7 +244,7 @@ const AssetSelectionDialog: FC<AssetSelectionDialogProps> = ({ open, handleClose
                         type="submit"
                         variant="contained"
                         onClick={handleSave}
-                        disabled={!Boolean(selected)}
+                        disabled={!selected}
                     >
                         Save
                     </Button>

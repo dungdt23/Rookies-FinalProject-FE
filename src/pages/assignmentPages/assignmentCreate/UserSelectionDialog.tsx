@@ -100,6 +100,9 @@ const UserSelectionDialog: FC<UserSelectionDialogProps> = ({ open, handleClose, 
         }
     }, [open])
 
+    console.log(selected);
+    
+
     const handleCancelClick = () => {
         handleClose()
         onClose()
@@ -241,7 +244,7 @@ const UserSelectionDialog: FC<UserSelectionDialogProps> = ({ open, handleClose, 
                         type="submit"
                         variant="contained"
                         onClick={handleSave}
-                        disabled={!Boolean(selected)}
+                        disabled={!selected}
                     >
                         Save
                     </Button>
