@@ -1,9 +1,9 @@
-import { Edit, HighlightOff, Refresh } from "@mui/icons-material";
+import { Edit, HighlightOff, Refresh, VpnLock } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
 import { Alert, Box, Button, Divider, FormControl, Grid, IconButton, InputLabel, MenuItem, Pagination, Select, SelectChangeEvent, Table, TableBody, TableRow, Typography, styled } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
-import { MouseEvent, ReactNode, useEffect, useState } from "react";
+import { ChangeEventHandler, MouseEvent, ReactNode, useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useLocation, useNavigate } from "react-router-dom";
 import { SearchBar } from "../../../components/form";
@@ -97,14 +97,30 @@ const AssignmentListPageAdmin = () => {
     const [deleteAnchorEl, setDeleteAnchorEl] = useState<HTMLElement | null>(null);
     const [canDisable, setCanDisable] = useState<boolean>(true);
     const [no, setNo] = useState<number>(1);
+    const [change, setChange] = useState<boolean>(true);
     const location = useLocation();
 
 
-    const placeholderSearch = "Search assignments by asset and assignee";
+    const placeholderSearch = "Search by asset and assignee";
 
     const state: ListPageState<Assignment> | undefined = location.state;
     const [bool, setBool] = useState<boolean>(false);
     const setAssignments = (assignments: Assignment[]) => {
+        if (!bool && state?.presetEntry) {
+            // add presetEntry into assets
+            console.log(state.presetEntry);
+
+            let newArr = [state.presetEntry, ...assignments];
+            let uniqueAssets = Array.from(
+                new Map(newArr.map((asset) => [asset.id, asset])).values()
+            );
+
+            _setAssignments(uniqueAssets);
+            setBool(true);
+        } else {
+            _setAssignments(assignments);
+        }
+        window.history.replaceState(location.pathname, "");
         if (!bool && state?.presetEntry) {
             // add presetEntry into assets
             console.log(state.presetEntry);
@@ -154,7 +170,7 @@ const AssignmentListPageAdmin = () => {
     useEffect(() => {
         setNo(pageSize * (page - 1) + 1)
         getAssignments();
-    }, [assignmentState, assignedDate, search, order, orderBy, page, pageSize]);
+    }, [assignmentState, assignedDate, search, order, orderBy, page, pageSize, change]);
 
     useEffect(() => {
         if (clearDate) {
@@ -175,6 +191,10 @@ const AssignmentListPageAdmin = () => {
     };
 
     const handleAssignedDateChange = (value: dayjs.Dayjs | null) => {
+        setChange(!change);
+        setAssignedDate(null);
+        _setAssignments([]);
+
         if (dayjs(value).isValid()) {
             setAssignedDate(value);
             setPage(1);
@@ -352,10 +372,14 @@ const AssignmentListPageAdmin = () => {
                             <Divider sx={{ height: 0, m: 1 }} orientation="vertical" />
                             <DatePicker
                                 format="DD/MM/YYYY"
-                                value={assignedDate}
-                                onChange={(value) => handleAssignedDateChange(value)}
+                                onAccept={(value) => handleAssignedDateChange(value)}
                                 slotProps={{
-                                    field: { clearable: true, onClear: () => setClearDate(true) }
+                                    field: {
+                                        readOnly: true
+                                    },
+                                    actionBar: {
+                                        actions: ['clear'],
+                                    }
                                 }}
                                 label="Assigned Date"
                             />
@@ -365,7 +389,11 @@ const AssignmentListPageAdmin = () => {
                         <SearchBar
                             placeholderSearch={placeholderSearch}
                             onSearchSubmit={handleSearchSubmit}
-                            TextFieldProps={{ sx: { minWidth: "26rem" } }}
+                            TextFieldProps={
+                                { 
+                                    sx: { minWidth: "26rem" },
+                                }
+                            }
                         />
                         <NoStyleLink to={routeNames.assignment.create}>
                             <Button sx={{ marginLeft: "1rem", p: '0 1.5rem', height: '100%' }} variant="contained" color="primary">

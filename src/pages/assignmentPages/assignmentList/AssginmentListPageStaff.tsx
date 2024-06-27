@@ -100,6 +100,7 @@ const AssignmentListPageStaff = () => {
     const getAssignments = async () => {
         setIsFetching(true);
         let params: GetAllAssignmentParams = {
+            own: true,
             searchString: search ? search as string : undefined,
             isAscending: order === "asc",
             fieldFilter: FieldAssignmentFilter[orderBy as keyof typeof FieldAssignmentFilter],
@@ -279,7 +280,7 @@ const AssignmentListPageStaff = () => {
                 <title>Manage assignment</title>
             </Helmet>
             <RootBox sx={{ mb: '1rem' }}>
-                <Typography variant="h5" color='primary'>My Management</Typography>
+                <Typography variant="h5" color='primary'>My Assignment</Typography>
             </RootBox>
             <RootBox>
                 {alert && <Alert sx={{ mb: '1rem' }} severity="success" onClose={() => setAlert(undefined)}>{alert}</Alert>}
