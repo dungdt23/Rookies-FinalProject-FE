@@ -47,6 +47,11 @@ const StyledTableContainer = styled(TableContainer)(() => ({
 
 const TABLE_HEAD: TableHeadInfo[] = [
     {
+        id: 'No',
+        label: 'No.',
+        sortable: false
+    },
+    {
         id: FieldAssignmentFilter[FieldAssignmentFilter.AssetCode],
         label: "Asset Code",
         sortable: true
@@ -102,6 +107,7 @@ const AssignmentListPageAdmin = () => {
     const [rowAnchorEl, setRowAnchorEl] = useState<HTMLElement | null>(null);
     const [deleteAnchorEl, setDeleteAnchorEl] = useState<HTMLElement | null>(null);
     const [canDisable, setCanDisable] = useState<boolean>(true);
+    const [no, setNo] = useState<number>(1);
     const location = useLocation();
 
 
@@ -157,6 +163,7 @@ const AssignmentListPageAdmin = () => {
     };
 
     useEffect(() => {
+        setNo(pageSize * (page - 1) + 1)
         getAssignments();
     }, [assignmentState, assignedDate, search, order, orderBy, page, pageSize]);
 
@@ -175,10 +182,12 @@ const AssignmentListPageAdmin = () => {
 
     const handleStateFilter = (event: SelectChangeEvent) => {
         setAssignmentState(event.target.value as AssignmentState | "");
+        setPage(1);
     };
 
     const handleAssignedDateChange = (value: dayjs.Dayjs | null) => {
         setAssignedDate(value);
+        setPage(1);
     }
 
     function onRequestSort(property: string): void {
@@ -272,7 +281,7 @@ const AssignmentListPageAdmin = () => {
             }
         ]
         return (
-            <Box sx={{maxWidth: "30rem"}}>
+            <Box sx={{ maxWidth: "30rem" }}>
                 {assignmentDetails.map((item) => (
                     <Grid container spacing={2} key={item.label}>
                         <Grid item xs={4}>
@@ -384,11 +393,13 @@ const AssignmentListPageAdmin = () => {
                                 onRequestSort={onRequestSort}
                             />
                             <TableBody>
-                                {assignments.map((assignment) => (
+
+                                {assignments.map((assignment, index) => (
                                     <ClickableTableRow
                                         key={assignment.id}
                                         sx={{ backgroundColor: selected?.id === assignment.id ? theme.palette.action.hover : 'unset' }}
                                     >
+                                        <CustomTableCell onClick={(event) => handleRowClick(event, assignment)}>{index + no}</CustomTableCell>
                                         <CustomTableCell onClick={(event) => handleRowClick(event, assignment)}>{assignment.assetCode}</CustomTableCell>
                                         <CustomTableCell onClick={(event) => handleRowClick(event, assignment)}>{assignment.assetName}</CustomTableCell>
                                         <CustomTableCell onClick={(event) => handleRowClick(event, assignment)}>{assignment.assignedTo}</CustomTableCell>
@@ -402,12 +413,12 @@ const AssignmentListPageAdmin = () => {
                                                 <Edit color={assignment.state === AssignmentState.WaitingForAcceptance ? undefined : "disabled"} />
                                             </IconButton>
                                             <IconButton
-                                                disabled={assignment.state !== AssignmentState.WaitingForAcceptance}
+                                                disabled={assignment.state === AssignmentState.Accepted}
                                                 onClick={(event) => handleDeleteClick(event, assignment)}>
-                                                <HighlightOff color={assignment.state === AssignmentState.WaitingForAcceptance ? "primary" : "disabled"} />
+                                                <HighlightOff color={assignment.state === AssignmentState.Accepted ? "disabled" : "primary"} />
                                             </IconButton>
-                                            <IconButton disabled={assignment.state === AssignmentState.WaitingForAcceptance}>
-                                                <Refresh color={assignment.state !== AssignmentState.WaitingForAcceptance ? "info" : "disabled"} />
+                                            <IconButton disabled={assignment.state === AssignmentState.Accepted}>
+                                                <Refresh color={assignment.state === AssignmentState.Accepted ? "info" : "disabled"} />
                                             </IconButton>
                                         </StyledTableCell>
                                     </ClickableTableRow>
