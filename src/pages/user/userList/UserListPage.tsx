@@ -129,7 +129,7 @@ const UserListPage: FC = () => {
   const [canDisable, setCanDisable] = useState<boolean>(true);
   const location = useLocation();
 
-  const placeholderSearch = "Search user by code and name";
+  const placeholderSearch = "Search users by code and fullname";
 
   const state: ListPageState<User> | undefined = location.state;
 

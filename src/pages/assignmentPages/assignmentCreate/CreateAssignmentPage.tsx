@@ -125,12 +125,12 @@ const CreateAssignmentPage: FC = () => {
     return (
         <>
             <Helmet>
-                <title>Create An Assignment</title>
+                <title>Create New Assignment</title>
             </Helmet>
             <RootBox>
                 <Stack spacing={3}>
                     <Typography variant="h6" gutterBottom color="primary">
-                        Create An Assignment
+                        Create New Assignment
                     </Typography>
                     <form onSubmit={formik.handleSubmit}>
                         <Grid container spacing={3}>

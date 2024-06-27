@@ -105,7 +105,7 @@ const AssignmentListPageAdmin = () => {
     const location = useLocation();
 
 
-    const placeholderSearch = "Search by asset code, name and asssignee";
+    const placeholderSearch = "Search assignments by asset and assignee";
 
     const state: ListPageState<Assignment> | undefined = location.state;
 

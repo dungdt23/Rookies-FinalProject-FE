@@ -108,7 +108,7 @@ const CreateUserPage: FC = () => {
                 lastName: values.lastName,
                 joinedDate: toISOStringWithoutTimezone(values.joinedDate!),
                 dateOfBirth: toISOStringWithoutTimezone(values.dateOfBirth!),
-                gender: values.gender as UserGender,
+                gender: values.gender,
                 locationId: user?.locationId,
                 type: values.userType,
             } as CreateUserRequest;
