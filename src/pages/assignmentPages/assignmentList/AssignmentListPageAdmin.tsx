@@ -186,8 +186,14 @@ const AssignmentListPageAdmin = () => {
     };
 
     const handleAssignedDateChange = (value: dayjs.Dayjs | null) => {
-        setAssignedDate(value);
-        setPage(1);
+        if (dayjs(value).isValid()) {
+            setAssignedDate(value);
+            setPage(1);
+        }else{
+            setAssignedDate(null);
+            _setAssignments([]);
+        }
+
     }
 
     function onRequestSort(property: string): void {
@@ -358,7 +364,7 @@ const AssignmentListPageAdmin = () => {
                             <DatePicker
                                 format="DD/MM/YYYY"
                                 value={assignedDate}
-                                onChange={(value) => dayjs(value).isValid() && handleAssignedDateChange(value)}
+                                onChange={(value) => handleAssignedDateChange(value)}
                                 slotProps={{
                                     field: { clearable: true, onClear: () => setClearDate(true) }
                                 }}
