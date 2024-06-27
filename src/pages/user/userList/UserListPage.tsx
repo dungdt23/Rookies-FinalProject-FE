@@ -47,6 +47,8 @@ import {
 } from "../../../services/user.service";
 import { ListPageState } from "../../../types/common";
 import { User, UserGender, UserType } from "../../../types/user";
+import CannotDisableYourPopper from "./CannotDisableYourselfPopper";
+import { useAuth } from "../../../contexts/AuthContext";
 
 const ClickableTableRow = styled(TableRow)(({ theme }) => ({
   cursor: "pointer",
@@ -116,6 +118,11 @@ const UserListPage: FC = () => {
   const [deleteAnchorEl, setDeleteAnchorEl] = useState<HTMLElement | null>(
     null
   );
+  const [cannotDisableYourselfAnchorEl, setCannotDisableYourselfAnchorEl] = useState<HTMLElement | null>(
+    null
+  );
+
+  const { user: JWTPayload } = useAuth();
   const [isFetching, setIsFetching] = useState<boolean>(false);
   const [isDisabling, setIsDisabling] = useState<boolean>(false);
   const [selected, setSelected] = useState<User | null>(null);
@@ -203,15 +210,20 @@ const UserListPage: FC = () => {
   };
 
   const handleDeleteClick = (event: MouseEvent<HTMLElement>, user: User) => {
-    setDeleteAnchorEl(event.currentTarget);
-    setSelected(user);
-    setCanDisable(true);
+    if (user.id !== JWTPayload?.id) {
+      setDeleteAnchorEl(event.currentTarget);
+      setSelected(user);
+      setCanDisable(true);
+      return;
+    }
+    setCannotDisableYourselfAnchorEl(event.currentTarget)
   };
 
   const handleClosePopover = () => {
     setSelected(null);
     setRowAnchorEl(null);
     setDeleteAnchorEl(null);
+    setCannotDisableYourselfAnchorEl(null);
   };
 
   const handleSearchSubmit = (searchTerm: string) => {
@@ -521,6 +533,10 @@ const UserListPage: FC = () => {
         }
         boxProps={{ sx: { maxWidth: "25rem" } }}
       ></CustomPopover>
+      <CannotDisableYourPopper
+        elAnchor={cannotDisableYourselfAnchorEl}
+        handleClose={handleClosePopover}
+      />
     </>
   );
 };
