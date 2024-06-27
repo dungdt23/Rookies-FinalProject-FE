@@ -125,12 +125,12 @@ const CreateAssignmentPage: FC = () => {
     return (
         <>
             <Helmet>
-                <title>Create An Assignment</title>
+                <title>Create New Assignment</title>
             </Helmet>
             <RootBox>
                 <Stack spacing={3}>
                     <Typography variant="h6" gutterBottom color="primary">
-                        Create An Assignment
+                        Create New Assignment
                     </Typography>
                     <form onSubmit={formik.handleSubmit}>
                         <Grid container spacing={3}>
@@ -141,7 +141,7 @@ const CreateAssignmentPage: FC = () => {
                                     fullWidth
                                     label="User"
                                     placeholder='User'
-                                    value={formik.values.user ? `${formik.values.user.firstName} ${formik.values.user.lastName}` : ""}
+                                    value={formik.values.user ? `${formik.values.user.staffCode} ${formik.values.user.firstName} ${formik.values.user.lastName}` : ""}
                                     InputLabelProps={{ shrink: Boolean(formik.values.user) }}
                                     onClick={handleUserTextfieldClick}
                                     InputProps={{
@@ -167,7 +167,7 @@ const CreateAssignmentPage: FC = () => {
                                     id="asset"
                                     fullWidth
                                     label="Asset"
-                                    value={formik.values.asset ? formik.values.asset.assetName : ""}
+                                    value={formik.values.asset ? `${formik.values.asset.assetCode} ${formik.values.asset.assetName}` : ""}
                                     placeholder='Asset'
                                     onClick={handleAssetTextfieldClick}
                                     InputLabelProps={{ shrink: Boolean(formik.values.asset) }}

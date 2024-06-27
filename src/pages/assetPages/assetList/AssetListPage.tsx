@@ -129,7 +129,7 @@ const AssetListPage: FC<ListPageProps> = ({ alertString }) => {
   const [selected, setSelected] = useState<Asset | null>(null);
   const [canDelete, setCanDelete] = useState<boolean>(true);
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const placeholderSearch = "Search asset by code and name";
+  const placeholderSearch = "Search assets by code and name";
 
   const setCategories = (categories: LoadingSelectOption[]) => {
     _setCategories([allOption, ...categories]);
