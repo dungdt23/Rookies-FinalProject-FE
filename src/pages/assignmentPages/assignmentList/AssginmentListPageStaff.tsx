@@ -1,12 +1,10 @@
 import { Check, Close, Refresh } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
-import { Alert, Box, Button, Divider, FormControl, Grid, IconButton, InputLabel, MenuItem, Pagination, Select, SelectChangeEvent, Table, TableBody, TableContainer, TableRow, Typography, styled } from "@mui/material";
-import { DatePicker } from "@mui/x-date-pickers";
+import { Alert, Box, Button, Grid, IconButton, Pagination, Table, TableBody, TableContainer, TableRow, Typography, styled } from "@mui/material";
 import dayjs, { Dayjs } from "dayjs";
 import { MouseEvent, ReactNode, useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useLocation } from "react-router-dom";
-import { SearchBar } from "../../../components/form";
 import { CircularProgressWrapper } from "../../../components/loading";
 import { CustomPopover } from "../../../components/popover";
 import { CustomTableCell, StyledTableCell } from "../../../components/table";
@@ -103,8 +101,6 @@ const AssignmentListPageStaff = () => {
     const location = useLocation();
 
 
-    const placeholderSearch = "Search assignment by asset and asssignee";
-
     const state: ListPageState<Assignment> | undefined = location.state;
 
     const [alert, setAlert] = useState<string | undefined>(state?.alertString);
@@ -146,27 +142,6 @@ const AssignmentListPageStaff = () => {
             setClearDate(false);
         }
     }, [clearDate])
-
-    const handleSearchSubmit = (searchTerm: string) => {
-        const searchQuery = searchTerm;
-        setSearch(searchQuery);
-        setPage(1); // Reset to the first page on search
-    };
-
-    const handleStateFilter = (event: SelectChangeEvent) => {
-        setAssignmentState(event.target.value as AssignmentState | "");
-        setPage(1);
-    };
-
-    const handleAssignedDateChange = (value: dayjs.Dayjs | null) => {
-        if (dayjs(value).isValid()) {
-            setAssignedDate(value);
-            setPage(1);
-        } else {
-            setAssignedDate(null);
-            _setAssignments([]);
-        }
-    }
 
     function onRequestSort(property: string): void {
         // toggle sort
@@ -312,43 +287,10 @@ const AssignmentListPageStaff = () => {
                 <title>Manage assignment</title>
             </Helmet>
             <RootBox sx={{ mb: '1rem' }}>
-                <Typography variant="h5" color='primary'>Assignment Management</Typography>
+                <Typography variant="h5" color='primary'>My Management</Typography>
             </RootBox>
             <RootBox>
                 {alert && <Alert sx={{ mb: '1rem' }} severity="success" onClose={() => setAlert(undefined)}>{alert}</Alert>}
-                <Box display="flex" justifyContent="space-between" alignItems="center" sx={{ mb: '1rem' }} >
-                    <FormControl>
-                        <InputLabel id="state-label">State</InputLabel>
-                        <Box display={'flex'}>
-                            <Select labelId="state-label" label="State" value={assignmentState.toString()} onChange={handleStateFilter}
-                                sx={{ minWidth: "15rem" }}
-                            >
-                                <MenuItem value="">
-                                    <em>None</em>
-                                </MenuItem>
-                                <MenuItem value="WaitingForAcceptance">Waiting For Acceptance</MenuItem>
-                                <MenuItem value="Accepted">Accepted</MenuItem>
-                            </Select>
-                            <Divider sx={{ height: 0, m: 1 }} orientation="vertical" />
-                            <DatePicker
-                                format="DD/MM/YYYY"
-                                value={assignedDate}
-                                onChange={(value) => handleAssignedDateChange(value)}
-                                slotProps={{
-                                    field: { clearable: true, onClear: () => setClearDate(true) }
-                                }}
-                                label="Assigned Date"
-                            />
-                        </Box>
-                    </FormControl>
-                    <Box display={'flex'}>
-                        <SearchBar
-                            placeholderSearch={placeholderSearch}
-                            onSearchSubmit={handleSearchSubmit}
-                        />
-                    </Box>
-
-                </Box>
 
                 <StyledTableContainer>
                     <CircularProgressWrapper
