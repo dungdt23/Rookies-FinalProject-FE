@@ -1,6 +1,6 @@
 import { Edit, HighlightOff, Refresh } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
-import { Alert, Box, Button, Divider, FormControl, Grid, IconButton, InputLabel, MenuItem, Pagination, Select, SelectChangeEvent, Table, TableBody, TableContainer, TableRow, Typography, styled } from "@mui/material";
+import { Alert, Box, Button, Divider, FormControl, Grid, IconButton, InputLabel, MenuItem, Pagination, Select, SelectChangeEvent, Table, TableBody, TableRow, Typography, styled } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
 import { MouseEvent, ReactNode, useEffect, useState } from "react";
@@ -10,8 +10,9 @@ import { SearchBar } from "../../../components/form";
 import { CircularProgressWrapper } from "../../../components/loading";
 import { NoStyleLink } from "../../../components/noStyleLink";
 import { CustomPopover } from "../../../components/popover";
-import { CustomTableCell, StyledTableCell } from "../../../components/table";
+import { ClickableTableRow, CustomTableCell, StyledTableCell, StyledTableContainer } from "../../../components/table";
 import CustomTableHead, { Order, TableHeadInfo } from "../../../components/table/CustomTableHead";
+import { StyledTypography } from "../../../components/typography";
 import { theme } from "../../../constants/appTheme";
 import { routeNames } from "../../../constants/routeName";
 import { toStandardFormat } from "../../../helpers/formatDate";
@@ -20,14 +21,6 @@ import { removeUndefinedValues } from "../../../helpers/removeUndefined";
 import { FieldAssignmentFilter, GetAllAssignmentParams, disableAssignmentrById, fetchAllAssignments } from "../../../services/assignment.service";
 import { Assignment, AssignmentState } from "../../../types/assignment";
 import { ListPageState } from "../../../types/common";
-
-const ClickableTableRow = styled(TableRow)(({ theme }) => ({
-    cursor: "pointer",
-    "&:hover": {
-        backgroundColor: theme.palette.action.hover,
-        color: theme.palette.primary.main,
-    },
-}));
 
 
 const RootBox = styled(Box)(() => ({
@@ -40,10 +33,6 @@ const allOption = {
     label: "None",
     value: ""
 }
-
-const StyledTableContainer = styled(TableContainer)(() => ({
-    border: '0px',
-}))
 
 const TABLE_HEAD: TableHeadInfo[] = [
     {
@@ -116,21 +105,21 @@ const AssignmentListPageAdmin = () => {
     const state: ListPageState<Assignment> | undefined = location.state;
     const [bool, setBool] = useState<boolean>(false);
     const setAssignments = (assignments: Assignment[]) => {
-      if (!bool && state?.presetEntry) {
-        // add presetEntry into assets
-        console.log(state.presetEntry);
-        
-        let newArr = [state.presetEntry, ...assignments];
-        let uniqueAssets = Array.from(
-          new Map(newArr.map((asset) => [asset.id, asset])).values()
-        );
-  
-        _setAssignments(uniqueAssets);
-        setBool(true);
-      } else {
-        _setAssignments(assignments);
-      }
-      window.history.replaceState(location.pathname, "");
+        if (!bool && state?.presetEntry) {
+            // add presetEntry into assets
+            console.log(state.presetEntry);
+
+            let newArr = [state.presetEntry, ...assignments];
+            let uniqueAssets = Array.from(
+                new Map(newArr.map((asset) => [asset.id, asset])).values()
+            );
+
+            _setAssignments(uniqueAssets);
+            setBool(true);
+        } else {
+            _setAssignments(assignments);
+        }
+        window.history.replaceState(location.pathname, "");
     };
 
     const [alert, setAlert] = useState<string | undefined>(state?.alertString);
@@ -189,7 +178,7 @@ const AssignmentListPageAdmin = () => {
         if (dayjs(value).isValid()) {
             setAssignedDate(value);
             setPage(1);
-        }else{
+        } else {
             setAssignedDate(null);
             _setAssignments([]);
         }
@@ -290,11 +279,11 @@ const AssignmentListPageAdmin = () => {
             <Box sx={{ maxWidth: "30rem" }}>
                 {assignmentDetails.map((item) => (
                     <Grid container spacing={2} key={item.label}>
-                        <Grid item xs={4}>
-                            <Typography variant="body1" gutterBottom>{item.label}</Typography>
+                        <Grid item xs={4} sx={{ minWidth: "4rem" }}>
+                            <StyledTypography variant="body1" gutterBottom>{item.label}</StyledTypography>
                         </Grid>
                         <Grid item xs={8}>
-                            <Typography variant="body1" gutterBottom>{item.value}</Typography>
+                            <StyledTypography variant="body1" gutterBottom>{item.value}</StyledTypography>
                         </Grid>
                     </Grid>
                 ))}

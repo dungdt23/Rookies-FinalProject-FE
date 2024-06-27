@@ -7,8 +7,9 @@ import { Helmet } from "react-helmet-async";
 import { useLocation } from "react-router-dom";
 import { CircularProgressWrapper } from "../../../components/loading";
 import { CustomPopover } from "../../../components/popover";
-import { CustomTableCell, StyledTableCell } from "../../../components/table";
+import { ClickableTableRow, CustomTableCell, StyledTableCell } from "../../../components/table";
 import CustomTableHead, { Order, TableHeadInfo } from "../../../components/table/CustomTableHead";
+import { StyledTypography } from "../../../components/typography";
 import { theme } from "../../../constants/appTheme";
 import { toStandardFormat } from "../../../helpers/formatDate";
 import { addSpacesToCamelCase } from "../../../helpers/helper";
@@ -16,15 +17,6 @@ import { removeUndefinedValues } from "../../../helpers/removeUndefined";
 import { FieldAssignmentFilter, GetAllAssignmentParams, RespondAssignmentRequest, fetchAllAssignments, respondAssignmentById } from "../../../services/assignment.service";
 import { Assignment, AssignmentState } from "../../../types/assignment";
 import { ListPageState } from "../../../types/common";
-
-const ClickableTableRow = styled(TableRow)(({ theme }) => ({
-    cursor: "pointer",
-    "&:hover": {
-        backgroundColor: theme.palette.action.hover,
-        color: theme.palette.primary.main,
-    },
-}));
-
 
 const RootBox = styled(Box)(() => ({
     minWidth: '30rem',
@@ -247,10 +239,10 @@ const AssignmentListPageStaff = () => {
                 {assignmentDetails.map((item) => (
                     <Grid container spacing={2} key={item.label}>
                         <Grid item xs={4}>
-                            <Typography variant="body1" gutterBottom>{item.label}</Typography>
+                            <StyledTypography variant="body1" gutterBottom>{item.label}</StyledTypography>
                         </Grid>
                         <Grid item xs={8}>
-                            <Typography variant="body1" gutterBottom>{item.value}</Typography>
+                            <StyledTypography variant="body1" gutterBottom>{item.value}</StyledTypography>
                         </Grid>
                     </Grid>
                 ))}

@@ -31,6 +31,7 @@ import { CircularProgressWrapper } from "../../../components/loading";
 import { NoStyleLink } from "../../../components/noStyleLink";
 import { CustomPopover } from "../../../components/popover";
 import {
+  ClickableTableRow,
   CustomTableCell,
   CustomTableHead,
   StyledTableCell,
@@ -42,6 +43,7 @@ import {
 import { theme } from "../../../constants/appTheme";
 import { routeNames } from "../../../constants/routeName";
 import { toStandardFormat } from "../../../helpers/formatDate";
+import { addSpacesToCamelCase } from '../../../helpers/helper';
 import { removeUndefinedValues } from "../../../helpers/removeUndefined";
 import {
   AssetFieldFilter,
@@ -51,17 +53,8 @@ import {
 } from "../../../services/asset.service";
 import { fetchAllCategory } from "../../../services/category.service";
 import { Asset, AssetState } from "../../../types/asset";
-import { ListPageProps, ListPageState, SortOrder } from "../../../types/common";
-import { addSpacesToCamelCase } from '../../../helpers/helper';
-import { Category } from "../../../types/category";
-
-const ClickableTableRow = styled(TableRow)(({ theme }) => ({
-  cursor: "pointer",
-  "&:hover": {
-    backgroundColor: theme.palette.action.hover,
-    color: theme.palette.primary.main,
-  },
-}));
+import { ListPageState, SortOrder } from "../../../types/common";
+import { StyledTypography } from "../../../components/typography";
 
 const RootBox = styled(Box)(() => ({
   minWidth: "30rem",
@@ -168,7 +161,7 @@ const AssetListPage: FC = () => {
     if (!bool && state?.presetEntry) {
       // add presetEntry into assets
       console.log(state.presetEntry);
-      
+
       let newArr = [state.presetEntry, ...assets];
       let uniqueAssets = Array.from(
         new Map(newArr.map((asset) => [asset.id, asset])).values()
@@ -280,18 +273,18 @@ const AssetListPage: FC = () => {
       },
     ];
     return (
-      <Box sx={{maxWidth: "30rem"}}>
+      <Box sx={{ maxWidth: "30rem" }}>
         {assetDetails.map((item) => (
           <Grid container spacing={2} key={item.label}>
-            <Grid item xs={4}>
-              <Typography variant="body1" gutterBottom>{item.label}</Typography>
+            <Grid item xs={4} sx={{ minWidth: "4rem" }}>
+              <StyledTypography variant="body1" gutterBottom>{item.label}</StyledTypography>
             </Grid>
             <Grid item xs={8}>
-              <Typography variant="body1" gutterBottom>{item.value}</Typography>
+              <StyledTypography variant="body1" gutterBottom>{item.value}</StyledTypography>
             </Grid>
           </Grid>
         ))}
-        <Divider/>
+        <Divider />
         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
           <Typography variant="h6">Assignment history:</Typography>
           <Typography variant="subtitle2">Time: Lorem | Assignment: Lorem</Typography>
@@ -488,9 +481,9 @@ const AssetListPage: FC = () => {
                     </CustomTableCell>
                     {asset.state === AssetState.Assigned && (
                       <StyledTableCell align="center">
-                          <IconButton disabled>
-                            <Edit />
-                          </IconButton>
+                        <IconButton disabled>
+                          <Edit />
+                        </IconButton>
                         <IconButton
                           disabled
                           onClick={(event) => handleDeleteClick(event, asset)}
