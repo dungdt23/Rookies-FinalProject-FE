@@ -53,6 +53,7 @@ import { fetchAllCategory } from "../../../services/category.service";
 import { Asset, AssetState } from "../../../types/asset";
 import { ListPageProps, ListPageState, SortOrder } from "../../../types/common";
 import { addSpacesToCamelCase } from '../../../helpers/helper';
+import { Category } from "../../../types/category";
 
 const ClickableTableRow = styled(TableRow)(({ theme }) => ({
   cursor: "pointer",
@@ -235,6 +236,11 @@ const AssetListPage: FC<ListPageProps> = ({ alertString }) => {
     setDeleteAnchorEl(null);
   };
 
+  const handleCategoryChange = (option: string) => {
+    setCategory(option)
+    setPage(1); // Reset to the first page on search
+  }
+
   const handleSearchSubmit = (searchTerm: string) => {
     const searchQuery = searchTerm;
     setSearch(searchQuery);
@@ -300,6 +306,7 @@ const AssetListPage: FC<ListPageProps> = ({ alertString }) => {
 
   const handleStateFilter = (event: SelectChangeEvent) => {
     setAssetState(event.target.value as AssetState | "");
+    setPage(1);
   };
 
   const disableAsset = async () => {
@@ -418,7 +425,7 @@ const AssetListPage: FC<ListPageProps> = ({ alertString }) => {
               loading={isFetchingCategory}
               value={category}
               options={categories}
-              onChange={(value) => setCategory(value)}
+              onChange={handleCategoryChange}
             />
           </Box>
           <Box sx={{ display: "flex", gap: "1rem" }}>

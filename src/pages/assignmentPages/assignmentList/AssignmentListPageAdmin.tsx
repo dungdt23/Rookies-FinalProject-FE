@@ -376,7 +376,7 @@ const AssignmentListPageAdmin = () => {
                         <SearchBar
                             placeholderSearch={placeholderSearch}
                             onSearchSubmit={handleSearchSubmit}
-                            TextFieldProps={{ sx: { minWidth: "25rem" } }}
+                            TextFieldProps={{ sx: { minWidth: "26rem" } }}
                         />
                         <NoStyleLink to={routeNames.assignment.create}>
                             <Button sx={{ marginLeft: "1rem", p: '0 1.5rem', height: '100%' }} variant="contained" color="primary">

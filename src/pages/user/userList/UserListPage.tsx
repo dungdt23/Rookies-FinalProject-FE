@@ -188,6 +188,7 @@ const UserListPage: FC = () => {
 
   const handleTypeFilter = (event: SelectChangeEvent) => {
     setUserType(event.target.value as UserType | "");
+    setPage(1);
   };
 
   const handleChangePage = (_: unknown, newPage: number) => {
@@ -229,7 +230,7 @@ const UserListPage: FC = () => {
   const handleSearchSubmit = (searchTerm: string) => {
     const searchQuery = searchTerm;
     setSearch(searchQuery);
-    setPage(1); // Reset to the first page on search
+    setPage(1);
   };
 
   const renderUserDetailDialog = (): ReactNode => {
@@ -393,7 +394,7 @@ const UserListPage: FC = () => {
             <SearchBar
               placeholderSearch={placeholderSearch}
               onSearchSubmit={handleSearchSubmit}
-              TextFieldProps={{ sx: { minWidth: "20rem" } }}
+              TextFieldProps={{ sx: { minWidth: "22rem" } }}
             />
             <NoStyleLink to={routeNames.user.create}>
               <Button
