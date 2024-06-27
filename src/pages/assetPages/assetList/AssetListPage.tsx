@@ -105,7 +105,7 @@ const allOption = {
   value: "",
 };
 
-const AssetListPage: FC<ListPageProps> = ({ alertString }) => {
+const AssetListPage: FC = () => {
   const defaultSortOrder: Order = "asc";
   const [assets, _setAssets] = useState<Asset[]>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
@@ -118,7 +118,6 @@ const AssetListPage: FC<ListPageProps> = ({ alertString }) => {
   const [deleteAnchorEl, setDeleteAnchorEl] = useState<HTMLElement | null>(
     null
   );
-  const [alert, setAlert] = useState<string | undefined>(alertString);
   const [isFetching, setIsFetching] = useState<boolean>(false);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const [isFetchingCategory, setIsFetchingCategory] = useState<boolean>(false);
@@ -163,6 +162,7 @@ const AssetListPage: FC<ListPageProps> = ({ alertString }) => {
 
   const location = useLocation();
   const state: ListPageState<Asset> | undefined = location.state;
+  const [alert, setAlert] = useState<string | undefined>(state?.alertString);
   const [bool, setBool] = useState<boolean>(false);
   const setAssets = (assets: Asset[]) => {
     if (!bool && state?.presetEntry) {
