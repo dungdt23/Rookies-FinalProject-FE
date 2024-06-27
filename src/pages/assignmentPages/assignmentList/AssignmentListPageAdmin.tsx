@@ -108,6 +108,24 @@ const AssignmentListPageAdmin = () => {
     const placeholderSearch = "Search assignments by asset and assignee";
 
     const state: ListPageState<Assignment> | undefined = location.state;
+    const [bool, setBool] = useState<boolean>(false);
+    const setAssignments = (assignments: Assignment[]) => {
+      if (!bool && state?.presetEntry) {
+        // add presetEntry into assets
+        console.log(state.presetEntry);
+        
+        let newArr = [state.presetEntry, ...assignments];
+        let uniqueAssets = Array.from(
+          new Map(newArr.map((asset) => [asset.id, asset])).values()
+        );
+  
+        _setAssignments(uniqueAssets);
+        setBool(true);
+      } else {
+        _setAssignments(assignments);
+      }
+      window.history.replaceState(location.pathname, "");
+    };
 
     const [alert, setAlert] = useState<string | undefined>(state?.alertString);
 
@@ -127,11 +145,11 @@ const AssignmentListPageAdmin = () => {
 
         try {
             const data = await fetchAllAssignments(params);
-            _setAssignments(data.data);
+            setAssignments(data.data);
             setTotalCount(data.totalCount)
         } catch (error: any) {
             if (error.response.data.statusCode === 404) {
-                _setAssignments([]);
+                setAssignments([]);
             }
         } finally {
             setIsFetching(false);
