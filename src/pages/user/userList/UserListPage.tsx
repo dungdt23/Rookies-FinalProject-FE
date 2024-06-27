@@ -12,8 +12,6 @@ import {
   Pagination,
   Select,
   SelectChangeEvent,
-  Table,
-  TableBody,
   TableContainer,
   TableRow,
   Typography,
@@ -27,16 +25,21 @@ import { CircularProgressWrapper } from "../../../components/loading";
 import { NoStyleLink } from "../../../components/noStyleLink";
 import { CustomPopover } from "../../../components/popover";
 import {
+  ClickableTableRow,
   CustomTableCell,
   CustomTableHead,
+  StyleTable,
+  StyleTableBody,
   StyledTableCell,
 } from "../../../components/table";
 import {
   Order,
   TableHeadInfo,
 } from "../../../components/table/CustomTableHead";
+import { StyledTypography } from "../../../components/typography";
 import { theme } from "../../../constants/appTheme";
 import { routeNames } from "../../../constants/routeName";
+import { useAuth } from "../../../contexts/AuthContext";
 import { toStandardFormat } from "../../../helpers/formatDate";
 import { removeUndefinedValues } from "../../../helpers/removeUndefined";
 import {
@@ -48,15 +51,6 @@ import {
 import { ListPageState } from "../../../types/common";
 import { User, UserGender, UserType } from "../../../types/user";
 import CannotDisableYourPopper from "./CannotDisableYourselfPopper";
-import { useAuth } from "../../../contexts/AuthContext";
-
-const ClickableTableRow = styled(TableRow)(({ theme }) => ({
-  cursor: "pointer",
-  "&:hover": {
-    backgroundColor: theme.palette.action.hover,
-    color: theme.palette.primary.main,
-  },
-}));
 
 const RootBox = styled(Box)(() => ({
   minWidth: "30rem",
@@ -188,6 +182,7 @@ const UserListPage: FC = () => {
 
   const handleTypeFilter = (event: SelectChangeEvent) => {
     setUserType(event.target.value as UserType | "");
+    setPage(1);
   };
 
   const handleChangePage = (_: unknown, newPage: number) => {
@@ -229,7 +224,7 @@ const UserListPage: FC = () => {
   const handleSearchSubmit = (searchTerm: string) => {
     const searchQuery = searchTerm;
     setSearch(searchQuery);
-    setPage(1); // Reset to the first page on search
+    setPage(1);
   };
 
   const renderUserDetailDialog = (): ReactNode => {
@@ -276,15 +271,15 @@ const UserListPage: FC = () => {
       <Box sx={{ minWidth: "25rem", maxWidth: "30rem" }}>
         {userDetails.map((item) => (
           <Grid container spacing={2} key={item.label}>
-            <Grid item xs={4}>
-              <Typography variant="body1" gutterBottom>
+            <Grid item xs={4} sx={{minWidth: "4rem"}}>
+              <StyledTypography variant="body1" gutterBottom>
                 {item.label}
-              </Typography>
+              </StyledTypography>
             </Grid>
             <Grid item xs={8}>
-              <Typography variant="body1" gutterBottom>
+              <StyledTypography variant="body1" gutterBottom>
                 {item.value}
-              </Typography>
+              </StyledTypography>
             </Grid>
           </Grid>
         ))}
@@ -393,7 +388,7 @@ const UserListPage: FC = () => {
             <SearchBar
               placeholderSearch={placeholderSearch}
               onSearchSubmit={handleSearchSubmit}
-              TextFieldProps={{ sx: { minWidth: "20rem" } }}
+              TextFieldProps={{ sx: { minWidth: "22rem" } }}
             />
             <NoStyleLink to={routeNames.user.create}>
               <Button
@@ -408,14 +403,14 @@ const UserListPage: FC = () => {
         </Box>
         <StyledTableContainer>
           <CircularProgressWrapper loading={isFetching || isDisabling}>
-            <Table>
+            <StyleTable>
               <CustomTableHead
                 columns={TABLE_HEAD}
                 order={order}
                 orderBy={orderBy}
                 onRequestSort={onRequestSort}
               />
-              <TableBody>
+              <StyleTableBody>
                 {users.map((user) => (
                   <ClickableTableRow
                     key={user.id}
@@ -497,8 +492,8 @@ const UserListPage: FC = () => {
                     </StyledTableCell>
                   </TableRow>
                 )}
-              </TableBody>
-            </Table>
+              </StyleTableBody>
+            </StyleTable>
           </CircularProgressWrapper>
         </StyledTableContainer>
         {totalCount !== 0

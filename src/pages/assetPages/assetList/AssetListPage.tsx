@@ -31,6 +31,7 @@ import { CircularProgressWrapper } from "../../../components/loading";
 import { NoStyleLink } from "../../../components/noStyleLink";
 import { CustomPopover } from "../../../components/popover";
 import {
+  ClickableTableRow,
   CustomTableCell,
   CustomTableHead,
   StyledTableCell,
@@ -42,6 +43,7 @@ import {
 import { theme } from "../../../constants/appTheme";
 import { routeNames } from "../../../constants/routeName";
 import { toStandardFormat } from "../../../helpers/formatDate";
+import { addSpacesToCamelCase } from '../../../helpers/helper';
 import { removeUndefinedValues } from "../../../helpers/removeUndefined";
 import {
   AssetFieldFilter,
@@ -51,16 +53,8 @@ import {
 } from "../../../services/asset.service";
 import { fetchAllCategory } from "../../../services/category.service";
 import { Asset, AssetState } from "../../../types/asset";
-import { ListPageProps, ListPageState, SortOrder } from "../../../types/common";
-import { addSpacesToCamelCase } from '../../../helpers/helper';
-
-const ClickableTableRow = styled(TableRow)(({ theme }) => ({
-  cursor: "pointer",
-  "&:hover": {
-    backgroundColor: theme.palette.action.hover,
-    color: theme.palette.primary.main,
-  },
-}));
+import { ListPageState, SortOrder } from "../../../types/common";
+import { StyledTypography } from "../../../components/typography";
 
 const RootBox = styled(Box)(() => ({
   minWidth: "30rem",
@@ -104,7 +98,7 @@ const allOption = {
   value: "",
 };
 
-const AssetListPage: FC<ListPageProps> = ({ alertString }) => {
+const AssetListPage: FC = () => {
   const defaultSortOrder: Order = "asc";
   const [assets, _setAssets] = useState<Asset[]>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
@@ -117,7 +111,6 @@ const AssetListPage: FC<ListPageProps> = ({ alertString }) => {
   const [deleteAnchorEl, setDeleteAnchorEl] = useState<HTMLElement | null>(
     null
   );
-  const [alert, setAlert] = useState<string | undefined>(alertString);
   const [isFetching, setIsFetching] = useState<boolean>(false);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const [isFetchingCategory, setIsFetchingCategory] = useState<boolean>(false);
@@ -162,12 +155,13 @@ const AssetListPage: FC<ListPageProps> = ({ alertString }) => {
 
   const location = useLocation();
   const state: ListPageState<Asset> | undefined = location.state;
+  const [alert, setAlert] = useState<string | undefined>(state?.alertString);
   const [bool, setBool] = useState<boolean>(false);
   const setAssets = (assets: Asset[]) => {
     if (!bool && state?.presetEntry) {
       // add presetEntry into assets
       console.log(state.presetEntry);
-      
+
       let newArr = [state.presetEntry, ...assets];
       let uniqueAssets = Array.from(
         new Map(newArr.map((asset) => [asset.id, asset])).values()
@@ -235,6 +229,11 @@ const AssetListPage: FC<ListPageProps> = ({ alertString }) => {
     setDeleteAnchorEl(null);
   };
 
+  const handleCategoryChange = (option: string) => {
+    setCategory(option)
+    setPage(1); // Reset to the first page on search
+  }
+
   const handleSearchSubmit = (searchTerm: string) => {
     const searchQuery = searchTerm;
     setSearch(searchQuery);
@@ -274,18 +273,18 @@ const AssetListPage: FC<ListPageProps> = ({ alertString }) => {
       },
     ];
     return (
-      <Box sx={{maxWidth: "30rem"}}>
+      <Box sx={{ maxWidth: "30rem" }}>
         {assetDetails.map((item) => (
           <Grid container spacing={2} key={item.label}>
-            <Grid item xs={4}>
-              <Typography variant="body1" gutterBottom>{item.label}</Typography>
+            <Grid item xs={4} sx={{ minWidth: "4rem" }}>
+              <StyledTypography variant="body1" gutterBottom>{item.label}</StyledTypography>
             </Grid>
             <Grid item xs={8}>
-              <Typography variant="body1" gutterBottom>{item.value}</Typography>
+              <StyledTypography variant="body1" gutterBottom>{item.value}</StyledTypography>
             </Grid>
           </Grid>
         ))}
-        <Divider/>
+        <Divider />
         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
           <Typography variant="h6">Assignment history:</Typography>
           <Typography variant="subtitle2">Time: Lorem | Assignment: Lorem</Typography>
@@ -300,6 +299,7 @@ const AssetListPage: FC<ListPageProps> = ({ alertString }) => {
 
   const handleStateFilter = (event: SelectChangeEvent) => {
     setAssetState(event.target.value as AssetState | "");
+    setPage(1);
   };
 
   const disableAsset = async () => {
@@ -418,7 +418,7 @@ const AssetListPage: FC<ListPageProps> = ({ alertString }) => {
               loading={isFetchingCategory}
               value={category}
               options={categories}
-              onChange={(value) => setCategory(value)}
+              onChange={handleCategoryChange}
             />
           </Box>
           <Box sx={{ display: "flex", gap: "1rem" }}>
@@ -481,9 +481,9 @@ const AssetListPage: FC<ListPageProps> = ({ alertString }) => {
                     </CustomTableCell>
                     {asset.state === AssetState.Assigned && (
                       <StyledTableCell align="center">
-                          <IconButton disabled>
-                            <Edit />
-                          </IconButton>
+                        <IconButton disabled>
+                          <Edit />
+                        </IconButton>
                         <IconButton
                           disabled
                           onClick={(event) => handleDeleteClick(event, asset)}

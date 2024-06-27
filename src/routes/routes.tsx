@@ -65,7 +65,7 @@ export const adminRoutes: RouteObject[] = [
                 children: [
                     {
                         path: routeNames.index,
-                        element: <HomePage />
+                        element: <AssignmentListPageStaff />
                     },
                     {
                         path: routeNames.user.list,

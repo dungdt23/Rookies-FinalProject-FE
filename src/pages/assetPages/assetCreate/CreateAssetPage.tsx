@@ -28,6 +28,7 @@ import { useNavigate } from "react-router-dom";
 import * as yup from "yup";
 import { NoStyleLink } from "../../../components/noStyleLink";
 import { routeNames } from "../../../constants/routeName";
+import { toISOStringWithoutTimezone } from "../../../helpers/helper";
 import { createAsset } from "../../../services/asset.service";
 import {
   checkUniquePrefixName,
@@ -39,7 +40,6 @@ import {
 import { Asset, AssetState, CreateAssetRequest } from "../../../types/asset";
 import { Category } from "../../../types/category";
 import { ListPageState } from "../../../types/common";
-import { toISOStringWithoutTimezone } from "../../../helpers/helper";
 
 const RootBox = styled(Box)(() => ({
   maxWidth: "100vh",
@@ -146,7 +146,13 @@ const CreateAssetPage: FC = () => {
     fetchCategoryData();
   }, []);
 
+  const resetCategoryForm = () => {
+    setNewCategory({ prefix: "", categoryName: "" });
+    setIsUnique({ prefix: false, categoryName: false });
+  };
+
   const handleCreateCategoryOpen = () => {
+    resetCategoryForm();
     setOpen(true);
   };
 
