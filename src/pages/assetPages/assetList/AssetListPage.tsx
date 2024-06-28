@@ -315,7 +315,7 @@ const AssetListPage: FC = () => {
       if (result) {
         handleClosePopover();
         getAssets(); // Refresh assets after disabling
-        setAlert(`Asset ${selected?.assetCode} is disabled`);
+        setAlert(`Asset ${selected?.assetCode} is deleted`);
       }
     } catch (error) {
       console.error(error);
