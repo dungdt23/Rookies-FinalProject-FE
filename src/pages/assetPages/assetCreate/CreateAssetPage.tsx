@@ -69,7 +69,7 @@ const validationSchema = yup.object({
   categoryId: yup.string().required("Category is required"),
   installedDate: yup
     .mixed()
-    .required("Please enter installed date")
+    .required("Please enter valid installed date")
     .test("is-valid-date", "Please enter a valid date", function (value) {
       return isValidDate(value);
     })
