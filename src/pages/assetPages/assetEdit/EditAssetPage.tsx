@@ -58,7 +58,7 @@ const validationSchema = yup.object({
     installedDate: yup
     .mixed()
     .required("Please enter installed date")
-    .test("is-valid-date", "Please enter installed date", function (value) {
+    .test("is-valid-date", "Please enter valid installed date", function (value) {
       return isValidDate(value);
     })
     .test(
