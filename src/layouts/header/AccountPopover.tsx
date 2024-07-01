@@ -1,10 +1,12 @@
-import { MouseEvent, useState } from 'react';
+import { MouseEvent, ReactNode, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { alpha } from '@mui/material/styles';
-import { Box, Divider, Typography, Stack, MenuItem, Avatar, IconButton, Popover } from '@mui/material';
+import { Box, Divider, Typography, Stack, MenuItem, Avatar, IconButton, Popover, Button } from '@mui/material';
 import { useAuth } from '../../contexts/AuthContext';
 import axios from 'axios';
 import { routeNames } from '../../constants/routeName';
+import { LoadingButton } from '@mui/lab';
+import CustomDialog from '../../components/dialog/CustomDialog';
 
 // Mock account data
 const account = {
@@ -38,6 +40,8 @@ const BACKEND_URL = {
 
 const AccountPopover = () => {
   const [open, setOpen] = useState<HTMLElement | null>(null);
+  const [logoutDialogOpen, setLogoutDialogOpen] = useState<boolean>(false);
+  const [isLoggingOut, setIsLoggingOut] = useState<boolean>(false);
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
@@ -48,6 +52,15 @@ const AccountPopover = () => {
   const handleClose = () => {
     setOpen(null);
   };
+
+  const handleCloseLogOutDialog = () => {
+    setLogoutDialogOpen(false);
+  }
+
+  const handleOpenLogOutDialog = () => {
+    setOpen(null);
+    setLogoutDialogOpen(true)
+  }
 
   const handleClick = (option: { path: string }) => {
     navigate(option.path);
@@ -63,6 +76,29 @@ const AccountPopover = () => {
       console.error('Logout failed', error);
     }
   };
+
+  const renderLogoutDialogBody = (): ReactNode => {
+    return (
+      <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+        <Typography variant="body1" gutterBottom>
+          Do you want to log out?
+        </Typography>
+        <Box sx={{ display: 'flex', gap: '1rem', mt: '1rem' }}>
+          <LoadingButton
+            loading={isLoggingOut}
+            type="submit"
+            variant="contained"
+            onClick={handleLogout}
+          >
+            Log out
+          </LoadingButton>
+          <Button variant="outlined" onClick={() => handleCloseLogOutDialog()}>
+            Cancel
+          </Button>
+        </Box>
+      </Box >
+    )
+  }
 
   return (
     <>
@@ -126,10 +162,18 @@ const AccountPopover = () => {
 
         <Divider sx={{ borderStyle: 'dashed' }} />
 
-        <MenuItem onClick={handleLogout} sx={{ m: 1 }}>
+        <MenuItem onClick={() => handleOpenLogOutDialog()} sx={{ m: 1 }}>
           Logout
         </MenuItem>
       </Popover>
+
+      <CustomDialog
+        open={logoutDialogOpen}
+        handleClose={handleCloseLogOutDialog}
+        renderTitle={() => <span>Are you sure?</span>}
+        renderBody={renderLogoutDialogBody}
+        boxProps={{ sx: { maxWidth: '25rem' } }}
+      />
     </>
   );
 };

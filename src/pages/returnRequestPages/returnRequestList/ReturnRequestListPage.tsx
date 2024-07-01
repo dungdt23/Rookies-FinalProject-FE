@@ -1,7 +1,7 @@
 import styled from "@emotion/styled"
-import { Alert, Box, Divider, FormControl, IconButton, InputLabel, MenuItem, Pagination, Select, SelectChangeEvent, Table, TableBody, TableRow, Typography } from "@mui/material"
+import { Alert, Box, Button, Divider, FormControl, IconButton, InputLabel, MenuItem, Pagination, Select, SelectChangeEvent, Table, TableBody, TableRow, Typography } from "@mui/material"
 import dayjs, { Dayjs } from "dayjs"
-import { MouseEvent, useEffect, useState } from "react"
+import { MouseEvent, ReactNode, useEffect, useState } from "react"
 import { Helmet } from "react-helmet-async"
 import { SearchBar } from "../../../components/form"
 import CustomTableHead, { Order, TableHeadInfo } from "../../../components/table/CustomTableHead"
@@ -15,6 +15,8 @@ import { toStandardFormat } from "../../../helpers/formatDate"
 import { addSpacesToCamelCase } from "../../../helpers/helper"
 import { Check, Close } from "@mui/icons-material"
 import { returnRequestsMock } from "./mockData"
+import { CustomPopover } from "../../../components/popover"
+import { LoadingButton } from "@mui/lab"
 
 const RootBox = styled(Box)(() => ({
     minWidth: '30rem',
@@ -84,6 +86,9 @@ const ReturnRequestListPage = () => {
     const [isResponding, setIsResponding] = useState<boolean>(false);
     const [selected, setSelected] = useState<ReturnRequest | null>(null);
     const [no, setNo] = useState<number>(1);
+    const [rowAnchorEl, setRowAnchorEl] = useState<HTMLElement | null>(null);
+    const [canComplete, setCanComplete] = useState<boolean>(true);
+    const [isAccept, setIsAccpet] = useState<boolean>(false);
 
 
     const placeholderSearch = "Search by asset and requester";
@@ -120,6 +125,27 @@ const ReturnRequestListPage = () => {
         }
     };
 
+    const completeRequest = async () => {
+        setIsResponding(true);
+        if (!selected) {
+            setIsResponding(false);
+            return
+        }
+        try {
+            // const result = await respondAssignmentById(payload);
+            const statusCode = 200;
+            setCanComplete(statusCode === 200)
+            if (statusCode === 200) {
+                handleClosePopover()
+                getReturnRequests()
+                setAlert(`Return request for asset ${selected?.assetName} is ${isAccept ? "completed" : "denied"}`)
+            }
+        } catch (error) {
+            console.error(error)
+        }
+        setIsResponding(false);
+    }
+
     function handleReturnedDateChange(value: dayjs.Dayjs | null) {
         if (dayjs(value).isValid()) {
             setReturnedDate(value);
@@ -155,11 +181,45 @@ const ReturnRequestListPage = () => {
     }
 
     function handleAcceptClick(event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, request: ReturnRequest): void {
-        throw new Error("Function not implemented.")
+        setIsAccpet(true)
+        setRowAnchorEl(event.currentTarget);
+        setSelected(request);
+        setCanComplete(true);
     }
 
     function handleDeclineClick(event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, request: ReturnRequest): void {
-        throw new Error("Function not implemented.")
+        setIsAccpet(false)
+        setRowAnchorEl(event.currentTarget);
+        setSelected(request);
+        setCanComplete(true);
+    }
+
+    const handleClosePopover = () => {
+        setSelected(null);
+        setRowAnchorEl(null);
+    };
+
+    const renderRequestCompletionDialog = (): ReactNode => {
+        return (
+            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                <Typography variant="body1" gutterBottom>
+                    Do you want to mark this request as "{isAccept ? "Completed" : "Declined"}"?
+                </Typography>
+                <Box sx={{ display: 'flex', gap: '1rem', mt: '1rem' }}>
+                    <LoadingButton
+                        loading={isResponding}
+                        type="submit"
+                        variant="contained"
+                        onClick={completeRequest}
+                    >
+                        Yes
+                    </LoadingButton>
+                    <Button variant="outlined" onClick={handleClosePopover}>
+                        Cancel
+                    </Button>
+                </Box>
+            </Box>
+        )
     }
 
     return (
@@ -232,7 +292,7 @@ const ReturnRequestListPage = () => {
                                     >
                                         <CustomTableCell>{index + no}</CustomTableCell>
                                         <CustomTableCell>{request.assetCode}</CustomTableCell>
-                                        <CustomTableCell>{request.assetId}</CustomTableCell>
+                                        <CustomTableCell>{request.assetName}</CustomTableCell>
                                         <CustomTableCell>{request.requestedBy}</CustomTableCell>
                                         <CustomTableCell>{toStandardFormat(request.assignedDate)}</CustomTableCell>
                                         <CustomTableCell>{request.acceptedBy}</CustomTableCell>
@@ -292,6 +352,14 @@ const ReturnRequestListPage = () => {
                         />
                     </Box>}
             </RootBox>
+            <CustomPopover
+                elAnchor={rowAnchorEl}
+                open={Boolean(rowAnchorEl)}
+                handleClose={handleClosePopover}
+                renderTitle={() => canComplete ? <span>Are you sure?</span> : <span>Can not complete request</span>}
+                renderDescription={renderRequestCompletionDialog}
+                boxProps={{ sx: { maxWidth: '25rem' } }}
+            />
         </>
     )
 }
