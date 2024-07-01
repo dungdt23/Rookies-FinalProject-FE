@@ -2,7 +2,7 @@ import CancelPresentationRoundedIcon from '@mui/icons-material/CancelPresentatio
 import { Box, BoxProps, Divider, IconButton, Paper, Popper, styled, Typography } from "@mui/material";
 import { FC, ReactNode, useEffect, useRef } from "react";
 
-interface PopperProps {
+interface CustomPopperProps {
     elAnchor: HTMLElement | null;
     open: boolean;
     handleClose: () => void;
@@ -18,14 +18,18 @@ const TitleBox = styled(Box)(({ theme }) => ({
     color: theme.palette.primary.main,
     alignItems: 'center',
     padding: '0 1rem',
+    borderTopLeftRadius: theme.shape.borderRadius, // Apply border radius to match the Paper component
+    borderTopRightRadius: theme.shape.borderRadius, // Apply border radius to match the Paper component
 }));
 
 const ContentBox = styled(Box)(({ theme }) => ({
     padding: '1rem',
     backgroundColor: theme.palette.background.paper,
+    borderBottomLeftRadius: theme.shape.borderRadius, // Apply border radius to match the Paper component
+    borderBottomRightRadius: theme.shape.borderRadius, // Apply border radius to match the Paper component
 }));
 
-const CustomPopper: FC<PopperProps> = ({ elAnchor, open, handleClose, renderTitle, renderDescription, boxProps, ...props }) => {
+const CustomPopper: FC<CustomPopperProps> = ({ elAnchor, open, handleClose, renderTitle, renderDescription, boxProps, ...props }) => {
     const popperRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -51,9 +55,10 @@ const CustomPopper: FC<PopperProps> = ({ elAnchor, open, handleClose, renderTitl
             open={open}
             anchorEl={elAnchor}
             placement="bottom-start"
+            sx={{ zIndex: 1000 }}
             {...props}
         >
-            <Paper elevation={3} ref={popperRef}>
+            <Paper elevation={3} ref={popperRef} square={false} sx={{ borderRadius: 2 }}>
                 <Box {...boxProps}>
                     <TitleBox>
                         <Typography variant="h6">

@@ -1,8 +1,8 @@
-import axios from "axios";
-import { LocalStorageConstants } from "../constants/localStorage";
+import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from "axios";
 import { AxiosConstants } from "../constants/axiosConstants";
-import { UserCredential } from "../types/user";
+import { LocalStorageConstants } from "../constants/localStorage";
 import { routeNames } from "../constants/routeName";
+import { logout, useAuth } from "../contexts/AuthContext";
 
 const axiosInstance = axios.create({
     baseURL: AxiosConstants.AXIOS_BASEURL,
@@ -11,31 +11,31 @@ const axiosInstance = axios.create({
 });
 
 axiosInstance.interceptors.request.use(
-    (config) => {
-        const storedCredential = localStorage.getItem(LocalStorageConstants.USER_CREDENTIAL);
-        const userCredential: UserCredential | null = storedCredential ? JSON.parse(storedCredential) : null;
-        if (userCredential) {
-            config.headers.Authorization = `Bearer ${userCredential.accessToken}`
+    (config: InternalAxiosRequestConfig) => {
+        const storedToken = localStorage.getItem(LocalStorageConstants.TOKEN);
+        const token: string | null = storedToken ?? null;
+        if (token) {
+            config.headers.set('Authorization', `Bearer ${token}`);
         }
 
         if (process.env.NODE_ENV === 'development') {
             const method = config.method?.toUpperCase() ?? 'GET';
-            const urlWithParams = method.concat(` ${config.url}`, (config.params ? `?${new URLSearchParams(config.params).toString()}` : ''));
+            const urlWithParams = method.concat(` ${config.url}`, (config.params ? `?${new URLSearchParams(config.params as Record<string, string>).toString()}` : ''));
             console.log('Request URL:', urlWithParams);
         }
 
-        return config
+        return config;
     },
-    (error) => {
-        Promise.reject(new Error(error))
+    (error: AxiosError) => {
+        return Promise.reject(new Error(error.message));
     }
-)
-
+);
 axiosInstance.interceptors.response.use(
-    response => {
+    (response: AxiosResponse) => {
         return response
     },
-    error => {
+    (error: AxiosError) => {
+        console.error(error)
         if (!error.response) {
             console.error('Network error, unable to connect to API');
             // Return a specific error message or object for network errors
@@ -44,13 +44,13 @@ axiosInstance.interceptors.response.use(
         // Any status codes that fall outside the range of 2xx cause this function to trigger
         if (error.response && error.response.status === 401 && window.location.pathname !== routeNames.login) {
             // Handle unauthorized errors (e.g., redirect to login)
-            console.log(window.location.href);
             console.error('Unauthorized, redirecting to login...');
+            logout();
             window.location.href = routeNames.login;
         }
         // You can add other error handling logic here
 
-        return Promise.reject(new Error(error));
+        return Promise.reject(error);
     }
 )
 

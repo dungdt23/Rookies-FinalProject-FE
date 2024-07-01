@@ -5,15 +5,21 @@ export interface User {
     lastName: string;
     userName: string;
     joinedDate: string;
-    typeGender: UserGender;
+    dateOfBirth: string;
+    gender: UserGender;
     type: UserType;
+    location: string;
 }
 
-export interface UserCredential {
-    tokenType: string,
-    accessToken: string,
-    expiresIn: number,
-    refreshToken: string
+export interface JWTPayload {
+    id: string;
+    username: string;
+    role: string;
+    locationId: string;
+    location: string;
+    nbf: number;
+    exp: number;
+    iat: number;
 }
 
 export enum UserGender {
