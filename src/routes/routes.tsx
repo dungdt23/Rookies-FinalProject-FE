@@ -18,6 +18,7 @@ import { UserType } from '../types/user';
 import RequireAuth from './RequireAuth';
 import RequireGuest from './RequireGuest';
 import { EditAssignmentPage } from '../pages/assignmentPages/assignmentEdit';
+import ReturnRequestListPage from '../pages/returnRequestPages/returnRequestList/ReturnRequestListPage';
 
 const commonRoutes: RouteObject[] = [
     {
@@ -102,7 +103,11 @@ export const adminRoutes: RouteObject[] = [
                     {
                         path: routeNames.assignment.edit(':assignmentId'),
                         element: <EditAssignmentPage />
-                    }
+                    },
+                    {
+                        path: routeNames.returnRequest.list,
+                        element: <ReturnRequestListPage />
+                    },
                 ]
             }
         ]

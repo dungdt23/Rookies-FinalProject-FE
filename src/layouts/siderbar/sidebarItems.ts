@@ -9,7 +9,7 @@ export const adminSidebarItems: SidebarItem[] = [
     { label: 'Manage User', to: routeNames.user.list },
     { label: 'Manage Asset', to: routeNames.asset.list },
     { label: 'Manage Assignment', to: routeNames.assignment.list },
-    { label: 'Request for Returning' },
+    { label: 'Request for Returning', to:routeNames.returnRequest.list },
     { label: 'Report' },
 ];
 
