@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { Helmet } from "react-helmet-async";
-import AssignmentListPageStaff from "../assignmentPages/assignmentList/AssginmentListPageStaff";
+import { Typography } from "@mui/material";
 
 const HomePage: FC = () => {
     return (
@@ -8,7 +8,9 @@ const HomePage: FC = () => {
             <Helmet>
                 <title>Home</title>
             </Helmet>
-            <AssignmentListPageStaff/>
+            <Typography>
+                This is home
+            </Typography>
         </>
     )
 }
