@@ -29,5 +29,9 @@ export const apiEndpoints = {
     TYPE: {
         GET_ALL: "/types"
     },
+    REPORT: {
+        GET_ALL: "/reports",
+        EXPORT: "/reports/export"
+    },
     LOGIN: "/users/login"
 }
