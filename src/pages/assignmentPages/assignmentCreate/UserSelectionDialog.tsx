@@ -100,9 +100,6 @@ const UserSelectionDialog: FC<UserSelectionDialogProps> = ({ open, handleClose, 
         }
     }, [open])
 
-    console.log(selected);
-    
-
     const handleCancelClick = () => {
         handleClose()
         onClose()
