@@ -105,7 +105,7 @@ const ReturnRequestListPage = () => {
             page: page,
             perPage: pageSize,
             sortField: FieldReturnRequestFilter[orderBy as keyof typeof FieldReturnRequestFilter],
-            sortOrder: order === "asc" ? 0 : 1,
+            sortOrder: order === "asc" ? 1 : 0,
             requestState: ReturnRequestState[returnRequestState as keyof typeof ReturnRequestState],
             returnedDate: returnedDate ? dayjs(returnedDate).format('MM-DD-YYYY') : undefined,
             search: search !== "" ? search : undefined
