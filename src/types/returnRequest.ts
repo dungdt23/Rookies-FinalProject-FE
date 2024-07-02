@@ -16,5 +16,5 @@ export interface ReturnRequest {
 export enum ReturnRequestState {
     WaitingForReturning = 0,
     Completed = 1,
-    Declined = -1,
+    Rejected = 2
 }
