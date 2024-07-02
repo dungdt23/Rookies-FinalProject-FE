@@ -21,6 +21,9 @@ export const apiEndpoints = {
         DELETE: (assignmentId: string) => `/assignments/${assignmentId}`,
         RESPOND: "/assignments/respond"
     },
+    RETURN_REQUEST: {
+        GET_ALL: "/return-requests"
+    },
     CATEGORY: {
         GET_ALL: "/categories",
         CREATE: "/categories",
