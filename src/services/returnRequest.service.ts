@@ -1,7 +1,7 @@
 import { AxiosResponse } from "axios";
 import { apiEndpoints } from "../constants/apiEndpoint";
 import { PaginateResponse } from "../types/common";
-import { ReturnRequest, ReturnRequestState } from "../types/returnRequest";
+import { ReturnCreateRequest, ReturnRequest, ReturnRequestState } from "../types/returnRequest";
 import axiosInstance from "./axios";
 
 export interface GetAllReturnRequestParams {
@@ -17,7 +17,7 @@ export interface GetAllReturnRequestParams {
 
 
 export enum FieldReturnRequestFilter {
-    CreatedAt = 1,
+    RequestedDate = 1,
     AssetCode,
     AssetName,
     RequestedBy,
@@ -31,7 +31,16 @@ export enum SortOrder{
     Descending = 0
 }
 
+
+export interface CreateReturnRequestRequest {
+    assignmentId : string
+}
+
 export const fetchAllReturnRequest = async (params: GetAllReturnRequestParams): Promise<PaginateResponse<ReturnRequest>> => {
     const response: AxiosResponse<PaginateResponse<ReturnRequest>> = await axiosInstance.get(apiEndpoints.RETURN_REQUEST.GET_ALL, { params });
+    return response.data;
+}
+export const createReturnRequest = async (payload: CreateReturnRequestRequest): Promise<ReturnCreateRequest> => {
+    const response: AxiosResponse<ReturnCreateRequest> = await axiosInstance.post(apiEndpoints.RETURN_REQUEST.CREATE, payload)
     return response.data;
 }
