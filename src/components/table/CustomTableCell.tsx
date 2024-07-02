@@ -19,6 +19,7 @@ const CustomTableCell: FC<CustomTableCellProps> = ({ children, ...props }) => {
         <StyledTableCell {...props}>
             <Box sx={{
                 padding: "0 0 1px 0",
+                minHeight:"2vh",
                 borderBottom: "1px solid #c0c0c0",
             }}>
                 {children}

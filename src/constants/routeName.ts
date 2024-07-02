@@ -21,6 +21,9 @@ export const routeNames = {
         edit: (assignmentId: string): string => `/assignments/edit/${assignmentId}`,
         staffList: "/"
     },
+    returnRequest:{
+        list:"/return-request",
+    },
     report: {
         list: "/reports"
     }

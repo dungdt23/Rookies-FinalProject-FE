@@ -1,29 +1,24 @@
-import { RouteObject } from "react-router-dom";
-import { routeNames } from "../constants/routeName";
-import { AdminLayout } from "../layouts/adminLayout";
-import { SimpleLayout } from "../layouts/simpleLayout";
-import { CreateAssetPage } from "../pages/assetPages/assetCreate";
-import { EditAssetPage } from "../pages/assetPages/assetEdit";
-import AssetListPage from "../pages/assetPages/assetList/AssetListPage";
-import { CreateAssignmentPage } from "../pages/assignmentPages/assignmentCreate";
-import { EditAssignmentPage } from "../pages/assignmentPages/assignmentEdit";
-import AssignmentListPageStaff from "../pages/assignmentPages/assignmentList/AssginmentListPageStaff";
-import AssignmentListPageAdmin from "../pages/assignmentPages/assignmentList/AssignmentListPageAdmin";
-import {
-    Error401,
-    Error403,
-    Error404,
-    Error500,
-} from "../pages/errorPage/ErrorPages";
-import { HomePage } from "../pages/homePage";
-import { LoginPage } from "../pages/login";
-import ReportPage from "../pages/reportPages/ReportPage";
-import CreateUserPage from "../pages/user/userCreate/CreateUserPage";
-import { EditUserPage } from "../pages/user/userEdit";
-import UserListPage from "../pages/user/userList/UserListPage";
-import { UserType } from "../types/user";
-import RequireAuth from "./RequireAuth";
-import RequireGuest from "./RequireGuest";
+import { RouteObject } from 'react-router-dom';
+import { routeNames } from '../constants/routeName';
+import { AdminLayout } from '../layouts/adminLayout';
+import { SimpleLayout } from '../layouts/simpleLayout';
+import { CreateAssetPage } from '../pages/assetPages/assetCreate';
+import { EditAssetPage } from '../pages/assetPages/assetEdit';
+import AssetListPage from '../pages/assetPages/assetList/AssetListPage';
+import { CreateAssignmentPage } from '../pages/assignmentPages/assignmentCreate';
+import AssignmentListPageStaff from '../pages/assignmentPages/assignmentList/AssginmentListPageStaff';
+import AssignmentListPageAdmin from '../pages/assignmentPages/assignmentList/AssignmentListPageAdmin';
+import { Error401, Error403, Error404, Error500 } from '../pages/errorPage/ErrorPages';
+import { HomePage } from '../pages/homePage';
+import { LoginPage } from '../pages/login';
+import CreateUserPage from '../pages/user/userCreate/CreateUserPage';
+import { EditUserPage } from '../pages/user/userEdit';
+import UserListPage from '../pages/user/userList/UserListPage';
+import { UserType } from '../types/user';
+import RequireAuth from './RequireAuth';
+import RequireGuest from './RequireGuest';
+import { EditAssignmentPage } from '../pages/assignmentPages/assignmentEdit';
+import ReturnRequestListPage from '../pages/returnRequestPages/returnRequestList/ReturnRequestListPage';
 
 const commonRoutes: RouteObject[] = [
   {
@@ -69,55 +64,63 @@ export const adminRoutes: RouteObject[] = [
       {
         element: <AdminLayout />,
         children: [
-          {
-            path: routeNames.index,
-            element: <AssignmentListPageStaff />,
-          },
-          {
-            path: routeNames.user.list,
-            element: <UserListPage />,
-          },
-          {
-            path: routeNames.user.create,
-            element: <CreateUserPage />,
-          },
-          {
-            path: routeNames.user.edit(":userId"),
-            element: <EditUserPage />,
-          },
-          {
-            path: routeNames.asset.list,
-            element: <AssetListPage />,
-          },
-          {
-            path: routeNames.asset.create,
-            element: <CreateAssetPage />,
-          },
-          {
-            path: routeNames.asset.edit(":assetId"),
-            element: <EditAssetPage />,
-          },
-          {
-            path: routeNames.assignment.list,
-            element: <AssignmentListPageAdmin />,
-          },
-          {
-            path: routeNames.assignment.create,
-            element: <CreateAssignmentPage />,
-          },
-          {
-            path: routeNames.assignment.edit(":assignmentId"),
-            element: <EditAssignmentPage />,
-          },
-          {
+            {
+                element: <AdminLayout />,
+                children: [
+                    {
+                        path: routeNames.index,
+                        element: <AssignmentListPageStaff />
+                    },
+                    {
+                        path: routeNames.user.list,
+                        element: <UserListPage />
+                    },
+                    {
+                        path: routeNames.user.create,
+                        element: <CreateUserPage />
+                    },
+                    {
+                        path: routeNames.user.edit(':userId'),
+                        element: <EditUserPage />
+                    },
+                    {
+                        path: routeNames.asset.list,
+                        element: <AssetListPage />
+                    },
+                    {
+                        path: routeNames.asset.create,
+                        element: <CreateAssetPage />
+                    },
+                    {
+                        path: routeNames.asset.edit(':assetId'),
+                        element: <EditAssetPage />
+                    },
+                    {
+                        path: routeNames.assignment.list,
+                        element: <AssignmentListPageAdmin />
+                    },
+                    {
+                        path: routeNames.assignment.create,
+                        element: <CreateAssignmentPage />
+                    },
+                    {
+                        path: routeNames.assignment.edit(':assignmentId'),
+                        element: <EditAssignmentPage />
+                    },
+                    {
+                        path: routeNames.returnRequest.list,
+                        element: <ReturnRequestListPage />
+                    },
+                  {
             path: routeNames.report.list,
             element: <ReportPage />,
           },
-        ],
-      },
-    ],
-  },
-  ...commonRoutes,
+                ]
+            }
+        ]
+    },
+    ...commonRoutes,
+
 ];
 
 export const guestRoutes: RouteObject[] = [
