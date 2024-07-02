@@ -7,7 +7,6 @@ import { JWTPayload } from '../types/user';
 interface AuthContextProps {
   user: JWTPayload | null;
   loading: boolean,
-  isPasswordChanged: boolean,
   login: (token: string) => void;
   logout: () => void;
   checkChangedPassword: (isChanged: boolean) => void;
@@ -20,7 +19,6 @@ export const logout = () => {
 }
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [isPasswordChanged, setIsPasswordChanged] = useState<boolean>(true);
   const [user, setUser] = useState<JWTPayload | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -41,7 +39,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const checkChangedPassword = (isChanged: boolean) => {
-    setIsPasswordChanged(isChanged);
+    localStorage.setItem(LocalStorageConstants.PASSWORD_CHANGED, isChanged ? "1" : "0");
   }
 
   const login = (token: string) => {
@@ -64,7 +62,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, isPasswordChanged, login, logout ,checkChangedPassword}}>
+    <AuthContext.Provider value={{ user, loading, login, logout ,checkChangedPassword}}>
       {children}
     </AuthContext.Provider>
   );

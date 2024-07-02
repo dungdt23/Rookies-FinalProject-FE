@@ -11,6 +11,7 @@ import CustomDialog from '../../components/dialog/CustomDialog';
 import { useFormik } from 'formik';
 import { ChangePasswordRequest, changePassword, changePasswordFirstTime } from '../../services/user.service';
 import Iconify from '../../components/iconify';
+import { LocalStorageConstants } from './../../constants/localStorage';
 
 // Mock account data
 const account = {
@@ -55,17 +56,17 @@ const BACKEND_URL = {
 };
 
 const AccountPopover = () => {
-  const { user, isPasswordChanged, logout } = useAuth();
+  const { user, logout , checkChangedPassword} = useAuth();
   const [open, setOpen] = useState<HTMLElement | null>(null);
   const [logoutDialogOpen, setLogoutDialogOpen] = useState<boolean>(false);
   const [changePasswordDialogOpen, setChangePasswordDialogOpen] = useState<boolean>(false);
-  const [changePasswordFirstTimeOpen, setChangePasswordFirstTimeOpen] = useState<boolean>(!isPasswordChanged);
+  const [changePasswordFirstTimeOpen, setChangePasswordFirstTimeOpen] = useState<boolean>(localStorage.getItem(LocalStorageConstants.PASSWORD_CHANGED) === "1" ?  false: true);
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showOldPassword, setShowOldPassword] = useState<boolean>(false);
   const [showNewPassword, setShowNewPassword] = useState<boolean>(false);
   const [isFetching, setIsFetching] = useState<boolean>(false);
   const [completeChangePassword, setCompleteChangePassword] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
+
   const navigate = useNavigate();
 
   const handleOpen = (event: MouseEvent<HTMLElement>) => {
@@ -272,7 +273,8 @@ const AccountPopover = () => {
       setIsFetching(true);
       try {
         await changePasswordFirstTime(`"${values.password}"`);
-        setChangePasswordFirstTimeOpen(false);
+        checkChangedPassword(true)
+        setChangePasswordFirstTimeOpen(false)
       } catch (error: any) {
         formikRequired.errors.password = error.response.data.message
       } finally {
