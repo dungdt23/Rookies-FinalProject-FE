@@ -5,7 +5,7 @@ import { MouseEvent, ReactNode, useEffect, useState } from "react"
 import { Helmet } from "react-helmet-async"
 import { SearchBar } from "../../../components/form"
 import CustomTableHead, { Order, TableHeadInfo } from "../../../components/table/CustomTableHead"
-import { FieldReturnRequestFilter } from "../../../services/returnRequest.service"
+import { FieldReturnRequestFilter, GetAllReturnRequestParams, fetchAllReturnRequest } from "../../../services/returnRequest.service"
 import { ReturnRequest, ReturnRequestState } from "../../../types/returnRequest"
 import { DatePicker } from "@mui/x-date-pickers"
 import { ClickableTableRow, CustomTableCell, StyledTableCell, StyledTableContainer } from "../../../components/table"
@@ -14,9 +14,9 @@ import { theme } from "../../../constants/appTheme"
 import { toStandardFormat } from "../../../helpers/formatDate"
 import { addSpacesToCamelCase } from "../../../helpers/helper"
 import { Check, Close } from "@mui/icons-material"
-import { returnRequestsMock } from "./mockData"
 import { CustomPopover } from "../../../components/popover"
 import { LoadingButton } from "@mui/lab"
+import { removeUndefinedValues } from "../../../helpers/removeUndefined"
 
 const RootBox = styled(Box)(() => ({
     minWidth: '30rem',
@@ -97,28 +97,25 @@ const ReturnRequestListPage = () => {
 
     useEffect(() => {
         getReturnRequests();
-        console.log(returnRequestState, returnedDate, page, pageSize, order, orderBy);
-        
-    }, [returnRequestState, returnedDate, page, pageSize, order, orderBy])
+    }, [returnRequestState, returnedDate, page, pageSize, order, orderBy,search])
 
     const getReturnRequests = async () => {
         setIsFetching(true);
-        // let params: GetAllAssignmentParams = {
-        //     searchString: search !== "" ? search : undefined,
-        //     isAscending: order === "asc",
-        //     fieldFilter: FieldAssignmentFilter[orderBy as keyof typeof FieldAssignmentFilter],
-        //     index: page,
-        //     size: pageSize,
-        //     stateFilter: AssignmentState[assignmentState as keyof typeof AssignmentState],
-        //     assignedDateFilter: assignedDate ? dayjs(assignedDate).format('MM-DD-YYYY') : undefined
-        // };
-
-        // removeUndefinedValues<GetAllAssignmentParams>(params);
+        let params: GetAllReturnRequestParams = {
+            page: page,
+            perPage: pageSize,
+            sortField: FieldReturnRequestFilter[orderBy as keyof typeof FieldReturnRequestFilter],
+            sortOrder: order === "asc" ? 1 : 0,
+            requestState: ReturnRequestState[returnRequestState as keyof typeof ReturnRequestState],
+            returnedDate: returnedDate ? dayjs(returnedDate).format('MM-DD-YYYY') : undefined,
+            search: search !== "" ? search : undefined
+        }
+        removeUndefinedValues<GetAllReturnRequestParams>(params);
 
         try {
-            const data = returnRequestsMock;
-            setReturnRequests(data);
-            setTotalCount(data.length)
+            const data = await fetchAllReturnRequest(params);
+            setReturnRequests(data.data);
+            setTotalCount(data.totalCount)
         } catch (error: any) {
         } finally {
             setIsFetching(false);
@@ -161,10 +158,12 @@ const ReturnRequestListPage = () => {
         setPage(1);
     }
 
-    function handleSearchSubmit(searchTerm: string): void {
-        setSearch(searchTerm);
-        setPage(1);
-    }
+    const handleSearchSubmit = (searchTerm: string) => {
+        const searchQuery = searchTerm;
+        setSearch(searchQuery);
+        setPage(1); // Reset to the first page on search
+    };
+
 
     function onRequestSort(property: string): void {
         // toggle sort
@@ -242,9 +241,9 @@ const ReturnRequestListPage = () => {
                                 <MenuItem value="">
                                     <em>None</em>
                                 </MenuItem>
-                                <MenuItem value="WaitingForAcceptance">Waiting For Acceptance</MenuItem>
-                                <MenuItem value="Accepted">Accepted</MenuItem>
-                                <MenuItem value="Declined">Declined</MenuItem>
+                                <MenuItem value="WaitingForReturning">Waiting For Returning</MenuItem>
+                                <MenuItem value="Completed">Completed</MenuItem>
+                                <MenuItem value="Rejected">Rejected</MenuItem>
                             </Select>
                             <Divider sx={{ height: 0, m: 1 }} orientation="vertical" />
                             <DatePicker
@@ -293,9 +292,9 @@ const ReturnRequestListPage = () => {
                                         <CustomTableCell>{index + no}</CustomTableCell>
                                         <CustomTableCell>{request.assetCode}</CustomTableCell>
                                         <CustomTableCell>{request.assetName}</CustomTableCell>
-                                        <CustomTableCell>{request.requestedBy}</CustomTableCell>
-                                        <CustomTableCell>{toStandardFormat(request.assignedDate)}</CustomTableCell>
-                                        <CustomTableCell>{request.acceptedBy}</CustomTableCell>
+                                        <CustomTableCell>{request.requestorUsername}</CustomTableCell>
+                                        <CustomTableCell>{toStandardFormat(request.assignmentAssignedDate)}</CustomTableCell>
+                                        <CustomTableCell>{request.responderUsername}</CustomTableCell>
                                         <CustomTableCell>{request.returnedDate ? toStandardFormat(request.returnedDate) : undefined}</CustomTableCell>
                                         <CustomTableCell>{addSpacesToCamelCase(ReturnRequestState[request.state])}</CustomTableCell>
                                         <StyledTableCell>

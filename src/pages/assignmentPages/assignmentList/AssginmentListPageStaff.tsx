@@ -24,11 +24,6 @@ const RootBox = styled(Box)(() => ({
     p: 2
 }))
 
-const allOption = {
-    label: "None",
-    value: ""
-}
-
 const StyledTableContainer = styled(TableContainer)(() => ({
     border: '0px',
 }))
@@ -75,8 +70,6 @@ const AssignmentListPageStaff = () => {
     const defaultSortOrder: Order = "asc"
     const [assignments, _setAssignments] = useState<Assignment[]>([]);
     const [totalCount, setTotalCount] = useState<number>(0);
-    const [assignmentState, setAssignmentState] = useState<AssignmentState | string>(allOption.value);
-    const [search, setSearch] = useState<string>("");
     const [order, setOrder] = useState<Order>(defaultSortOrder);
     const [orderBy, setOrderBy] = useState<string>(TABLE_HEAD[0].id);
     const [page, setPage] = useState<number>(1);
@@ -101,12 +94,10 @@ const AssignmentListPageStaff = () => {
         setIsFetching(true);
         let params: GetAllAssignmentParams = {
             own: true,
-            searchString: search ? search as string : undefined,
             isAscending: order === "asc",
             fieldFilter: FieldAssignmentFilter[orderBy as keyof typeof FieldAssignmentFilter],
             index: page,
             size: pageSize,
-            stateFilter: AssignmentState[assignmentState as keyof typeof AssignmentState],
             assignedDateFilter: assignedDate ? dayjs(assignedDate).format('MM-DD-YYYY') : undefined
         };
 
@@ -127,7 +118,7 @@ const AssignmentListPageStaff = () => {
 
     useEffect(() => {
         getAssignments();
-    }, [assignmentState, assignedDate, search, order, orderBy, page, pageSize]);
+    }, [assignedDate, order, orderBy, page, pageSize]);
 
     useEffect(() => {
         if (clearDate) {
@@ -277,7 +268,7 @@ const AssignmentListPageStaff = () => {
     return (
         <>
             <Helmet>
-                <title>Manage assignment</title>
+                <title>My Assignment</title>
             </Helmet>
             <RootBox sx={{ mb: '1rem' }}>
                 <Typography variant="h5" color='primary'>My Assignment</Typography>
@@ -337,17 +328,11 @@ const AssignmentListPageStaff = () => {
                                                 }}
                                             >
                                                 <Typography variant="h6" paragraph>
-                                                    {search === "" ? "Empty!" : "Not found"}
+                                                    Empty!
                                                 </Typography>
 
                                                 <Typography variant="body2">
-                                                    {search === "" ? "There are no records."
-                                                        : (<>
-                                                            No results found for{' '}
-                                                            <strong>
-                                                                &quot;{search}&quot;
-                                                            </strong>.
-                                                            <br /> Try checking for typos or using complete words.</>)}
+                                                    There are no records.
                                                 </Typography>
                                             </Box>
                                         </StyledTableCell>
