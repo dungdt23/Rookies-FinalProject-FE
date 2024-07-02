@@ -19,6 +19,7 @@ import RequireAuth from './RequireAuth';
 import RequireGuest from './RequireGuest';
 import { EditAssignmentPage } from '../pages/assignmentPages/assignmentEdit';
 import ReturnRequestListPage from '../pages/returnRequestPages/returnRequestList/ReturnRequestListPage';
+import ReportPage from '../pages/reportPages/ReportPage';
 
 const commonRoutes: RouteObject[] = [
   {
@@ -64,62 +65,59 @@ export const adminRoutes: RouteObject[] = [
       {
         element: <AdminLayout />,
         children: [
-            {
-                element: <AdminLayout />,
-                children: [
-                    {
-                        path: routeNames.index,
-                        element: <AssignmentListPageStaff />
-                    },
-                    {
-                        path: routeNames.user.list,
-                        element: <UserListPage />
-                    },
-                    {
-                        path: routeNames.user.create,
-                        element: <CreateUserPage />
-                    },
-                    {
-                        path: routeNames.user.edit(':userId'),
-                        element: <EditUserPage />
-                    },
-                    {
-                        path: routeNames.asset.list,
-                        element: <AssetListPage />
-                    },
-                    {
-                        path: routeNames.asset.create,
-                        element: <CreateAssetPage />
-                    },
-                    {
-                        path: routeNames.asset.edit(':assetId'),
-                        element: <EditAssetPage />
-                    },
-                    {
-                        path: routeNames.assignment.list,
-                        element: <AssignmentListPageAdmin />
-                    },
-                    {
-                        path: routeNames.assignment.create,
-                        element: <CreateAssignmentPage />
-                    },
-                    {
-                        path: routeNames.assignment.edit(':assignmentId'),
-                        element: <EditAssignmentPage />
-                    },
-                    {
-                        path: routeNames.returnRequest.list,
-                        element: <ReturnRequestListPage />
-                    },
-                  {
+          {
+            path: routeNames.index,
+            element: <AssignmentListPageStaff />
+          },
+          {
+            path: routeNames.user.list,
+            element: <UserListPage />
+          },
+          {
+            path: routeNames.user.create,
+            element: <CreateUserPage />
+          },
+          {
+            path: routeNames.user.edit(':userId'),
+            element: <EditUserPage />
+          },
+          {
+            path: routeNames.asset.list,
+            element: <AssetListPage />
+          },
+          {
+            path: routeNames.asset.create,
+            element: <CreateAssetPage />
+          },
+          {
+            path: routeNames.asset.edit(':assetId'),
+            element: <EditAssetPage />
+          },
+          {
+            path: routeNames.assignment.list,
+            element: <AssignmentListPageAdmin />
+          },
+          {
+            path: routeNames.assignment.create,
+            element: <CreateAssignmentPage />
+          },
+          {
+            path: routeNames.assignment.edit(':assignmentId'),
+            element: <EditAssignmentPage />
+          },
+          {
+            path: routeNames.returnRequest.list,
+            element: <ReturnRequestListPage />
+          },
+          {
             path: routeNames.report.list,
             element: <ReportPage />,
           },
-                ]
-            }
         ]
-    },
-    ...commonRoutes,
+      }
+    ]
+  },
+  ...commonRoutes,
 
 ];
 
