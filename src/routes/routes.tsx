@@ -21,45 +21,48 @@ import { EditAssignmentPage } from '../pages/assignmentPages/assignmentEdit';
 import ReturnRequestListPage from '../pages/returnRequestPages/returnRequestList/ReturnRequestListPage';
 
 const commonRoutes: RouteObject[] = [
-    {
-        element: <RequireGuest />,
-        children: [
-            {
-                path: routeNames.login,
-                element: <LoginPage />
-            }
-        ]
-    },
-    {
-        element: <SimpleLayout />,
-        children: [
-            {
-                path: routeNames.notFound,
-                element: <Error404 />
-            },
-            {
-                path: routeNames.unauthorized,
-                element: <Error401 />
-            },
-            {
-                path: routeNames.forbidden,
-                element: <Error403 />
-            },
-            {
-                path: routeNames.serverError,
-                element: <Error500 />
-            },
-        ]
-    },
-    {
-        path: '*',
+  {
+    element: <RequireGuest />,
+    children: [
+      {
+        path: routeNames.login,
+        element: <LoginPage />,
+      },
+    ],
+  },
+  {
+    element: <SimpleLayout />,
+    children: [
+      {
+        path: routeNames.notFound,
         element: <Error404 />,
-    },
-]
+      },
+      {
+        path: routeNames.unauthorized,
+        element: <Error401 />,
+      },
+      {
+        path: routeNames.forbidden,
+        element: <Error403 />,
+      },
+      {
+        path: routeNames.serverError,
+        element: <Error500 />,
+      },
+    ],
+  },
+  {
+    path: "*",
+    element: <Error404 />,
+  },
+];
 
 export const adminRoutes: RouteObject[] = [
-    {
-        element: <RequireAuth allowedTypes={[UserType.Admin]} />,
+  {
+    element: <RequireAuth allowedTypes={[UserType.Admin]} />,
+    children: [
+      {
+        element: <AdminLayout />,
         children: [
             {
                 element: <AdminLayout />,
@@ -108,40 +111,45 @@ export const adminRoutes: RouteObject[] = [
                         path: routeNames.returnRequest.list,
                         element: <ReturnRequestListPage />
                     },
+                  {
+            path: routeNames.report.list,
+            element: <ReportPage />,
+          },
                 ]
             }
         ]
     },
-    ...commonRoutes
+    ...commonRoutes,
+
 ];
 
 export const guestRoutes: RouteObject[] = [
-    {
-        element: <AdminLayout />,
-        children: [
-            {
-                path: routeNames.index,
-                element: <HomePage />
-            },
-        ]
-    },
-    ...commonRoutes
-]
+  {
+    element: <AdminLayout />,
+    children: [
+      {
+        path: routeNames.index,
+        element: <HomePage />,
+      },
+    ],
+  },
+  ...commonRoutes,
+];
 
 export const staffRoutes: RouteObject[] = [
-    {
-        element: <RequireAuth allowedTypes={[UserType.Staff]} />,
+  {
+    element: <RequireAuth allowedTypes={[UserType.Staff]} />,
+    children: [
+      {
+        element: <AdminLayout />,
         children: [
-            {
-                element: <AdminLayout />,
-                children: [
-                    {
-                        path: routeNames.assignment.staffList,
-                        element: <AssignmentListPageStaff />
-                    }
-                ]
-            }
-        ]
-    },
-    ...commonRoutes
-]
+          {
+            path: routeNames.assignment.staffList,
+            element: <AssignmentListPageStaff />,
+          },
+        ],
+      },
+    ],
+  },
+  ...commonRoutes,
+];

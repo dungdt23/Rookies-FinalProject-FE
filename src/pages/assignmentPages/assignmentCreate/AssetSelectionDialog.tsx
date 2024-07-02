@@ -5,8 +5,6 @@ import {
     Dialog,
     DialogTitle,
     Pagination,
-    Table,
-    TableBody,
     TableRow,
     Typography
 } from '@mui/material';
@@ -16,7 +14,8 @@ import SimpleBar from 'simplebar-react';
 import 'simplebar-react/dist/simplebar.min.css';
 import { SearchBar } from '../../../components/form';
 import { CircularProgressWrapper } from '../../../components/loading';
-import { ClickableTableRow, CustomTableCell, CustomTableHead, StyledTableCell } from '../../../components/table';
+import { ClickableTableRow, CustomTableCell, CustomTableHead, StyledTableCell, StyleTableBody } from '../../../components/table';
+import { StyleTable } from '../../../components/table/CustomTable';
 import { Order, TableHeadInfo } from '../../../components/table/CustomTableHead';
 import { removeUndefinedValues } from '../../../helpers/removeUndefined';
 import { AssetFieldFilter, fetchAllAssets, GetAllAssetParams } from '../../../services/asset.service';
@@ -172,14 +171,14 @@ const AssetSelectionDialog: FC<AssetSelectionDialogProps> = ({ open, handleClose
                         loading={isFetching}
                     >
                         <Box>
-                            <Table>
+                            <StyleTable>
                                 <CustomTableHead
                                     columns={TABLE_HEAD}
                                     order={order}
                                     orderBy={orderBy}
                                     onRequestSort={onRequestSort}
                                 />
-                                <TableBody>
+                                <StyleTableBody>
                                     {assets.map((asset) => (
                                         <ClickableTableRow
                                             key={asset.id}
@@ -226,8 +225,8 @@ const AssetSelectionDialog: FC<AssetSelectionDialogProps> = ({ open, handleClose
                                             </CustomTableCell>
                                         </TableRow>
                                     )}
-                                </TableBody>
-                            </Table>
+                                </StyleTableBody>
+                            </StyleTable>
                         </Box>
                     </CircularProgressWrapper>
                 </SimpleBar>

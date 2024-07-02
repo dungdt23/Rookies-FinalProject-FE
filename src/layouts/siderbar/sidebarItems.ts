@@ -10,7 +10,7 @@ export const adminSidebarItems: SidebarItem[] = [
     { label: 'Manage Asset', to: routeNames.asset.list },
     { label: 'Manage Assignment', to: routeNames.assignment.list },
     { label: 'Request for Returning', to:routeNames.returnRequest.list },
-    { label: 'Report' },
+    { label: 'Report', to: routeNames.report.list},
 ];
 
 export const staffSidebarItems: SidebarItem[] = [

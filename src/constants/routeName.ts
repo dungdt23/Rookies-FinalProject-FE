@@ -23,5 +23,8 @@ export const routeNames = {
     },
     returnRequest:{
         list:"/return-request",
+    },
+    report: {
+        list: "/reports"
     }
 }
