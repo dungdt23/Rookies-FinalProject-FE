@@ -14,7 +14,6 @@ import { theme } from "../../../constants/appTheme"
 import { toStandardFormat } from "../../../helpers/formatDate"
 import { addSpacesToCamelCase } from "../../../helpers/helper"
 import { Check, Close } from "@mui/icons-material"
-import { returnRequestsMock } from "./mockData"
 import { CustomPopover } from "../../../components/popover"
 import { LoadingButton } from "@mui/lab"
 
@@ -116,9 +115,9 @@ const ReturnRequestListPage = () => {
         // removeUndefinedValues<GetAllAssignmentParams>(params);
 
         try {
-            const data = returnRequestsMock;
-            setReturnRequests(data);
-            setTotalCount(data.length)
+            // const data = returnRequestsMock;
+            // setReturnRequests(data);
+            // setTotalCount(data.length)
         } catch (error: any) {
         } finally {
             setIsFetching(false);
@@ -293,9 +292,9 @@ const ReturnRequestListPage = () => {
                                         <CustomTableCell>{index + no}</CustomTableCell>
                                         <CustomTableCell>{request.assetCode}</CustomTableCell>
                                         <CustomTableCell>{request.assetName}</CustomTableCell>
-                                        <CustomTableCell>{request.requestedBy}</CustomTableCell>
-                                        <CustomTableCell>{toStandardFormat(request.assignedDate)}</CustomTableCell>
-                                        <CustomTableCell>{request.acceptedBy}</CustomTableCell>
+                                        <CustomTableCell>{request.requestorUsername}</CustomTableCell>
+                                        <CustomTableCell>{toStandardFormat(request.assignmentAssignedDate)}</CustomTableCell>
+                                        <CustomTableCell>{request.responderUsername}</CustomTableCell>
                                         <CustomTableCell>{request.returnedDate ? toStandardFormat(request.returnedDate) : undefined}</CustomTableCell>
                                         <CustomTableCell>{addSpacesToCamelCase(ReturnRequestState[request.state])}</CustomTableCell>
                                         <StyledTableCell>

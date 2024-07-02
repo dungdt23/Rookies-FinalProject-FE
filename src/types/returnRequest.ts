@@ -1,16 +1,19 @@
 export interface ReturnRequest {
     id: string;
+    requestorId: string;
+    requestorUsername: string;
+    responderId: string;
+    responderUsername: string;
+    assignmentId: string;
+    assignmentAssignedDate: string; 
     assetId: string;
     assetCode: string;
     assetName: string;
-    requesterId: string;
-    requestedBy: string;
-    assignedDate: string;
-    accepterId?: string;
-    acceptedBy?: string;
-    returnedDate?: string;
-    state: ReturnRequestState;
+    state: ReturnRequestState; 
+    requestedDate: string; 
+    returnedDate: string; 
 }
+
 
 
 export enum ReturnRequestState {
