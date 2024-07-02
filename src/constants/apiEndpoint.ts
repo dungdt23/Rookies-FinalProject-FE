@@ -5,6 +5,8 @@ export const apiEndpoints = {
         CREATE: "/users",
         EDIT: (userId: string) => `/users/${userId}`,
         DELETE: (userId: string) => `/users/${userId}`,
+        CHANGE_PASSWORD: "/users/change-password",
+        CHANGE_PASSWORD_FIRST_TIME: "/users/change-password-first-time"
     },
     ASSET: {
         GET_ALL: "/assets",

@@ -82,6 +82,16 @@ export const fetchUserById = async (id: string): Promise<ApiResponse<User>> => {
     const response: AxiosResponse<ApiResponse<User>> = await axiosInstance.get(`${apiEndpoints.USER.GET_ID(id)}`)
     return response.data
 }
+
+export const changePassword = async (payload: ChangePasswordRequest): Promise<ApiResponse<User>> => {
+    const response: AxiosResponse<ApiResponse<User>> = await axiosInstance.put(apiEndpoints.USER.CHANGE_PASSWORD, payload)
+    return response.data
+}
+
+export const changePasswordFirstTime = async (payload: any): Promise<ApiResponse<User>> => {
+    const response: AxiosResponse<ApiResponse<User>> = await axiosInstance.put(apiEndpoints.USER.CHANGE_PASSWORD_FIRST_TIME, payload)
+    return response.data
+}
     
 export const disableUserById = async (id: string): Promise<boolean> => {
     try {

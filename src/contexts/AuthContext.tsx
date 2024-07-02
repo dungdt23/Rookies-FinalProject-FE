@@ -10,6 +10,7 @@ interface AuthContextProps {
   isPasswordChanged: boolean,
   login: (token: string) => void;
   logout: () => void;
+  checkChangedPassword: (isChanged: boolean) => void;
 }
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
@@ -39,6 +40,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setLoading(false);
   }, []);
 
+  const checkChangedPassword = (isChanged: boolean) => {
+    setIsPasswordChanged(isChanged);
+  }
+
   const login = (token: string) => {
     try {
       const decoded = jwtDecode<JWTPayload>(token);
@@ -59,7 +64,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, isPasswordChanged, login, logout }}>
+    <AuthContext.Provider value={{ user, loading, isPasswordChanged, login, logout ,checkChangedPassword}}>
       {children}
     </AuthContext.Provider>
   );
