@@ -1,9 +1,29 @@
+import dayjs from "dayjs";
+import { ReturnRequestState } from "../types/returnRequest";
+
+export interface GetAllReturnRequestParams {
+    page: number;
+    perPage: number;
+    sortField?: FieldReturnRequestFilter;
+    sortOrder?:SortOrder;
+    stateFilter?:ReturnRequestState;
+    returnedDate?:string;
+    search?:string;
+    
+}
+
+
 export enum FieldReturnRequestFilter {
-    AssetCode = 1,
-    AssetName = 2,
-    RequestedBy = 3,
-    AssignedDate = 4,
-    AcceptedBy = 5,
-    ReturnedDate = 6,
-    State = 7
+    CreatedAt = 1,
+    AssetCode,
+    AssetName,
+    RequestedBy,
+    AssignedDate,
+    AcceptedBy,
+    ReturnedDate,
+    State
+}
+export enum SortOrder{
+    Ascending = 1,
+    Descending = 0
 }

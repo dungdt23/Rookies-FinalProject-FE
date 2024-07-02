@@ -47,6 +47,11 @@ export interface LoginRequest {
     password: string
 }
 
+export interface ChangePasswordRequest {
+    oldPassword: string,
+    newPassword: string
+}
+
 export interface LoginResponse {
     tokenType: string,
     token: string
