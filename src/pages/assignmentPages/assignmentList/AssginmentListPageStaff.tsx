@@ -268,7 +268,7 @@ const AssignmentListPageStaff = () => {
     return (
         <>
             <Helmet>
-                <title>Manage assignment</title>
+                <title>My Assignment</title>
             </Helmet>
             <RootBox sx={{ mb: '1rem' }}>
                 <Typography variant="h5" color='primary'>My Assignment</Typography>
