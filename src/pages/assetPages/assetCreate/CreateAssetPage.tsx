@@ -15,8 +15,7 @@ import {
   Radio,
   RadioGroup,
   Stack,
-  styled,
-  TextField,
+  TextField
 } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import { DatePicker } from "@mui/x-date-pickers";
@@ -26,6 +25,7 @@ import { FC, useCallback, useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
 import * as yup from "yup";
+import { RootBox } from "../../../components/form";
 import { NoStyleLink } from "../../../components/noStyleLink";
 import { routeNames } from "../../../constants/routeName";
 import { toISOStringWithoutTimezone } from "../../../helpers/helper";
@@ -40,12 +40,6 @@ import {
 import { Asset, AssetState, CreateAssetRequest } from "../../../types/asset";
 import { Category } from "../../../types/category";
 import { ListPageState } from "../../../types/common";
-
-const RootBox = styled(Box)(() => ({
-  maxWidth: "100vh",
-  margin: "auto",
-}));
-
 dayjs.locale("en");
 
 const isPastDate = (date: any) =>
