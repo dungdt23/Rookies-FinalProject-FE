@@ -54,7 +54,8 @@ export interface ChangePasswordRequest {
 
 export interface LoginResponse {
     tokenType: string,
-    token: string
+    token: string,
+    isPasswordChanged: boolean
 }
 
 export const fetchAllUsers = async (params: GetAllUserParams): Promise<PaginateResponse<User>> => {

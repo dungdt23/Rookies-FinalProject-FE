@@ -7,6 +7,7 @@ import { JWTPayload } from '../types/user';
 interface AuthContextProps {
   user: JWTPayload | null;
   loading: boolean,
+  isPasswordChanged: boolean,
   login: (token: string) => void;
   logout: () => void;
 }
@@ -18,6 +19,7 @@ export const logout = () => {
 }
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const [isPasswordChanged, setIsPasswordChanged] = useState<boolean>(true);
   const [user, setUser] = useState<JWTPayload | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -57,7 +59,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout }}>
+    <AuthContext.Provider value={{ user, loading, isPasswordChanged, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

@@ -1,7 +1,7 @@
 import { MouseEvent, ReactNode, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { alpha } from '@mui/material/styles';
-import { Box, Divider, Typography, Stack, MenuItem, Avatar, IconButton, Popover, Button, InputAdornment, TextField } from '@mui/material';
+import { Box, Divider, Typography, Stack, MenuItem, Avatar, IconButton, Popover, Button, InputAdornment, TextField, DialogProps } from '@mui/material';
 import { useAuth } from '../../contexts/AuthContext';
 import axios from 'axios';
 import * as yup from 'yup';
@@ -20,10 +20,12 @@ const account = {
 };
 
 const lengthMessage = 'Password length should be from 8 - 20 characters'
+const samePasswordMessage = 'New password should not be the same as old password'
+const incorrectPasswordMessage = 'Password is incorrect'
 
 const validationSchema = yup.object({
   oldPassword: yup.string().min(8, lengthMessage).max(20, lengthMessage),
-  newPassword: yup.string().min(8, lengthMessage).max(20, lengthMessage)
+  newPassword: yup.string().min(8, lengthMessage).max(20, lengthMessage).notOneOf([yup.ref('oldPassword')], samePasswordMessage)
 });
 
 const MENU_OPTIONS = [
@@ -75,7 +77,9 @@ const AccountPopover = () => {
     setChangePasswordDialogOpen(true);
   }
 
-  const handleCloseChangePassword = () => {
+  const handleCloseChangePassword: DialogProps["onClose"] = (event, reason) => {
+    if (reason && reason === "backdropClick")
+      return;
     setChangePasswordDialogOpen(false);
   }
 
@@ -140,7 +144,7 @@ const AccountPopover = () => {
           oldPassword: values.oldPassword,
           newPassword: values.newPassword
         };
-
+        formik.errors.oldPassword = 'wrong password'
         // const response = await loginPost(payload);
         // login(response.data.token);
       } catch (error) {
@@ -186,7 +190,8 @@ const AccountPopover = () => {
                   shrink: true
                 }}
                 sx={{
-                  minWidth: '25rem'
+                  minWidth: '25rem',
+                  minHeight: '5rem'
                 }}
               />
               <TextField
@@ -211,6 +216,10 @@ const AccountPopover = () => {
                 InputLabelProps={{
                   shrink: true
                 }}
+                sx={{
+                  minWidth: '25rem',
+                  minHeight: '5rem'
+                }}
               />
             </Stack>
             <Box sx={{ display: 'flex', justifyContent: 'end', gap: '1rem', ml: '5rem' }}>
@@ -221,7 +230,7 @@ const AccountPopover = () => {
               >
                 Save
               </LoadingButton>
-              <Button variant="outlined" onClick={() => handleCloseChangePassword()}>
+              <Button disabled={isFetching} variant="outlined" onClick={() => setChangePasswordDialogOpen(false)}>
                 Cancel
               </Button>
             </Box>
@@ -236,7 +245,7 @@ const AccountPopover = () => {
             Your password have been changed successfully!
           </Typography>
           <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'end', mt: '1rem' }}>
-            <Button variant="outlined" onClick={() => handleCloseChangePassword()}>
+            <Button variant="outlined" onClick={() => setChangePasswordDialogOpen(false)}>
               Close
             </Button>
           </Box>
