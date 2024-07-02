@@ -97,7 +97,7 @@ const ReturnRequestListPage = () => {
 
     useEffect(() => {
         getReturnRequests();
-    }, [returnRequestState, returnedDate, page, pageSize, order, orderBy])
+    }, [returnRequestState, returnedDate, page, pageSize, order, orderBy,search])
 
     const getReturnRequests = async () => {
         setIsFetching(true);
