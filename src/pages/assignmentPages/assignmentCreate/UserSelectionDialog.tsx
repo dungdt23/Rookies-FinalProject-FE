@@ -1,10 +1,10 @@
 import {
     Box,
     Button,
-    Checkbox,
     Dialog,
     DialogTitle,
     Pagination,
+    Radio,
     TableRow,
     Typography
 } from '@mui/material';
@@ -186,10 +186,10 @@ const UserSelectionDialog: FC<UserSelectionDialogProps> = ({ open, handleClose, 
                                             sx={{ backgroundColor: selected?.id === user.id ? theme.palette.action.hover : 'unset' }}
                                         >
                                             <StyledTableCell sx={{ maxWidth: "1rem" }}>
-                                                <Checkbox
+                                                <Radio
                                                     checked={selected?.id === user.id}
                                                     inputProps={{
-                                                        'aria-label': "checkbox"
+                                                        'aria-label': "radio"
                                                     }}
                                                     onClick={() => handleRowClick(user)}
                                                 />
