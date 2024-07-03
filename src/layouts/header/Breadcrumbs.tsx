@@ -26,11 +26,22 @@ const Breadcrumbs: React.FC = () => {
             )
     });
 
+    const renderHome = () => {
+        if (pathnames.length >= 1)
+            return (
+                <LinkMui key={'home'} component={Link} to={routeNames.index} color="inherit" underline="hover" >
+                    <Typography>Home</Typography>
+                </LinkMui>
+            )
+        else
+            return (
+                <Typography color={theme.palette.common.white}>Home</Typography>
+            )
+    }
+
     return (
         <BreadcrumbsMui aria-label="breadcrumb" sx={{ color: theme.palette.lightGrey.main, margin: "auto 0 auto 0" }}>
-            <LinkMui key={'home'} component={Link} to={routeNames.index} color="inherit" underline="hover">
-                <Typography>Home</Typography>
-            </LinkMui>
+            {renderHome()}
             {breadcrumbs}
         </BreadcrumbsMui>
     );
