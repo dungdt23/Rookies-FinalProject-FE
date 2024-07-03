@@ -17,6 +17,7 @@ import { removeUndefinedValues } from "../../../helpers/removeUndefined";
 import { FieldAssignmentFilter, GetAllAssignmentParams, RespondAssignmentRequest, fetchAllAssignments, respondAssignmentById } from "../../../services/assignment.service";
 import { Assignment, AssignmentState } from "../../../types/assignment";
 import { ListPageState } from "../../../types/common";
+import { CreateReturnRequestRequest, createReturnRequest } from "../../../services/returnRequest.service";
 
 const RootBox = styled(Box)(() => ({
     minWidth: '30rem',
@@ -79,6 +80,8 @@ const AssignmentListPageStaff = () => {
     const [isFetching, setIsFetching] = useState<boolean>(false);
     const [isDisabling, setIsDisabling] = useState<boolean>(false);
     const [selected, setSelected] = useState<Assignment | null>(null);
+    const [canCreateReturnRequest, setCanCreateReturnRequest] = useState<boolean>(true);
+    const [createReturnRequestAnchorEl, setCreateReturnRequestDeleteAnchorEl] = useState<HTMLElement | null>(null);
     const [rowAnchorEl, setRowAnchorEl] = useState<HTMLElement | null>(null);
     const [respondAnchorEl, setRespondAnchorEl] = useState<HTMLElement | null>(null);
     const [canRespond, setCanRespond] = useState<boolean>(true);
@@ -148,7 +151,11 @@ const AssignmentListPageStaff = () => {
         setSelected(assignment);
         setCanRespond(true);
     }
-
+    function handleCreateReturnRequest(event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, assignment: Assignment): void {
+        setCreateReturnRequestDeleteAnchorEl(event.currentTarget);
+        setSelected(assignment);
+        setCanCreateReturnRequest(true);
+    }
     const handleRespondClick = (event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, assignment: Assignment) => {
         setIsAccpet(true);
         setRespondAnchorEl(event.currentTarget);
@@ -164,6 +171,7 @@ const AssignmentListPageStaff = () => {
         setSelected(null);
         setRowAnchorEl(null);
         setRespondAnchorEl(null);
+        setCreateReturnRequestDeleteAnchorEl(null); 
     };
 
     const respondAssignment = async () => {
@@ -190,6 +198,28 @@ const AssignmentListPageStaff = () => {
         }
         setIsDisabling(false);
     }
+    const createReturnReq = async () => {
+        setIsDisabling(true);
+        try {
+            const payload = {
+                assignmentId: selected?.id
+            } as CreateReturnRequestRequest;
+            const response = await createReturnRequest(payload);
+            console.log('Return request created:', response);
+            handleClosePopover();
+            setAlert(`Return request for assignment of asset ${selected?.assetName} is created`);
+            getAssignments();
+        } catch (error: any) {
+            if (error.response.status === 409)
+            {
+                setCanCreateReturnRequest(false);
+                console.log('Conflics in business');
+            }    
+            console.error('Error creating return request:', error);
+        } finally {
+            setIsDisabling(false);
+        }
+    };
     const renderAssignmentDetailDialog = (): ReactNode => {
         if (!selected) return null;
         const assignmentDetails = [
@@ -264,7 +294,38 @@ const AssignmentListPageStaff = () => {
             </Box>
         )
     }
-
+    const renderReturnRequestCreateDialog = (): ReactNode => {
+        return (
+            <Box>
+                <Typography variant="body1" gutterBottom>
+                    Do you want to create a return request for this asset?
+                </Typography>
+                <Box sx={{ display: 'flex', gap: '1rem', mt: '1rem' }}>
+                    <LoadingButton
+                        loading={isDisabling}
+                        type="submit"
+                        variant="contained"
+                        onClick = {createReturnReq}
+                    >
+                        Yes
+                    </LoadingButton>
+                    <Button variant="outlined" onClick={handleClosePopover}>
+                        No
+                    </Button>
+                </Box>
+            </Box>
+        )
+    }
+    const renderCannotCreateReturnRequestDialog = (): ReactNode => {
+        return (
+          <Box sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+            <Typography variant="body1" gutterBottom>
+              Cannot create a new return request because this assignment has currently active return request
+              <br />
+            </Typography>
+          </Box>
+        );
+      };
     return (
         <>
             <Helmet>
@@ -310,7 +371,8 @@ const AssignmentListPageStaff = () => {
                                                 onClick={(event) => handleDeleteClick(event, assignment)}>
                                                 <Close color={assignment.state === AssignmentState.WaitingForAcceptance ? "primary" : "disabled"} />
                                             </IconButton>
-                                            <IconButton disabled={assignment.state === AssignmentState.WaitingForAcceptance}>
+                                            <IconButton disabled={assignment.state === AssignmentState.WaitingForAcceptance}
+                                                onClick={(event) => handleCreateReturnRequest(event, assignment)}>
                                                 <Refresh color={assignment.state !== AssignmentState.WaitingForAcceptance ? "info" : "disabled"} />
                                             </IconButton>
                                         </StyledTableCell>
@@ -366,6 +428,15 @@ const AssignmentListPageStaff = () => {
                 renderDescription={renderAssignmentRespondDialog}
                 boxProps={{ sx: { maxWidth: '25rem' } }}
             />
+            <CustomPopover
+                elAnchor={createReturnRequestAnchorEl}
+                open={Boolean(createReturnRequestAnchorEl)}
+                handleClose={handleClosePopover}
+                renderTitle={() => canCreateReturnRequest ? <span>Are you sure?</span> : <span>Can not create a new return request</span> }
+                renderDescription={canCreateReturnRequest ? renderReturnRequestCreateDialog : renderCannotCreateReturnRequestDialog}
+            >
+
+            </CustomPopover>
         </>
     )
 }
