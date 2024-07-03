@@ -1,3 +1,5 @@
+import { Assignment } from "./assignment";
+
 export interface Asset {
     id: string;
     assetCode: string;
@@ -7,6 +9,7 @@ export interface Asset {
     specification: string;
     installedDate: string;
     state: AssetState;
+    assignments: Assignment[];
 }
 
 export enum AssetState {
