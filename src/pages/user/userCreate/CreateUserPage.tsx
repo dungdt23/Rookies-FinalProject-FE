@@ -16,18 +16,13 @@ import { isValidDate, isWithinAllowedRange, toISOStringWithoutTimezone } from '.
 import { CreateUserRequest, createUser } from '../../../services/user.service';
 import { ListPageState } from '../../../types/common';
 import { User, UserGender, UserType } from '../../../types/user';
+import { RootBox } from '../../../components/form';
 
 export interface Role {
     id: string;
     name: string;
     dateCreated: string;
 }
-
-const RootBox = styled(Box)(() => ({
-    maxWidth: '100vh',
-    margin: 'auto'
-}));
-
 // Set dayjs locale if needed
 dayjs.locale('en');
 

@@ -29,12 +29,7 @@ import { Asset, AssetState, CreateAssetRequest } from "../../../types/asset";
 import { Category } from "../../../types/category";
 import { ListPageState } from "../../../types/common";
 import { toISOStringWithoutTimezone } from "../../../helpers/helper";
-
-const RootBox = styled(Box)(() => ({
-  maxWidth: "100vh",
-  margin: "auto",
-}));
-
+import { RootBox } from "../../../components/form";
 dayjs.locale("en");
 
 const isPastDate = (date: any) =>

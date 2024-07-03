@@ -55,11 +55,11 @@ const BACKEND_URL = {
 };
 
 const AccountPopover = () => {
-  const { user, logout , checkChangedPassword} = useAuth();
+  const { user, login, logout, checkChangedPassword } = useAuth();
   const [open, setOpen] = useState<HTMLElement | null>(null);
   const [logoutDialogOpen, setLogoutDialogOpen] = useState<boolean>(false);
   const [changePasswordDialogOpen, setChangePasswordDialogOpen] = useState<boolean>(false);
-  const [changePasswordFirstTimeOpen, setChangePasswordFirstTimeOpen] = useState<boolean>(localStorage.getItem(LocalStorageConstants.PASSWORD_CHANGED) === "1" ?  false: true);
+  const [changePasswordFirstTimeOpen, setChangePasswordFirstTimeOpen] = useState<boolean>(localStorage.getItem(LocalStorageConstants.PASSWORD_CHANGED) === "1" ? false : true);
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showOldPassword, setShowOldPassword] = useState<boolean>(false);
   const [showNewPassword, setShowNewPassword] = useState<boolean>(false);
@@ -156,6 +156,15 @@ const AccountPopover = () => {
           newPassword: values.newPassword
         };
         await changePassword(payload);
+        
+        const loginPayload: LoginRequest = {
+          userName: user ? user.username : "No token found",
+          password: values.newPassword,
+        };
+        const response = await loginPost(loginPayload);
+        login(response.data.token);
+        checkChangedPassword(response.data.isPasswordChanged);
+
         setCompleteChangePassword(true);
       } catch (error: any) {
         formik.errors.oldPassword = error.response.data.message
@@ -324,7 +333,7 @@ const AccountPopover = () => {
           </Stack>
           <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'end', mt: '1rem' }}>
             <LoadingButton
-              loading={false}
+              loading={isFetching}
               type="submit"
               variant="contained"
             >

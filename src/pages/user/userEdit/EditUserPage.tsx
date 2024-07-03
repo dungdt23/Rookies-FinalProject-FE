@@ -15,17 +15,13 @@ import { editUserById, EditUserRequest, fetchUserById } from '../../../services/
 import { User, UserGender, UserType } from '../../../types/user';
 import { ListPageState } from '../../../types/common';
 import { isValidDate, isWithinAllowedRange, toISOStringWithoutTimezone } from '../../../helpers/helper';
+import { RootBox } from '../../../components/form';
 
 export interface Role {
     id: string;
     name: string;
     dateCreated: string;
 }
-
-const RootBox = styled(Box)(() => ({
-    maxWidth: '100vh',
-    margin: 'auto'
-}));
 
 // Set dayjs locale if needed
 dayjs.locale('en');

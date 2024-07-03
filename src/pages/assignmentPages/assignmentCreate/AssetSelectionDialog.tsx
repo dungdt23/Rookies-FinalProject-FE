@@ -1,10 +1,10 @@
 import {
     Box,
     Button,
-    Checkbox,
     Dialog,
     DialogTitle,
     Pagination,
+    Radio,
     TableRow,
     Typography
 } from '@mui/material';
@@ -185,10 +185,10 @@ const AssetSelectionDialog: FC<AssetSelectionDialogProps> = ({ open, handleClose
                                             sx={{ backgroundColor: selected?.id === asset.id ? theme.palette.action.hover : 'unset' }}
                                         >
                                             <StyledTableCell sx={{ maxWidth: "1rem" }}>
-                                                <Checkbox
+                                                <Radio
                                                     checked={selected?.id === asset.id}
                                                     inputProps={{
-                                                        'aria-label': "checkbox"
+                                                        'aria-label': "radio"
                                                     }}
                                                     onClick={() => handleRowClick(asset)}
                                                 />

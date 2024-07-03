@@ -1,5 +1,5 @@
 import { Search } from '@mui/icons-material';
-import { Box, Button, Grid, IconButton, InputAdornment, Stack, styled, Typography } from '@mui/material';
+import { Box, Button, Grid, IconButton, InputAdornment, Stack, Typography } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs, { Dayjs } from 'dayjs';
@@ -8,6 +8,7 @@ import { FC, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 import * as yup from 'yup';
+import { RootBox } from '../../../components/form';
 import { NoStyleLink } from '../../../components/noStyleLink';
 import { routeNames } from '../../../constants/routeName';
 import { isValidDate, isWithinAllowedRange, maxSelectDate, toISOStringWithoutTimezone } from '../../../helpers/helper';
@@ -18,11 +19,6 @@ import { ListPageState } from '../../../types/common';
 import { User } from '../../../types/user';
 import AssetSelectionDialog from './AssetSelectionDialog';
 import UserSelectionDialog from './UserSelectionDialog';
-
-const RootBox = styled(Box)(() => ({
-    maxWidth: '100vh',
-    margin: 'auto'
-}));
 
 // Custom validation functions using dayjs
 const isAfterOrEqual = (a: Dayjs, b: Dayjs) => dayjs(a).add(1, 'day').isAfter(b);
