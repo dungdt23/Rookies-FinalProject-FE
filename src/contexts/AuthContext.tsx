@@ -9,7 +9,6 @@ interface AuthContextProps {
   loading: boolean,
   login: (token: string) => void;
   logout: () => void;
-  checkChangedPassword: (isChanged: boolean) => void;
 }
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
@@ -38,9 +37,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setLoading(false);
   }, []);
 
-  const checkChangedPassword = (isChanged: boolean) => {
-    localStorage.setItem(LocalStorageConstants.PASSWORD_CHANGED, isChanged ? "1" : "0");
-  }
 
   const login = (token: string) => {
     try {
@@ -62,7 +58,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout ,checkChangedPassword}}>
+    <AuthContext.Provider value={{ user, loading, login, logout}}>
       {children}
     </AuthContext.Provider>
   );

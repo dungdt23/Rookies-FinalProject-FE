@@ -1,16 +1,15 @@
+import { LoadingButton } from '@mui/lab';
+import { Avatar, Box, Button, DialogProps, Divider, IconButton, InputAdornment, MenuItem, Popover, Stack, TextField, Typography } from '@mui/material';
+import { alpha } from '@mui/material/styles';
+import { useFormik } from 'formik';
 import { MouseEvent, ReactNode, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { alpha } from '@mui/material/styles';
-import { Box, Divider, Typography, Stack, MenuItem, Avatar, IconButton, Popover, Button, InputAdornment, TextField, DialogProps } from '@mui/material';
-import { useAuth } from '../../contexts/AuthContext';
-import axios from 'axios';
 import * as yup from 'yup';
-import { routeNames } from '../../constants/routeName';
-import { LoadingButton } from '@mui/lab';
 import CustomDialog from '../../components/dialog/CustomDialog';
-import { useFormik } from 'formik';
-import { ChangePasswordRequest, LoginRequest, changePassword, changePasswordFirstTime, loginPost } from '../../services/user.service';
 import Iconify from '../../components/iconify';
+import { routeNames } from '../../constants/routeName';
+import { useAuth } from '../../contexts/AuthContext';
+import { ChangePasswordFirstTimeRequest, ChangePasswordRequest, LoginRequest, changePassword, changePasswordFirstTime, loginPost } from '../../services/user.service';
 import { LocalStorageConstants } from './../../constants/localStorage';
 
 // Mock account data
@@ -50,17 +49,12 @@ const MENU_OPTIONS = [
   },
 ];
 
-// Define the backend logout URL
-const BACKEND_URL = {
-  LOGOUT_ENDPOINT: '/api/logout',
-};
-
 const AccountPopover = () => {
-  const { user, login, logout, checkChangedPassword } = useAuth();
+  const { user, login, logout } = useAuth();
   const [open, setOpen] = useState<HTMLElement | null>(null);
   const [logoutDialogOpen, setLogoutDialogOpen] = useState<boolean>(false);
   const [changePasswordDialogOpen, setChangePasswordDialogOpen] = useState<boolean>(false);
-  const [changePasswordFirstTimeOpen, setChangePasswordFirstTimeOpen] = useState<boolean>(localStorage.getItem(LocalStorageConstants.PASSWORD_CHANGED) === "1" ? false : true);
+  const [changePasswordFirstTimeOpen, setChangePasswordFirstTimeOpen] = useState<boolean>(user?.isPasswordChangedFirstTime === "0" ? true : false);
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showOldPassword, setShowOldPassword] = useState<boolean>(false);
   const [showNewPassword, setShowNewPassword] = useState<boolean>(false);
@@ -87,6 +81,7 @@ const AccountPopover = () => {
     if (reason && reason === "backdropClick")
       return;
     setChangePasswordDialogOpen(false);
+    window.location.reload();
   }
 
   const handleCloseChangePasswordFirstTime: DialogProps["onClose"] = (event, reason) => {
@@ -108,6 +103,7 @@ const AccountPopover = () => {
     navigate(option.path);
     handleClose();
   };
+
 
   const handleLogout = async () => {
     setOpen(null);
@@ -157,16 +153,16 @@ const AccountPopover = () => {
           newPassword: values.newPassword
         };
         await changePassword(payload);
-        
+
         const loginPayload: LoginRequest = {
           userName: user ? user.username : "No token found",
           password: values.newPassword,
         };
         const response = await loginPost(loginPayload);
         login(response.data.token);
-        checkChangedPassword(response.data.isPasswordChanged);
 
         setCompleteChangePassword(true);
+
       } catch (error: any) {
         formik.errors.oldPassword = error.response.data.message
 
@@ -249,7 +245,10 @@ const AccountPopover = () => {
               >
                 Save
               </LoadingButton>
-              <Button disabled={isFetching} variant="outlined" onClick={() => setChangePasswordDialogOpen(false)}>
+              <Button
+                disabled={isFetching}
+                variant="outlined"
+                onClick={() => setChangePasswordDialogOpen(false)}>
                 Cancel
               </Button>
             </Box>
@@ -264,7 +263,12 @@ const AccountPopover = () => {
             Your password have been changed successfully!
           </Typography>
           <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'end', mt: '1rem' }}>
-            <Button variant="outlined" onClick={() => setChangePasswordDialogOpen(false)}>
+            <Button
+              variant="outlined"
+              onClick={() => {
+                setChangePasswordDialogOpen(false)
+                window.location.reload()
+              }}>
               Close
             </Button>
           </Box>
@@ -280,8 +284,11 @@ const AccountPopover = () => {
     validationSchema: requiredValidationSchema,
     onSubmit: async (values) => {
       setIsFetching(true);
+      const payload = {
+        newPassword: values.password,
+      } as ChangePasswordFirstTimeRequest
       try {
-        await changePasswordFirstTime(`"${values.password}"`);
+        await changePasswordFirstTime(payload);
 
         const loginPayload: LoginRequest = {
           userName: user ? user.username : "No token found",
@@ -289,9 +296,9 @@ const AccountPopover = () => {
         };
         const response = await loginPost(loginPayload);
         login(response.data.token);
-        
-        checkChangedPassword(response.data.isPasswordChanged);
+
         setChangePasswordFirstTimeOpen(false)
+        window.location.reload()
       } catch (error: any) {
         formikRequired.errors.password = error.response.data.message
       } finally {
