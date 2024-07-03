@@ -9,7 +9,7 @@ import CustomDialog from '../../components/dialog/CustomDialog';
 import Iconify from '../../components/iconify';
 import { routeNames } from '../../constants/routeName';
 import { useAuth } from '../../contexts/AuthContext';
-import { ChangePasswordFirstTimeRequest, ChangePasswordRequest, changePassword, changePasswordFirstTime } from '../../services/user.service';
+import { ChangePasswordFirstTimeRequest, ChangePasswordRequest, LoginRequest, changePassword, changePasswordFirstTime, loginPost } from '../../services/user.service';
 import { LocalStorageConstants } from './../../constants/localStorage';
 
 // Mock account data
@@ -48,11 +48,6 @@ const MENU_OPTIONS = [
     path: '/settings'
   },
 ];
-
-// Define the backend logout URL
-const BACKEND_URL = {
-  LOGOUT_ENDPOINT: '/api/logout',
-};
 
 const AccountPopover = () => {
   const { user, login, logout, checkChangedPassword } = useAuth();
