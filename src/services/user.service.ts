@@ -52,6 +52,10 @@ export interface ChangePasswordRequest {
     newPassword: string
 }
 
+export interface ChangePasswordFirstTimeRequest{
+    password:string
+}
+
 export interface LoginResponse {
     tokenType: string,
     token: string,
@@ -88,7 +92,7 @@ export const changePassword = async (payload: ChangePasswordRequest): Promise<Ap
     return response.data
 }
 
-export const changePasswordFirstTime = async (payload: any): Promise<ApiResponse<User>> => {
+export const changePasswordFirstTime = async (payload: ChangePasswordFirstTimeRequest): Promise<ApiResponse<User>> => {
     const response: AxiosResponse<ApiResponse<User>> = await axiosInstance.put(apiEndpoints.USER.CHANGE_PASSWORD_FIRST_TIME, payload)
     return response.data
 }

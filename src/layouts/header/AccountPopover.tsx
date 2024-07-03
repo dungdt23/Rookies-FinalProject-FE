@@ -9,7 +9,7 @@ import { routeNames } from '../../constants/routeName';
 import { LoadingButton } from '@mui/lab';
 import CustomDialog from '../../components/dialog/CustomDialog';
 import { useFormik } from 'formik';
-import { ChangePasswordRequest, LoginRequest, changePassword, changePasswordFirstTime, loginPost } from '../../services/user.service';
+import { ChangePasswordFirstTimeRequest, ChangePasswordRequest, LoginRequest, changePassword, changePasswordFirstTime, loginPost } from '../../services/user.service';
 import Iconify from '../../components/iconify';
 import { LocalStorageConstants } from './../../constants/localStorage';
 
@@ -281,7 +281,10 @@ const AccountPopover = () => {
     onSubmit: async (values) => {
       setIsFetching(true);
       try {
-        await changePasswordFirstTime(`"${values.password}"`);
+        let payload : ChangePasswordFirstTimeRequest ={
+          password: values.password
+        }
+        await changePasswordFirstTime(payload);
 
         const loginPayload: LoginRequest = {
           userName: user ? user.username : "No token found",
