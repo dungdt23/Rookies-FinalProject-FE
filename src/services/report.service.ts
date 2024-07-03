@@ -34,7 +34,10 @@ export const exportReport = async (): Promise<void> => {
         });
 
         const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-        const formattedDate = new Date().toISOString().slice(0, 10).replace(/-/g, '-');
+        
+        const now = new Date();
+        const formattedDate = `${String(now.getDate()).padStart(2, '0')}${String(now.getMonth() + 1).padStart(2, '0')}${now.getFullYear()}`;
+        
         const fileName = `AssetManagement_Report_${formattedDate}.xlsx`;
         saveAs(blob, fileName);
     } catch (error) {
