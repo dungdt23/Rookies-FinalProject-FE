@@ -1,9 +1,9 @@
-import { Box, BoxProps, Dialog, Divider, Paper, Typography, styled } from "@mui/material";
+import { Box, BoxProps, Dialog, DialogProps, Divider, Paper, Typography, styled } from "@mui/material";
 import { FC, ReactNode } from "react";
 
 interface CustomDialogProps {
-    open: boolean;
-    handleClose: () => void;
+    open: boolean;  
+    handleClose: (event: {}, reason: "backdropClick" | "escapeKeyDown") => void;
     renderTitle: () => ReactNode;
     renderBody: () => ReactNode;
     boxProps?: BoxProps;
@@ -28,22 +28,22 @@ const ContentBox = styled(Box)(({ theme }) => ({
     borderBottomRightRadius: theme.shape.borderRadius, // Apply border radius to match the Paper component
 }));
 
-const CustomDialog: FC<CustomDialogProps> = ({ open, handleClose, renderTitle, renderBody, boxProps, ...props }) => {
+const CustomDialog: FC<CustomDialogProps> = ({open, handleClose, renderTitle, renderBody, boxProps, ...props }) => {
     return (
         <Dialog
             onClose={handleClose}
             open={open}
-            sx={{ 
+            sx={{
                 zIndex: 1000,
-             }}
+            }}
             {...props}>
-            <Paper 
-            elevation={3} 
-            square={false} 
-            sx={{ 
-                borderRadius: 5 ,
-                
-            }}>
+            <Paper
+                elevation={3}
+                square={false}
+                sx={{
+                    borderRadius: 5,
+
+                }}>
                 <Box {...boxProps}>
                     <TitleBox>
                         <Typography variant="h6">
