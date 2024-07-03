@@ -130,7 +130,7 @@ const ReturnRequestListPage = () => {
         }
         try {
             const payload: CompleteReturnRequestPayload = {
-                state: isAccept ? 1 : 0
+                state: isAccept ? 1 : 2
             }
             await completeReturnRequest(payload, selected.id);
             const statusCode = 200;
