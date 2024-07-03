@@ -17,6 +17,7 @@ export interface JWTPayload {
     role: string;
     locationId: string;
     location: string;
+    isPasswordChangedFirstTime: string;
     nbf: number;
     exp: number;
     iat: number;
