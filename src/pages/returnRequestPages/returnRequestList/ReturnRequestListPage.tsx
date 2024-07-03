@@ -1,22 +1,22 @@
 import styled from "@emotion/styled"
+import { Check, Close } from "@mui/icons-material"
+import { LoadingButton } from "@mui/lab"
 import { Alert, Box, Button, Divider, FormControl, IconButton, InputLabel, MenuItem, Pagination, Select, SelectChangeEvent, Table, TableBody, TableRow, Typography } from "@mui/material"
+import { DatePicker } from "@mui/x-date-pickers"
 import dayjs, { Dayjs } from "dayjs"
 import { MouseEvent, ReactNode, useEffect, useState } from "react"
 import { Helmet } from "react-helmet-async"
 import { SearchBar } from "../../../components/form"
-import CustomTableHead, { Order, TableHeadInfo } from "../../../components/table/CustomTableHead"
-import { FieldReturnRequestFilter, GetAllReturnRequestParams, fetchAllReturnRequest } from "../../../services/returnRequest.service"
-import { ReturnRequest, ReturnRequestState } from "../../../types/returnRequest"
-import { DatePicker } from "@mui/x-date-pickers"
-import { ClickableTableRow, CustomTableCell, StyledTableCell, StyledTableContainer } from "../../../components/table"
 import { CircularProgressWrapper } from "../../../components/loading"
+import { CustomPopover } from "../../../components/popover"
+import { ClickableTableRow, CustomTableCell, StyledTableCell, StyledTableContainer } from "../../../components/table"
+import CustomTableHead, { Order, TableHeadInfo } from "../../../components/table/CustomTableHead"
 import { theme } from "../../../constants/appTheme"
 import { toStandardFormat } from "../../../helpers/formatDate"
 import { addSpacesToCamelCase } from "../../../helpers/helper"
-import { Check, Close } from "@mui/icons-material"
-import { CustomPopover } from "../../../components/popover"
-import { LoadingButton } from "@mui/lab"
 import { removeUndefinedValues } from "../../../helpers/removeUndefined"
+import { CompleteReturnRequestPayload, FieldReturnRequestFilter, GetAllReturnRequestParams, completeReturnRequest, fetchAllReturnRequest } from "../../../services/returnRequest.service"
+import { ReturnRequest, ReturnRequestState } from "../../../types/returnRequest"
 
 const RootBox = styled(Box)(() => ({
     minWidth: '30rem',
@@ -88,7 +88,7 @@ const ReturnRequestListPage = () => {
     const [no, setNo] = useState<number>(1);
     const [rowAnchorEl, setRowAnchorEl] = useState<HTMLElement | null>(null);
     const [canComplete, setCanComplete] = useState<boolean>(true);
-    const [isAccept, setIsAccpet] = useState<boolean>(false);
+    const [isAccept, setIsAccept] = useState<boolean>(false);
 
 
     const placeholderSearch = "Search by asset and requester";
@@ -97,7 +97,7 @@ const ReturnRequestListPage = () => {
 
     useEffect(() => {
         getReturnRequests();
-    }, [returnRequestState, returnedDate, page, pageSize, order, orderBy,search])
+    }, [returnRequestState, returnedDate, page, pageSize, order, orderBy, search])
 
     const getReturnRequests = async () => {
         setIsFetching(true);
@@ -129,7 +129,10 @@ const ReturnRequestListPage = () => {
             return
         }
         try {
-            // const result = await respondAssignmentById(payload);
+            const payload: CompleteReturnRequestPayload = {
+                state: isAccept ? 1 : 0
+            }
+            await completeReturnRequest(payload, selected.id);
             const statusCode = 200;
             setCanComplete(statusCode === 200)
             if (statusCode === 200) {
@@ -180,14 +183,14 @@ const ReturnRequestListPage = () => {
     }
 
     function handleAcceptClick(event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, request: ReturnRequest): void {
-        setIsAccpet(true)
+        setIsAccept(true)
         setRowAnchorEl(event.currentTarget);
         setSelected(request);
         setCanComplete(true);
     }
 
     function handleDeclineClick(event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, request: ReturnRequest): void {
-        setIsAccpet(false)
+        setIsAccept(false)
         setRowAnchorEl(event.currentTarget);
         setSelected(request);
         setCanComplete(true);

@@ -9,7 +9,7 @@ import { routeNames } from '../../constants/routeName';
 import { LoadingButton } from '@mui/lab';
 import CustomDialog from '../../components/dialog/CustomDialog';
 import { useFormik } from 'formik';
-import { ChangePasswordRequest, changePassword, changePasswordFirstTime } from '../../services/user.service';
+import { ChangePasswordRequest, LoginRequest, changePassword, changePasswordFirstTime, loginPost } from '../../services/user.service';
 import Iconify from '../../components/iconify';
 import { LocalStorageConstants } from './../../constants/localStorage';
 
@@ -56,11 +56,11 @@ const BACKEND_URL = {
 };
 
 const AccountPopover = () => {
-  const { user, logout , checkChangedPassword} = useAuth();
+  const { user, login, logout, checkChangedPassword } = useAuth();
   const [open, setOpen] = useState<HTMLElement | null>(null);
   const [logoutDialogOpen, setLogoutDialogOpen] = useState<boolean>(false);
   const [changePasswordDialogOpen, setChangePasswordDialogOpen] = useState<boolean>(false);
-  const [changePasswordFirstTimeOpen, setChangePasswordFirstTimeOpen] = useState<boolean>(localStorage.getItem(LocalStorageConstants.PASSWORD_CHANGED) === "1" ?  false: true);
+  const [changePasswordFirstTimeOpen, setChangePasswordFirstTimeOpen] = useState<boolean>(localStorage.getItem(LocalStorageConstants.PASSWORD_CHANGED) === "1" ? false : true);
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showOldPassword, setShowOldPassword] = useState<boolean>(false);
   const [showNewPassword, setShowNewPassword] = useState<boolean>(false);
@@ -157,6 +157,15 @@ const AccountPopover = () => {
           newPassword: values.newPassword
         };
         await changePassword(payload);
+        
+        const loginPayload: LoginRequest = {
+          userName: user ? user.username : "No token found",
+          password: values.newPassword,
+        };
+        const response = await loginPost(loginPayload);
+        login(response.data.token);
+        checkChangedPassword(response.data.isPasswordChanged);
+
         setCompleteChangePassword(true);
       } catch (error: any) {
         formik.errors.oldPassword = error.response.data.message
@@ -273,7 +282,15 @@ const AccountPopover = () => {
       setIsFetching(true);
       try {
         await changePasswordFirstTime(`"${values.password}"`);
-        checkChangedPassword(true)
+
+        const loginPayload: LoginRequest = {
+          userName: user ? user.username : "No token found",
+          password: values.password,
+        };
+        const response = await loginPost(loginPayload);
+        login(response.data.token);
+        
+        checkChangedPassword(response.data.isPasswordChanged);
         setChangePasswordFirstTimeOpen(false)
       } catch (error: any) {
         formikRequired.errors.password = error.response.data.message
@@ -322,7 +339,7 @@ const AccountPopover = () => {
           </Stack>
           <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'end', mt: '1rem' }}>
             <LoadingButton
-              loading={false}
+              loading={isFetching}
               type="submit"
               variant="contained"
             >
