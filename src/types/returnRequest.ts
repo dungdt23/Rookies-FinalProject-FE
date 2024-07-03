@@ -13,8 +13,14 @@ export interface ReturnRequest {
     requestedDate: string; 
     returnedDate: string; 
 }
-
-
+export interface ReturnCreateRequest {
+    id: string;
+    requestorId: string;
+    responderId: string;
+    assignmentId: string;
+    state: ReturnRequestState;
+    returnedDate: string;
+}
 
 export enum ReturnRequestState {
     WaitingForReturning = 0,

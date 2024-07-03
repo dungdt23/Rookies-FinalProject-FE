@@ -24,7 +24,8 @@ export const apiEndpoints = {
         RESPOND: "/assignments/respond"
     },
     RETURN_REQUEST: {
-        GET_ALL: "/return-requests"
+        GET_ALL: "/return-requests",
+        CREATE: "/return-requests"
     },
     CATEGORY: {
         GET_ALL: "/categories",
