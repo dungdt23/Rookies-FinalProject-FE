@@ -1,16 +1,15 @@
+import { LoadingButton } from '@mui/lab';
+import { Avatar, Box, Button, DialogProps, Divider, IconButton, InputAdornment, MenuItem, Popover, Stack, TextField, Typography } from '@mui/material';
+import { alpha } from '@mui/material/styles';
+import { useFormik } from 'formik';
 import { MouseEvent, ReactNode, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { alpha } from '@mui/material/styles';
-import { Box, Divider, Typography, Stack, MenuItem, Avatar, IconButton, Popover, Button, InputAdornment, TextField, DialogProps } from '@mui/material';
-import { useAuth } from '../../contexts/AuthContext';
-import axios from 'axios';
 import * as yup from 'yup';
-import { routeNames } from '../../constants/routeName';
-import { LoadingButton } from '@mui/lab';
 import CustomDialog from '../../components/dialog/CustomDialog';
-import { useFormik } from 'formik';
-import { ChangePasswordRequest, changePassword, changePasswordFirstTime } from '../../services/user.service';
 import Iconify from '../../components/iconify';
+import { routeNames } from '../../constants/routeName';
+import { useAuth } from '../../contexts/AuthContext';
+import { ChangePasswordFirstTimeRequest, ChangePasswordRequest, changePassword, changePasswordFirstTime } from '../../services/user.service';
 import { LocalStorageConstants } from './../../constants/localStorage';
 
 // Mock account data
@@ -271,8 +270,11 @@ const AccountPopover = () => {
     validationSchema: requiredValidationSchema,
     onSubmit: async (values) => {
       setIsFetching(true);
+      const payload = {
+        newPassword: values.password,
+      } as ChangePasswordFirstTimeRequest
       try {
-        await changePasswordFirstTime(`"${values.password}"`);
+        await changePasswordFirstTime(payload);
         checkChangedPassword(true)
         setChangePasswordFirstTimeOpen(false)
       } catch (error: any) {
