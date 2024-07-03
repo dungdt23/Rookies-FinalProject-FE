@@ -15,7 +15,7 @@ const validationSchema = yup.object({
 
 const LoginForm: React.FC = () => {
     const [showPassword, setShowPassword] = useState<boolean>(false);
-    const { login, checkChangedPassword } = useAuth();
+    const { login } = useAuth();
     const [isFetching, setIsFetching] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     
@@ -35,7 +35,6 @@ const LoginForm: React.FC = () => {
 
                 const response = await loginPost(payload);
                 login(response.data.token);
-                checkChangedPassword(response.data.isPasswordChanged);
             } catch (error) {
                 setError("Login failed. Please check your credentials");
                 console.error(error);
