@@ -23,7 +23,7 @@ import { useLocation } from "react-router-dom";
 import { SearchBar } from "../../../components/form";
 import { CircularProgressWrapper } from "../../../components/loading";
 import { NoStyleLink } from "../../../components/noStyleLink";
-import { CustomPopover } from "../../../components/popover";
+import { ListPopper } from "../../../components/popover";
 import {
   ClickableTableRow,
   CustomTableCell,
@@ -51,12 +51,7 @@ import {
 import { ListPageState } from "../../../types/common";
 import { User, UserGender, UserType } from "../../../types/user";
 import CannotDisableYourPopper from "./CannotDisableYourselfPopper";
-
-const RootBox = styled(Box)(() => ({
-  minWidth: "30rem",
-  width: "100%",
-  p: 2,
-}));
+import { RootListBox } from "../../../components/styledComponents";
 
 const StyledTableContainer = styled(TableContainer)(() => ({
   border: "0px",
@@ -347,12 +342,12 @@ const UserListPage: FC = () => {
       <Helmet>
         <title>Manage User</title>
       </Helmet>
-      <RootBox sx={{ mb: "1rem" }}>
+      <RootListBox sx={{ mb: "1rem" }}>
         <Typography variant="h5" color="primary">
           User Management
         </Typography>
-      </RootBox>
-      <RootBox>
+      </RootListBox>
+      <RootListBox>
         {alert && (
           <Alert
             sx={{ mb: "1rem" }}
@@ -504,15 +499,15 @@ const UserListPage: FC = () => {
               onChange={handleChangePage}
             />
           </Box>}
-      </RootBox>
-      <CustomPopover
+      </RootListBox>
+      <ListPopper
         elAnchor={rowAnchorEl}
         open={Boolean(rowAnchorEl)}
         handleClose={handleClosePopover}
         renderTitle={() => <span>Detailed User Information</span>}
         renderDescription={renderUserDetailDialog}
       />
-      <CustomPopover
+      <ListPopper
         elAnchor={deleteAnchorEl}
         open={Boolean(deleteAnchorEl)}
         handleClose={handleClosePopover}
@@ -527,7 +522,7 @@ const UserListPage: FC = () => {
           canDisable ? renderUserDisableDialog : renderCannotDisableDialog
         }
         boxProps={{ sx: { maxWidth: "25rem" } }}
-      ></CustomPopover>
+      ></ListPopper>
       <CannotDisableYourPopper
         elAnchor={cannotDisableYourselfAnchorEl}
         handleClose={handleClosePopover}

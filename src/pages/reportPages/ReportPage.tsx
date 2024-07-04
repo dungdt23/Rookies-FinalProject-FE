@@ -12,6 +12,7 @@ import {
 import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { CircularProgressWrapper } from "../../components/loading";
+import { RootListBox } from "../../components/styledComponents";
 import { CustomTableCell } from "../../components/table";
 import CustomTableHead, {
   Order,
@@ -25,12 +26,6 @@ import {
   fetchReport,
 } from "../../services/report.service";
 import { ReportResponse } from "../../types/report";
-
-const RootBox = styled(Box)(() => ({
-  minWidth: "30rem",
-  width: "100%",
-  p: 2,
-}));
 
 const StyledTableContainer = styled(TableContainer)(() => ({
   border: "0px",
@@ -136,7 +131,7 @@ const ReportPage = () => {
       <Helmet>
         <title>Manage Report</title>
       </Helmet>
-      <RootBox sx={{ mb: "1rem" }}>
+      <RootListBox sx={{ mb: "1rem" }}>
         <Typography variant="h5" color="primary">
           Report
         </Typography>        
@@ -147,8 +142,8 @@ const ReportPage = () => {
         >
           Export
         </ExportButton>
-      </RootBox>
-      <RootBox>
+      </RootListBox>
+      <RootListBox>
         <StyledTableContainer>
           <CircularProgressWrapper loading={isFetching}>
             <Table>
@@ -199,7 +194,7 @@ const ReportPage = () => {
             />
           </Box>
         )}
-      </RootBox>
+      </RootListBox>
     </>
   );
 };

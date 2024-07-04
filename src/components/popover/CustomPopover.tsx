@@ -29,7 +29,7 @@ const ContentBox = styled(Box)(({ theme }) => ({
     borderBottomRightRadius: theme.shape.borderRadius, // Apply border radius to match the Paper component
 }));
 
-const CustomPopper: FC<CustomPopperProps> = ({ elAnchor, open, handleClose, renderTitle, renderDescription, boxProps, ...props }) => {
+const ListPopper: FC<CustomPopperProps> = ({ elAnchor, open, handleClose, renderTitle, renderDescription, boxProps, ...props }) => {
     const popperRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -56,6 +56,28 @@ const CustomPopper: FC<CustomPopperProps> = ({ elAnchor, open, handleClose, rend
             anchorEl={elAnchor}
             placement="bottom-start"
             sx={{ zIndex: 1000 }}
+            modifiers={[
+                {
+                    name: 'flip',
+                    enabled: true,
+                    options: {
+                        altBoundary: true,
+                        rootBoundary: 'document',
+                        padding: 8,
+                    },
+                },
+                {
+                    name: 'preventOverflow',
+                    enabled: true,
+                    options: {
+                        altAxis: true,
+                        altBoundary: true,
+                        tether: false,
+                        rootBoundary: 'document',
+                        padding: 8,
+                    },
+                },
+            ]}
             {...props}
         >
             <Paper elevation={3} ref={popperRef} square={false} sx={{ borderRadius: 2 }}>
@@ -78,4 +100,4 @@ const CustomPopper: FC<CustomPopperProps> = ({ elAnchor, open, handleClose, rend
     )
 }
 
-export default CustomPopper;
+export default ListPopper;
