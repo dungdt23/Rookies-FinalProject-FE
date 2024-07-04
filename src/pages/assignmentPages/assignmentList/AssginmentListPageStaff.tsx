@@ -6,7 +6,7 @@ import { MouseEvent, ReactNode, useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useLocation } from "react-router-dom";
 import { CircularProgressWrapper } from "../../../components/loading";
-import { CustomPopover } from "../../../components/popover";
+import { ListPopper } from "../../../components/popover";
 import { ClickableTableRow, CustomTableCell, StyledTableCell } from "../../../components/table";
 import CustomTableHead, { Order, TableHeadInfo } from "../../../components/table/CustomTableHead";
 import { StyledTypography } from "../../../components/typography";
@@ -18,12 +18,7 @@ import { FieldAssignmentFilter, GetAllAssignmentParams, RespondAssignmentRequest
 import { Assignment, AssignmentState } from "../../../types/assignment";
 import { ListPageState } from "../../../types/common";
 import { CreateReturnRequestRequest, createReturnRequest } from "../../../services/returnRequest.service";
-
-const RootBox = styled(Box)(() => ({
-    minWidth: '30rem',
-    width: '100%',
-    p: 2
-}))
+import { RootListBox } from "../../../components/styledComponents";
 
 const StyledTableContainer = styled(TableContainer)(() => ({
     border: '0px',
@@ -331,10 +326,10 @@ const AssignmentListPageStaff = () => {
             <Helmet>
                 <title>My Assignment</title>
             </Helmet>
-            <RootBox sx={{ mb: '1rem' }}>
+            <RootListBox sx={{ mb: '1rem' }}>
                 <Typography variant="h5" color='primary'>My Assignment</Typography>
-            </RootBox>
-            <RootBox>
+            </RootListBox>
+            <RootListBox>
                 {alert && <Alert sx={{ mb: '1rem' }} severity="success" onClose={() => setAlert(undefined)}>{alert}</Alert>}
 
                 <StyledTableContainer>
@@ -411,8 +406,8 @@ const AssignmentListPageStaff = () => {
                             onChange={handleChangePage}
                         />
                     </Box>}
-            </RootBox >
-            <CustomPopover
+            </RootListBox >
+            <ListPopper
                 elAnchor={rowAnchorEl}
                 open={Boolean(rowAnchorEl)}
                 handleClose={handleClosePopover}
@@ -420,7 +415,7 @@ const AssignmentListPageStaff = () => {
                 renderDescription={renderAssignmentDetailDialog}
                 boxProps={{ sx: { minWidth: '25rem' } }}
             />
-            <CustomPopover
+            <ListPopper
                 elAnchor={respondAnchorEl}
                 open={Boolean(respondAnchorEl)}
                 handleClose={handleClosePopover}
@@ -428,7 +423,7 @@ const AssignmentListPageStaff = () => {
                 renderDescription={renderAssignmentRespondDialog}
                 boxProps={{ sx: { maxWidth: '25rem' } }}
             />
-            <CustomPopover
+            <ListPopper
                 elAnchor={createReturnRequestAnchorEl}
                 open={Boolean(createReturnRequestAnchorEl)}
                 handleClose={handleClosePopover}
@@ -436,7 +431,7 @@ const AssignmentListPageStaff = () => {
                 renderDescription={canCreateReturnRequest ? renderReturnRequestCreateDialog : renderCannotCreateReturnRequestDialog}
             >
 
-            </CustomPopover>
+            </ListPopper>
         </>
     )
 }

@@ -10,7 +10,9 @@ const RootBox = styled(Box)(({ theme }) => ({
     display: 'flex',
     justifyContent: 'space-between',
     backgroundColor: theme.palette.primary.main,
-    padding: '1.5rem 1rem'
+    padding: '1.5rem 1rem',
+    height: '10vh',
+    maxHeight: "1.5rem"
 }))
 
 const Header: FC = () => {
