@@ -1,4 +1,3 @@
-import styled from "@emotion/styled"
 import { Check, Close } from "@mui/icons-material"
 import { LoadingButton } from "@mui/lab"
 import { Alert, Box, Button, Divider, FormControl, IconButton, InputLabel, MenuItem, Pagination, Select, SelectChangeEvent, Table, TableBody, TableRow, Typography } from "@mui/material"
@@ -8,7 +7,8 @@ import { MouseEvent, ReactNode, useEffect, useState } from "react"
 import { Helmet } from "react-helmet-async"
 import { SearchBar } from "../../../components/form"
 import { CircularProgressWrapper } from "../../../components/loading"
-import { CustomPopover } from "../../../components/popover"
+import { ListPopper } from "../../../components/popover"
+import { RootListBox } from "../../../components/styledComponents"
 import { ClickableTableRow, CustomTableCell, StyledTableCell, StyledTableContainer } from "../../../components/table"
 import CustomTableHead, { Order, TableHeadInfo } from "../../../components/table/CustomTableHead"
 import { theme } from "../../../constants/appTheme"
@@ -17,12 +17,6 @@ import { addSpacesToCamelCase } from "../../../helpers/helper"
 import { removeUndefinedValues } from "../../../helpers/removeUndefined"
 import { CompleteReturnRequestPayload, FieldReturnRequestFilter, GetAllReturnRequestParams, completeReturnRequest, fetchAllReturnRequest } from "../../../services/returnRequest.service"
 import { ReturnRequest, ReturnRequestState } from "../../../types/returnRequest"
-
-const RootBox = styled(Box)(() => ({
-    minWidth: '30rem',
-    width: '100%',
-    p: 2
-}))
 
 const TABLE_HEAD: TableHeadInfo[] = [
     {
@@ -229,10 +223,10 @@ const ReturnRequestListPage = () => {
             <Helmet>
                 <title>Request for Returning</title>
             </Helmet>
-            <RootBox sx={{ mb: '1rem' }}>
+            <RootListBox sx={{ mb: '1rem' }}>
                 <Typography variant="h5" color='primary'>Request List</Typography>
-            </RootBox>
-            <RootBox>
+            </RootListBox>
+            <RootListBox>
                 {alert && <Alert sx={{ mb: '1rem' }} severity="success" onClose={() => setAlert(undefined)}>{alert}</Alert>}
                 <Box display="flex" justifyContent="space-between" alignItems="center" sx={{ mb: '1rem' }} >
                     <FormControl>
@@ -353,8 +347,8 @@ const ReturnRequestListPage = () => {
                             onChange={handleChangePage}
                         />
                     </Box>}
-            </RootBox>
-            <CustomPopover
+            </RootListBox>
+            <ListPopper
                 elAnchor={rowAnchorEl}
                 open={Boolean(rowAnchorEl)}
                 handleClose={handleClosePopover}

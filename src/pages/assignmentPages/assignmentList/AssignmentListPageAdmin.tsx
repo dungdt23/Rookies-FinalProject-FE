@@ -1,6 +1,6 @@
 import { Edit, HighlightOff, Refresh } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
-import { Alert, Box, Button, Divider, FormControl, Grid, IconButton, InputLabel, MenuItem, Pagination, Select, SelectChangeEvent, Table, TableBody, TableRow, Typography, styled } from "@mui/material";
+import { Alert, Box, Button, Divider, FormControl, Grid, IconButton, InputLabel, MenuItem, Pagination, Select, SelectChangeEvent, Table, TableBody, TableRow, Typography } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
 import { MouseEvent, ReactNode, useEffect, useState } from "react";
@@ -9,7 +9,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { SearchBar } from "../../../components/form";
 import { CircularProgressWrapper } from "../../../components/loading";
 import { NoStyleLink } from "../../../components/noStyleLink";
-import { CustomPopover } from "../../../components/popover";
+import { ListPopper } from "../../../components/popover";
+import { RootListBox } from "../../../components/styledComponents";
 import { ClickableTableRow, CustomTableCell, StyledTableCell, StyledTableContainer } from "../../../components/table";
 import CustomTableHead, { Order, TableHeadInfo } from "../../../components/table/CustomTableHead";
 import { StyledTypography } from "../../../components/typography";
@@ -19,15 +20,9 @@ import { toStandardFormat } from "../../../helpers/formatDate";
 import { addSpacesToCamelCase } from "../../../helpers/helper";
 import { removeUndefinedValues } from "../../../helpers/removeUndefined";
 import { FieldAssignmentFilter, GetAllAssignmentParams, disableAssignmentrById, fetchAllAssignments } from "../../../services/assignment.service";
+import { CreateReturnRequestRequest, createReturnRequest } from "../../../services/returnRequest.service";
 import { Assignment, AssignmentState } from "../../../types/assignment";
 import { ListPageState } from "../../../types/common";
-import { CreateReturnRequestRequest, createReturnRequest } from "../../../services/returnRequest.service";
-
-const RootBox = styled(Box)(() => ({
-    minWidth: '30rem',
-    width: '100%',
-    p: 2
-}))
 
 const allOption = {
     label: "None",
@@ -411,10 +406,10 @@ const AssignmentListPageAdmin = () => {
             <Helmet>
                 <title>Manage assignment</title>
             </Helmet>
-            <RootBox sx={{ mb: '1rem' }}>
+            <RootListBox sx={{ mb: '1rem' }}>
                 <Typography variant="h5" color='primary'>Assignment Management</Typography>
-            </RootBox>
-            <RootBox>
+            </RootListBox>
+            <RootListBox>
                 {alert && <Alert sx={{ mb: '1rem' }} severity="success" onClose={() => setAlert(undefined)}>{alert}</Alert>}
                 <Box display="flex" justifyContent="space-between" alignItems="center" sx={{ mb: '1rem' }} >
                     <FormControl>
@@ -547,15 +542,15 @@ const AssignmentListPageAdmin = () => {
                             onChange={handleChangePage}
                         />
                     </Box>}
-            </RootBox >
-            <CustomPopover
+            </RootListBox >
+            <ListPopper
                 elAnchor={rowAnchorEl}
                 open={Boolean(rowAnchorEl)}
                 handleClose={handleClosePopover}
                 renderTitle={() => <span>Detailed Assignment Information</span>}
                 renderDescription={renderAssignmentDetailDialog}
             />
-            <CustomPopover
+            <ListPopper
                 elAnchor={deleteAnchorEl}
                 open={Boolean(deleteAnchorEl)}
                 handleClose={handleClosePopover}
@@ -564,8 +559,8 @@ const AssignmentListPageAdmin = () => {
                 boxProps={{ sx: { maxWidth: '25rem' } }}
             >
 
-            </CustomPopover>
-            <CustomPopover
+            </ListPopper>
+            <ListPopper
                 elAnchor={createReturnRequestAnchorEl}
                 open={Boolean(createReturnRequestAnchorEl)}
                 handleClose={handleClosePopover}
@@ -573,7 +568,7 @@ const AssignmentListPageAdmin = () => {
                 renderDescription={canCreateReturnRequest ? renderReturnRequestCreateDialog : renderCannotCreateReturnRequestDialog}
             >
 
-            </CustomPopover>
+            </ListPopper>
         </>
     )
 }

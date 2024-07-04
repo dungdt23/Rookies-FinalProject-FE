@@ -29,7 +29,7 @@ import LoadingSelect, {
 } from "../../../components/form/LoadingSelect";
 import { CircularProgressWrapper } from "../../../components/loading";
 import { NoStyleLink } from "../../../components/noStyleLink";
-import { CustomPopover } from "../../../components/popover";
+import { ListPopper } from "../../../components/popover";
 import {
   ClickableTableRow,
   CustomTableCell,
@@ -55,12 +55,7 @@ import { fetchAllCategory } from "../../../services/category.service";
 import { Asset, AssetState } from "../../../types/asset";
 import { ListPageState, SortOrder } from "../../../types/common";
 import { StyledTypography } from "../../../components/typography";
-
-const RootBox = styled(Box)(() => ({
-  minWidth: "30rem",
-  width: "100%",
-  p: 2,
-}));
+import { RootListBox } from "../../../components/styledComponents";
 
 const StyledTableContainer = styled(TableContainer)(() => ({
   border: "0px",
@@ -385,12 +380,12 @@ const AssetListPage: FC = () => {
       <Helmet>
         <title>Manage Assets</title>
       </Helmet>
-      <RootBox sx={{ mb: "1rem" }}>
+      <RootListBox sx={{ mb: "1rem" }}>
         <Typography variant="h5" color="primary">
           Asset Management
         </Typography>
-      </RootBox>
-      <RootBox>
+      </RootListBox>
+      <RootListBox>
         {alert && (
           <Alert
             sx={{ mb: "1rem" }}
@@ -567,15 +562,15 @@ const AssetListPage: FC = () => {
               onChange={handleChangePage}
             />
           </Box>}
-      </RootBox>
-      <CustomPopover
+      </RootListBox>
+      <ListPopper
         elAnchor={rowAnchorEl}
         open={Boolean(rowAnchorEl)}
         handleClose={handleClosePopover}
         renderTitle={() => <span>Detailed Asset Information</span>}
         renderDescription={renderAssetDetailDialog}
       />
-      <CustomPopover
+      <ListPopper
         elAnchor={deleteAnchorEl}
         open={Boolean(deleteAnchorEl)}
         handleClose={handleClosePopover}
