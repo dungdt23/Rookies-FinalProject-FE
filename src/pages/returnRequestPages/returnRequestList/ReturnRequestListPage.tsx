@@ -217,7 +217,7 @@ const ReturnRequestListPage = () => {
                         Yes
                     </LoadingButton>
                     <Button variant="outlined" onClick={handleClosePopover}>
-                        Cancel
+                        No
                     </Button>
                 </Box>
             </Box>

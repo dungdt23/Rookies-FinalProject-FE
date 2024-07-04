@@ -13,7 +13,8 @@ export const routeNames = {
     asset: {
         list: "/assets",
         create: "/assets/create",
-        edit: (assetId: string): string => assetId !== '' ? `/assets/edit/${assetId}` : `/assets/edit`
+        edit: (assetId: string): string => assetId !== '' ? `/assets/edit/${assetId}` : `/assets/edit`,
+        history: (assetId: string): string => assetId !== '' ? `/assets/${assetId}/assignment-history` : `/assets/assignment-history`,
     },
     assignment: {
         list: "/assignments",

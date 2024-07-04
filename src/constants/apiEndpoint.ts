@@ -21,6 +21,7 @@ export const apiEndpoints = {
         CREATE: "/assignments",
         EDIT: (assignmentId: string) => `/assignments/${assignmentId}`,
         DELETE: (assignmentId: string) => `/assignments/${assignmentId}`,
+        HISTORY: (assetId: string) => `/assignments/asset-historical/${assetId}`,
         RESPOND: "/assignments/respond"
     },
     RETURN_REQUEST: {
