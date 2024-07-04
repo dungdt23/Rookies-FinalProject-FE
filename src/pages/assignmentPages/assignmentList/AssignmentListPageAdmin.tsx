@@ -246,7 +246,7 @@ const AssignmentListPageAdmin = () => {
         setSelected(null);
         setRowAnchorEl(null);
         setDeleteAnchorEl(null);
-        setCreateReturnRequestDeleteAnchorEl(null); 
+        setCreateReturnRequestDeleteAnchorEl(null);
     };
 
     const deleteAssignment = async () => {
@@ -280,11 +280,10 @@ const AssignmentListPageAdmin = () => {
             setAlert(`Return request for assignment of asset ${selected?.assetName} is created`);
             getAssignments();
         } catch (error: any) {
-            if (error.response.status === 409)
-            {
+            if (error.response.status === 409) {
                 setCanCreateReturnRequest(false);
                 console.log('Conflics in business');
-            }    
+            }
             console.error('Error creating return request:', error);
         } finally {
             setIsDisabling(false);
@@ -386,7 +385,7 @@ const AssignmentListPageAdmin = () => {
                         loading={isDisabling}
                         type="submit"
                         variant="contained"
-                        onClick = {createReturnReq}
+                        onClick={createReturnReq}
                     >
                         Yes
                     </LoadingButton>
@@ -399,14 +398,14 @@ const AssignmentListPageAdmin = () => {
     }
     const renderCannotCreateReturnRequestDialog = (): ReactNode => {
         return (
-          <Box sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-            <Typography variant="body1" gutterBottom>
-              Cannot create a new return request because this assignment has currently active return request
-              <br />
-            </Typography>
-          </Box>
+            <Box sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                <Typography variant="body1" gutterBottom>
+                    Cannot create a new return request because this assignment has currently active return request
+                    <br />
+                </Typography>
+            </Box>
         );
-      };
+    };
     return (
         <>
             <Helmet>
@@ -452,7 +451,7 @@ const AssignmentListPageAdmin = () => {
                             placeholderSearch={placeholderSearch}
                             onSearchSubmit={handleSearchSubmit}
                             TextFieldProps={
-                                { 
+                                {
                                     sx: { minWidth: "26rem" },
                                 }
                             }
@@ -502,10 +501,17 @@ const AssignmentListPageAdmin = () => {
                                                 onClick={(event) => handleDeleteClick(event, assignment)}>
                                                 <HighlightOff color={assignment.state === AssignmentState.Accepted ? "disabled" : "primary"} />
                                             </IconButton>
-                                            <IconButton disabled={assignment.state !== AssignmentState.Accepted}
-                                                onClick={(event) => handleCreateReturnRequest(event, assignment)}>
-                                                <Refresh color={assignment.state === AssignmentState.Accepted ? "info" : "disabled"} />
-                                            </IconButton>
+                                            {assignment.activeReturnRequestId ?
+                                                (<IconButton disabled
+                                                    onClick={(event) => handleCreateReturnRequest(event, assignment)}>
+                                                    <Refresh color="disabled" />
+                                                </IconButton>) :
+                                                (<IconButton disabled={assignment.state !== AssignmentState.Accepted}
+                                                    onClick={(event) => handleCreateReturnRequest(event, assignment)}>
+                                                    <Refresh color={(assignment.state === AssignmentState.Accepted) ? "info" : "disabled"} />
+                                                </IconButton>)
+                                            }
+
                                         </StyledTableCell>
                                     </ClickableTableRow>
                                 ))}
@@ -570,7 +576,7 @@ const AssignmentListPageAdmin = () => {
                 elAnchor={createReturnRequestAnchorEl}
                 open={Boolean(createReturnRequestAnchorEl)}
                 handleClose={handleClosePopover}
-                renderTitle={() => canCreateReturnRequest ? <span>Are you sure?</span> : <span>Can not create a new return request</span> }
+                renderTitle={() => canCreateReturnRequest ? <span>Are you sure?</span> : <span>Can not create a new return request</span>}
                 renderDescription={canCreateReturnRequest ? renderReturnRequestCreateDialog : renderCannotCreateReturnRequestDialog}
             >
 

@@ -10,7 +10,10 @@ import Iconify from '../../components/iconify';
 import { routeNames } from '../../constants/routeName';
 import { useAuth } from '../../contexts/AuthContext';
 import { ChangePasswordFirstTimeRequest, ChangePasswordRequest, LoginRequest, changePassword, changePasswordFirstTime, loginPost } from '../../services/user.service';
-import { LocalStorageConstants } from './../../constants/localStorage';
+import ChangePasswordDialog from '../../components/dialog/ChangePasswordDialog';
+import { ExpandMore } from '@mui/icons-material';
+import ChangePasswordFirstTimeDialog from '../../components/dialog/ChangePasswordFirstTimeDialog';
+import LogOutDialog from '../../components/dialog/LogOutDialog';
 
 // Mock account data
 const account = {
@@ -55,11 +58,6 @@ const AccountPopover = () => {
   const [logoutDialogOpen, setLogoutDialogOpen] = useState<boolean>(false);
   const [changePasswordDialogOpen, setChangePasswordDialogOpen] = useState<boolean>(false);
   const [changePasswordFirstTimeOpen, setChangePasswordFirstTimeOpen] = useState<boolean>(user?.isPasswordChangedFirstTime === "0" ? true : false);
-  const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [showOldPassword, setShowOldPassword] = useState<boolean>(false);
-  const [showNewPassword, setShowNewPassword] = useState<boolean>(false);
-  const [isFetching, setIsFetching] = useState<boolean>(false);
-  const [completeChangePassword, setCompleteChangePassword] = useState<boolean>(false);
 
   const navigate = useNavigate();
 
@@ -73,25 +71,7 @@ const AccountPopover = () => {
 
   const handleChangePasswordOpen = () => {
     setOpen(null);
-    setCompleteChangePassword(false);
     setChangePasswordDialogOpen(true);
-  }
-
-  const handleCloseChangePassword: DialogProps["onClose"] = (event, reason) => {
-    if (reason && reason === "backdropClick")
-      return;
-    setChangePasswordDialogOpen(false);
-    window.location.reload();
-  }
-
-  const handleCloseChangePasswordFirstTime: DialogProps["onClose"] = (event, reason) => {
-    if (reason && reason === "backdropClick")
-      return;
-    setChangePasswordDialogOpen(false);
-  }
-
-  const handleCloseLogOutDialog = () => {
-    setLogoutDialogOpen(false);
   }
 
   const handleOpenLogOutDialog = () => {
@@ -104,280 +84,14 @@ const AccountPopover = () => {
     handleClose();
   };
 
-
-  const handleLogout = async () => {
-    setOpen(null);
-    try {
-      logout();
-      navigate(routeNames.login);
-    } catch (error) {
-      console.error('Logout failed', error);
-    }
-  };
-
-
-  const renderLogoutDialogBody = (): ReactNode => {
-    return (
-      <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-        <Typography variant="body1" gutterBottom>
-          Do you want to log out?
-        </Typography>
-        <Box sx={{ display: 'flex', gap: '1rem', mt: '1rem' }}>
-          <LoadingButton
-            loading={false}
-            type="submit"
-            variant="contained"
-            onClick={handleLogout}
-          >
-            Log out
-          </LoadingButton>
-          <Button variant="outlined" onClick={() => handleCloseLogOutDialog()}>
-            Cancel
-          </Button>
-        </Box>
-      </Box >
-    )
-  }
-
-  const formik = useFormik({
-    initialValues: {
-      oldPassword: '',
-      newPassword: '',
-    },
-    validationSchema: validationSchema,
-    onSubmit: async (values) => {
-      setIsFetching(true);
-      try {
-        const payload: ChangePasswordRequest = {
-          oldPassword: values.oldPassword,
-          newPassword: values.newPassword
-        };
-        await changePassword(payload);
-
-        const loginPayload: LoginRequest = {
-          userName: user ? user.username : "No token found",
-          password: values.newPassword,
-        };
-        const response = await loginPost(loginPayload);
-        login(response.data.token);
-
-        setCompleteChangePassword(true);
-
-      } catch (error: any) {
-        formik.errors.oldPassword = error.response.data.message
-
-      } finally {
-        setIsFetching(false);
-      }
-    },
-  });
-
-  const renderChangePasswordDialog = (): ReactNode => {
-    useEffect(() => {
-      formik.values.newPassword = ''
-      formik.values.oldPassword = ''
-    }, [changePasswordDialogOpen])
-    if (!completeChangePassword) {
-      return (
-        <form onSubmit={formik.handleSubmit}>
-          <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-            <Stack spacing={1} mb={3}>
-              <TextField
-                name="oldPassword"
-                label="Old Password"
-                value={formik.values.oldPassword}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                error={formik.touched.oldPassword && Boolean(formik.errors.oldPassword)}
-                helperText={formik.touched.oldPassword && formik.errors.oldPassword}
-                required
-                type={showOldPassword ? 'text' : 'password'}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton onClick={() => setShowOldPassword(!showOldPassword)} edge="end">
-                        <Iconify icon={showOldPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-                InputLabelProps={{
-                  shrink: true
-                }}
-                sx={{
-                  minWidth: '25rem',
-                  minHeight: '5rem'
-                }}
-              />
-              <TextField
-                name="newPassword"
-                label="New Password"
-                value={formik.values.newPassword}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                error={formik.touched.newPassword && Boolean(formik.errors.newPassword)}
-                helperText={formik.touched.newPassword && formik.errors.newPassword}
-                required
-                type={showNewPassword ? 'text' : 'password'}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton onClick={() => setShowNewPassword(!showNewPassword)} edge="end">
-                        <Iconify icon={showNewPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-                InputLabelProps={{
-                  shrink: true
-                }}
-                sx={{
-                  minWidth: '25rem',
-                  minHeight: '5rem'
-                }}
-              />
-            </Stack>
-            <Box sx={{ display: 'flex', justifyContent: 'end', gap: '1rem', ml: '5rem' }}>
-              <LoadingButton
-                loading={isFetching}
-                type="submit"
-                variant="contained"
-              >
-                Save
-              </LoadingButton>
-              <Button
-                disabled={isFetching}
-                variant="outlined"
-                onClick={() => setChangePasswordDialogOpen(false)}>
-                Cancel
-              </Button>
-            </Box>
-          </Box >
-        </form>
-      )
-    }
-    else {
-      return (
-        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-          <Typography variant="body1" gutterBottom>
-            Your password have been changed successfully!
-          </Typography>
-          <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'end', mt: '1rem' }}>
-            <Button
-              variant="outlined"
-              onClick={() => {
-                setChangePasswordDialogOpen(false)
-                window.location.reload()
-              }}>
-              Close
-            </Button>
-          </Box>
-        </Box >
-      )
-    }
-  }
-
-  const formikRequired = useFormik({
-    initialValues: {
-      password: ''
-    },
-    validationSchema: requiredValidationSchema,
-    onSubmit: async (values) => {
-      setIsFetching(true);
-      const payload = {
-        newPassword: values.password,
-      } as ChangePasswordFirstTimeRequest
-      try {
-        await changePasswordFirstTime(payload);
-
-        const loginPayload: LoginRequest = {
-          userName: user ? user.username : "No token found",
-          password: values.password,
-        };
-        const response = await loginPost(loginPayload);
-        login(response.data.token);
-
-        setChangePasswordFirstTimeOpen(false)
-        window.location.reload()
-      } catch (error: any) {
-        formikRequired.errors.password = error.response.data.message
-      } finally {
-        setIsFetching(false);
-      }
-    },
-  });
-
-  const renderChangePasswordFirstTime = (): ReactNode => {
-    return (
-      <form onSubmit={formikRequired.handleSubmit}>
-        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-          <Stack spacing={3} mb={3}>
-            <Typography variant="body1" gutterBottom>
-              This is the first time you logged in.<br />
-              You have to change your password to continue.
-            </Typography>
-            <TextField
-              name="password"
-              label="Password"
-              value={formikRequired.values.password}
-              onChange={formikRequired.handleChange}
-              onBlur={formikRequired.handleBlur}
-              error={formikRequired.touched.password && Boolean(formikRequired.errors.password)}
-              helperText={formikRequired.touched.password && formikRequired.errors.password}
-              required
-              type={showPassword ? 'text' : 'password'}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                      <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-              InputLabelProps={{
-                shrink: true
-              }}
-              sx={{
-                minWidth: '25rem',
-                minHeight: '5rem'
-              }}
-            />
-          </Stack>
-          <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'end', mt: '1rem' }}>
-            <LoadingButton
-              loading={isFetching}
-              type="submit"
-              variant="contained"
-            >
-              Save
-            </LoadingButton>
-          </Box>
-        </Box >
-      </form>
-    )
-  }
   return (
     <>
-      <IconButton
-        onClick={handleOpen}
-        sx={{
-          p: 0,
-          ...(open && {
-            '&:before': {
-              zIndex: 1,
-              content: "''",
-              width: '100%',
-              height: '100%',
-              borderRadius: '50%',
-              position: 'absolute',
-              bgcolor: (theme) => alpha(theme.palette.grey[900], 0.8),
-            },
-          }),
-        }}
-      >
-        <Avatar src={account.photoURL} alt="photoURL" />
-      </IconButton>
+
+      <div onClick={handleOpen} style={{ marginRight: '1rem', color: 'white', cursor: 'pointer' }}>
+        <Typography>
+          {`${user?.username}`} ⯆
+        </Typography>
+      </div>
 
       <Popover
         open={Boolean(open)}
@@ -427,26 +141,22 @@ const AccountPopover = () => {
         </MenuItem>
       </Popover>
 
-      <CustomDialog
+      <LogOutDialog
         open={logoutDialogOpen}
-        handleClose={handleCloseLogOutDialog}
-        renderTitle={() => <span>Are you sure?</span>}
-        renderBody={renderLogoutDialogBody}
-        boxProps={{ sx: { maxWidth: '30rem' } }}
+        setOpen={setLogoutDialogOpen}
+        logout={logout}
       />
-      <CustomDialog
+      <ChangePasswordDialog
         open={changePasswordDialogOpen}
-        handleClose={handleCloseChangePassword}
-        renderTitle={() => <span>Change password</span>}
-        renderBody={renderChangePasswordDialog}
-        boxProps={{ sx: { maxWidth: '30rem' } }}
+        setOpen={setChangePasswordDialogOpen}
+        user={user}
+        login={login}
       />
-      <CustomDialog
+      <ChangePasswordFirstTimeDialog
         open={changePasswordFirstTimeOpen}
-        handleClose={handleCloseChangePasswordFirstTime}
-        renderTitle={() => <span>Change password</span>}
-        renderBody={renderChangePasswordFirstTime}
-        boxProps={{ sx: { maxWidth: '30rem' } }}
+        setOpen={setChangePasswordFirstTimeOpen}
+        user={user}
+        login={login}
       />
     </>
   );
