@@ -1,5 +1,6 @@
 import { LoadingButton } from '@mui/lab';
 import { IconButton, InputAdornment, Stack, TextField } from '@mui/material';
+import axios from 'axios';
 import { useFormik } from 'formik';
 import React, { useState } from 'react';
 import * as yup from 'yup';
@@ -15,10 +16,10 @@ const validationSchema = yup.object({
 
 const LoginForm: React.FC = () => {
     const [showPassword, setShowPassword] = useState<boolean>(false);
-    const { login, checkChangedPassword } = useAuth();
+    const { login } = useAuth();
     const [isFetching, setIsFetching] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
-    
+
     const formik = useFormik({
         initialValues: {
             username: '',
@@ -35,10 +36,15 @@ const LoginForm: React.FC = () => {
 
                 const response = await loginPost(payload);
                 login(response.data.token);
-                checkChangedPassword(response.data.isPasswordChanged);
             } catch (error) {
-                setError("Login failed. Please check your credentials");
-                console.error(error);
+                if (axios.isAxiosError(error)) {
+                    if (error.response?.status === 403) {
+                        setError("This account is disabled. Please contact the admin for more information.")
+                    } else if (error.response?.status === 401) {
+                        setError("Login failed. Please check your credentials");
+                    }
+                    console.error(error);
+                }
             } finally {
                 setIsFetching(false);
             }
