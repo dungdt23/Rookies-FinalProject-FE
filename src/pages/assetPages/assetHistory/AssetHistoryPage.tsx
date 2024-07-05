@@ -7,7 +7,7 @@ import {
   TableCell,
   TableContainer,
   TableRow,
-  Typography,
+  Typography
 } from "@mui/material";
 import { FC, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -35,26 +35,28 @@ const AssetHistoryPage: FC = () => {
   const TABLE_HEAD: TableHeadInfo[] = [
     {
       id: "Date",
-      label: "Date",
+      label: "Date"
     },
     {
       id: "AssignedBy",
-      label: "Assigned By",
+      label: "Assigned By"
     },
     {
       id: "AssignedTo",
-      label: "Assigned To",
+      label: "Assigned To"
     },
     {
       id: "State",
-      label: "State",
+      label: "State"
     },
     {
       id: "ReturnDate",
-      label: "Return Date",
+      label: "Return Date"
     },
-  ];
-  function onRequestSort(property: string): void {}
+  ]
+  function onRequestSort(_: string): void {
+
+  }
   useEffect(() => {
     const getAssignments = async () => {
       setIsLoading(true);
@@ -82,8 +84,8 @@ const AssetHistoryPage: FC = () => {
 
   return (
     <Box sx={{ p: 2 }}>
-      <Typography variant="h5" color="primary">
-        Asset Assignment History Of {assetCode} - {assetName}
+      <Typography variant="h5" color='primary'>
+        Assignment History Of {assetCode} - {assetName} Asset
       </Typography>
       {isLoading ? (
         <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
@@ -94,8 +96,8 @@ const AssetHistoryPage: FC = () => {
           <Table>
             <CustomTableHead
               columns={TABLE_HEAD}
-              order={"asc"}
-              orderBy={"asc"}
+              order={'asc'}
+              orderBy={'asc'}
               onRequestSort={onRequestSort}
             />
             <TableBody>
@@ -106,15 +108,10 @@ const AssetHistoryPage: FC = () => {
                   </TableCell>
                   <TableCell>{assignment.assignedBy}</TableCell>
                   <TableCell>{assignment.assignedTo}</TableCell>
-                  <TableCell>
-                    {addSpacesToCamelCase(AssignmentState[assignment.state])}
-                  </TableCell>
-                  <TableCell>
-                    {assignment.returnRequest &&
-                    assignment.returnRequest.returnedDate
-                      ? toStandardFormat(assignment.returnRequest.returnedDate)
-                      : ""}
-                  </TableCell>{" "}
+                  <TableCell>{addSpacesToCamelCase(AssignmentState[assignment.state])}</TableCell>
+                  <TableCell>{assignment.returnRequest?.returnedDate
+                    ? toStandardFormat(assignment.returnRequest.returnedDate)
+                    : null}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

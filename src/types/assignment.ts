@@ -36,5 +36,5 @@ export interface HistoricalAssignment {
     assignedDate: string;
     state: AssignmentState;
     note?: string;
-    returnRequest: ReturnRequest;
+    returnRequest: ReturnRequest | null;
 }
