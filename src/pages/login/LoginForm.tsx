@@ -40,7 +40,7 @@ const LoginForm: React.FC = () => {
                 if (axios.isAxiosError(error)) {
                     if (error.response?.status === 403) {
                         setError("This account is disabled. Please contact the admin for more information.")
-                    } else if (error.response?.status === 401) {
+                    } else if (error.response?.status === 400) {
                         setError("Login failed. Please check your credentials");
                     }
                     console.error(error);

@@ -1,2 +1,2 @@
-import CustomPopover from './CustomPopover';
-export {CustomPopover}
+import ListPopper from './CustomPopover';
+export { ListPopper }
