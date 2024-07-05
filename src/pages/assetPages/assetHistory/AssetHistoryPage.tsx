@@ -1,13 +1,13 @@
 import {
-    Box,
-    CircularProgress,
-    Pagination,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableRow,
-    Typography
+  Box,
+  CircularProgress,
+  Pagination,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableRow,
+  Typography
 } from "@mui/material";
 import { FC, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -29,29 +29,29 @@ const AssetHistoryPage: FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const TABLE_HEAD: TableHeadInfo[] = [
     {
-        id: "Date",
-        label: "Date"
+      id: "Date",
+      label: "Date"
     },
     {
-        id:"AssignedBy",
-        label: "Assigned By"
+      id: "AssignedBy",
+      label: "Assigned By"
     },
     {
-        id: "AssignedTo",
-        label: "Assigned To"
+      id: "AssignedTo",
+      label: "Assigned To"
     },
     {
-        id: "State",
-        label: "State"
+      id: "State",
+      label: "State"
     },
     {
-        id: "ReturnDate",
-        label: "Return Date"
+      id: "ReturnDate",
+      label: "Return Date"
     },
   ]
-  function onRequestSort(property: string): void {
+  function onRequestSort(_: string): void {
 
-}
+  }
   useEffect(() => {
     const getAssignments = async () => {
       setIsLoading(true);
@@ -80,7 +80,7 @@ const AssetHistoryPage: FC = () => {
   return (
     <Box sx={{ p: 2 }}>
       <Typography variant="h5" color='primary'>
-        Asset Assignment History Of {assetCode} - {assetName}
+        Assignment History Of {assetCode} - {assetName} Asset
       </Typography>
       {isLoading ? (
         <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
@@ -90,10 +90,10 @@ const AssetHistoryPage: FC = () => {
         <TableContainer>
           <Table>
             <CustomTableHead
-             columns={TABLE_HEAD}
-             order = {'asc'}
-             orderBy= {'asc'}
-             onRequestSort={onRequestSort}
+              columns={TABLE_HEAD}
+              order={'asc'}
+              orderBy={'asc'}
+              onRequestSort={onRequestSort}
             />
             <TableBody>
               {assignments.map((assignment) => (
@@ -104,7 +104,9 @@ const AssetHistoryPage: FC = () => {
                   <TableCell>{assignment.assignedBy}</TableCell>
                   <TableCell>{assignment.assignedTo}</TableCell>
                   <TableCell>{addSpacesToCamelCase(AssignmentState[assignment.state])}</TableCell>
-                  <TableCell>{toStandardFormat(assignment.returnRequest.returnedDate)}</TableCell>
+                  <TableCell>{assignment.returnRequest?.returnedDate
+                    ? toStandardFormat(assignment.returnRequest.returnedDate)
+                    : null}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
