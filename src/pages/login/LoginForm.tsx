@@ -1,5 +1,5 @@
 import { LoadingButton } from '@mui/lab';
-import { IconButton, InputAdornment, Stack, TextField } from '@mui/material';
+import { IconButton, InputAdornment, Stack, TextField, Typography } from '@mui/material';
 import axios from 'axios';
 import { useFormik } from 'formik';
 import React, { useState } from 'react';
@@ -95,7 +95,7 @@ const LoginForm: React.FC = () => {
             </Stack>
 
             {error && (
-                <div style={{ color: 'red', textAlign: 'center', marginBottom: '10px' }}>{error}</div>
+                <Typography sx={{ color: 'red', textAlign: 'center', marginBottom: '10px' }}>{error}</Typography>
             )}
 
             <LoadingButton loading={isFetching} fullWidth size="large" type="submit" variant="contained">
