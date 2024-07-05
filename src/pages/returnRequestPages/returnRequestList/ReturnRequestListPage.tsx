@@ -240,7 +240,6 @@ const ReturnRequestListPage = () => {
                                 </MenuItem>
                                 <MenuItem value="WaitingForReturning">Waiting For Returning</MenuItem>
                                 <MenuItem value="Completed">Completed</MenuItem>
-                                <MenuItem value="Rejected">Rejected</MenuItem>
                             </Select>
                             <Divider sx={{ height: 0, m: 1 }} orientation="vertical" />
                             <DatePicker
