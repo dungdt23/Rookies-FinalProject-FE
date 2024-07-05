@@ -9,21 +9,38 @@ const Breadcrumbs: React.FC = () => {
     const location = useLocation();
     const pathnames = location.pathname.split('/').filter((x) => x);
 
-    const breadcrumbs = pathnames.map((_, index) => {
-        const url = `/${pathnames.slice(0, index + 1).join('/')}`;
-        if (url.includes('/edit/')) return;
-        const routeName = routeNameBreadcrumbsNameMap[url] || 'Unknown';
+    const generateUrl = (index: number, pathnames: string[]) => {
+        return `/${pathnames.slice(0, index + 1).join('/')}`;
+    };
 
-        if (index < pathnames.length - 1)
+    const generateRouteName = (url: string): string => {
+        // Check for dynamic paths and replace with generic paths for breadcrumb names
+        if (url.match(/\/assets\/[^/]+\/assignment-history/)) {
+            return routeNameBreadcrumbsNameMap[routeNames.asset.history('')];
+        }
+
+        if (url.includes("/edit/")) return "";
+        return routeNameBreadcrumbsNameMap[url] || "";
+    };
+
+    const breadcrumbs = pathnames.map((_, index) => {
+        const url = generateUrl(index, pathnames);
+        const routeName = generateRouteName(url);
+
+        if (routeName === "") return
+        if (index < pathnames.length - 1) {
             return (
                 <LinkMui component={Link} key={url} to={url} color="inherit" underline="hover">
                     <Typography component={Box}>{routeName}</Typography>
                 </LinkMui>
-            )
-        else
+            );
+        } else {
             return (
-                <Typography key={url} color={theme.palette.common.white}>{routeName}</Typography>
-            )
+                <Typography key={url} color={theme.palette.common.white}>
+                    {routeName}
+                </Typography>
+            );
+        }
     });
 
     const renderHome = () => {
