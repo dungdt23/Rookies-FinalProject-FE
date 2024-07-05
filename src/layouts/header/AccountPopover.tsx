@@ -12,7 +12,7 @@ const AccountPopover = () => {
   const [open, setOpen] = useState<HTMLElement | null>(null);
   const [logoutDialogOpen, setLogoutDialogOpen] = useState<boolean>(false);
   const [changePasswordDialogOpen, setChangePasswordDialogOpen] = useState<boolean>(false);
-  const [changePasswordFirstTimeOpen, setChangePasswordFirstTimeOpen] = useState<boolean>(user?.isPasswordChangedFirstTime === "1" ? true : false);
+  const [changePasswordFirstTimeOpen, setChangePasswordFirstTimeOpen] = useState<boolean>(user?.isPasswordChangedFirstTime === "0" ? true : false);
 
   const handleOpen = (event: MouseEvent<HTMLElement>) => {
     setOpen(event.currentTarget);
