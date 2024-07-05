@@ -11,11 +11,16 @@ import {
 } from "@mui/material";
 import { FC, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import CustomTableHead, { TableHeadInfo } from "../../../components/table/CustomTableHead";
+import CustomTableHead, {
+  TableHeadInfo,
+} from "../../../components/table/CustomTableHead";
 import { toStandardFormat } from "../../../helpers/formatDate";
 import { addSpacesToCamelCase } from "../../../helpers/helper";
 import { fetchAssetHistory } from "../../../services/asset.service";
-import { AssignmentState, HistoricalAssignment } from "../../../types/assignment";
+import {
+  AssignmentState,
+  HistoricalAssignment,
+} from "../../../types/assignment";
 import { PaginateResponse } from "../../../types/common";
 
 const AssetHistoryPage: FC = () => {

@@ -2,6 +2,7 @@ import { ArrowDropDown } from "@mui/icons-material";
 import { Box, TableHead, TableSortLabel } from '@mui/material';
 import { FC } from "react";
 import { StyledTableCell } from "./CustomTableCell";
+import { theme } from "../../constants/appTheme";
 
 export interface TableHeadInfo {
     id: string,
@@ -29,6 +30,10 @@ const CustomTableHead: FC<TableHeadProps> = ({ columns, order, orderBy, onReques
     return (
         <TableHead sx={{
             height: "1px",
+            position: "sticky",
+            top: 0,
+            zIndex: 1,
+            background: theme.palette.common.white,
         }}>
             {columns.map((info) => (
                 <StyledTableCell
