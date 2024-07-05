@@ -13,6 +13,7 @@ export interface Assignment {
     assignedDate: string;
     state: AssignmentState;
     note?: string;
+    activeReturnRequestId? : string;
 }
 
 
