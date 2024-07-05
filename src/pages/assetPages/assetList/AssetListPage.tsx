@@ -170,6 +170,8 @@ const AssetListPage: FC = () => {
     window.history.replaceState(location.pathname, "");
   };
 
+
+  
   const getCategories = async () => {
     setIsFetchingCategory(true);
     try {
@@ -236,6 +238,8 @@ const AssetListPage: FC = () => {
   };
 
   const renderAssetDetailDialog = (): ReactNode => {
+    console.log(selected);
+    
     if (!selected) return null;
     const assetDetails = [
       {
@@ -280,14 +284,27 @@ const AssetListPage: FC = () => {
           </Grid>
         ))}
         <Divider />
-        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-          <Typography variant="h6">Assignment history:</Typography>
-          <Typography variant="subtitle2">Time: Lorem | Assignment: Lorem</Typography>
-          <Typography variant="subtitle2">Time: Lorem | Assignment: Lorem</Typography>
-          <Typography variant="subtitle2">Time: Lorem | Assignment: Lorem</Typography>
-          <Typography variant="subtitle2">Time: Lorem | Assignment: Lorem</Typography>
-          <Typography variant="subtitle2">Time: Lorem | Assignment: Lorem</Typography>
-        </Box>
+        <Box sx={{ display: 'flex', flexDirection: 'column', mt: 2 }}>
+                <Typography variant="h6">Assignment history:</Typography>
+                {selected.assignments.length > 0 ? (
+                    selected.assignments.map((assignment) => (
+                        <Typography key={assignment.id} variant="body2">
+                            Date: {toStandardFormat(assignment.assignedDate)} | Assigned by: {assignment.assignedBy} | Assigned to: {assignment.assignedTo}
+                        </Typography>
+                    ))
+                ) : (
+                    <Typography variant="body2">
+                        This asset doesn't have any historical assignment.
+                    </Typography>
+                )}
+    {selected.assignments.length > 0 && (
+        <Link to={routeNames.asset.history(selected?.id ?? "")} style={{ textDecoration: "none", marginTop: "16px" }}>
+            <Button variant="contained">
+                Show More
+            </Button>
+        </Link>
+    )}
+            </Box>
       </Box>
     );
   };

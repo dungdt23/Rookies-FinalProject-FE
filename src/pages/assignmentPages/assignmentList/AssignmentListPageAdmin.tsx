@@ -270,9 +270,8 @@ const AssignmentListPageAdmin = () => {
                 assignmentId: selected?.id
             } as CreateReturnRequestRequest;
             const response = await createReturnRequest(payload);
-            console.log('Return request created:', response);
             handleClosePopover();
-            setAlert(`Return request for assignment of asset ${selected?.assetName} is created`);
+            setAlert(`Returning request for assignment of asset ${selected?.assetName} is created`);
             getAssignments();
         } catch (error: any) {
             if (error.response.status === 409) {
@@ -373,7 +372,7 @@ const AssignmentListPageAdmin = () => {
         return (
             <Box>
                 <Typography variant="body1" gutterBottom>
-                    Do you want to create a return request for this asset?
+                    Do you want to create a returning request for this asset?
                 </Typography>
                 <Box sx={{ display: 'flex', gap: '1rem', mt: '1rem' }}>
                     <LoadingButton
@@ -393,12 +392,12 @@ const AssignmentListPageAdmin = () => {
     }
     const renderCannotCreateReturnRequestDialog = (): ReactNode => {
         return (
-            <Box sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                <Typography variant="body1" gutterBottom>
-                    Cannot create a new return request because this assignment has currently active return request
-                    <br />
-                </Typography>
-            </Box>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+            <Typography variant="body1" gutterBottom>
+              Cannot create a new returning request because this assignment has currently active return request
+              <br />
+            </Typography>
+          </Box>
         );
     };
     return (
@@ -571,7 +570,7 @@ const AssignmentListPageAdmin = () => {
                 elAnchor={createReturnRequestAnchorEl}
                 open={Boolean(createReturnRequestAnchorEl)}
                 handleClose={handleClosePopover}
-                renderTitle={() => canCreateReturnRequest ? <span>Are you sure?</span> : <span>Can not create a new return request</span>}
+                renderTitle={() => canCreateReturnRequest ? <span>Are you sure?</span> : <span>Can not create a new returning request</span> }
                 renderDescription={canCreateReturnRequest ? renderReturnRequestCreateDialog : renderCannotCreateReturnRequestDialog}
             >
 

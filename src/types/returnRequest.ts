@@ -2,8 +2,8 @@ export interface ReturnRequest {
     id: string;
     requestorId: string;
     requestorUsername: string;
-    responderId: string;
-    responderUsername: string;
+    responderId: string | null;
+    responderUsername: string | null;
     assignmentId: string;
     assignmentAssignedDate: string; 
     assetId: string;
@@ -11,7 +11,7 @@ export interface ReturnRequest {
     assetName: string;
     state: ReturnRequestState; 
     requestedDate: string; 
-    returnedDate: string; 
+    returnedDate: string | null; 
 }
 export interface ReturnCreateRequest {
     id: string;

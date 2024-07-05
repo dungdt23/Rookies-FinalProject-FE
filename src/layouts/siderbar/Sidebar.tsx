@@ -7,6 +7,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { UserType } from '../../types/user';
 import { adminSidebarItems, guestSidebarItems, SidebarItem, staffSidebarItems } from './sidebarItems';
 import { routeNameSidebarNameMap } from '../../constants/routeNameMaps';
+import { routeNames } from '../../constants/routeName';
 
 const StyledListItem = styled(ListItem)<{ active: boolean }>(({ theme, active }) => ({
     backgroundColor: active ? theme.palette.primary.main : theme.palette.lightGrey.main,
@@ -33,6 +34,11 @@ const Sidebar: FC = () => {
     if (url.includes('/edit/')) {
         url = `/${pathnames.slice(0, pathnames.indexOf('edit') + 1).join('/')}`;
     }
+
+    if (url.match(/\/assets\/[^/]+\/assignment-history/)) { 
+        url = routeNames.asset.history('')
+    }
+
 
     const activeItem: SidebarItem | undefined = (routeNameSidebarNameMap[url])
 

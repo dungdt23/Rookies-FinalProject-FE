@@ -20,6 +20,7 @@ import RequireGuest from './RequireGuest';
 import { EditAssignmentPage } from '../pages/assignmentPages/assignmentEdit';
 import ReturnRequestListPage from '../pages/returnRequestPages/returnRequestList/ReturnRequestListPage';
 import ReportPage from '../pages/reportPages/ReportPage';
+import AssetHistoryPage from '../pages/assetPages/assetHistory/AssetHistoryPage';
 
 const commonRoutes: RouteObject[] = [
   {
@@ -92,6 +93,10 @@ export const adminRoutes: RouteObject[] = [
           {
             path: routeNames.asset.edit(':assetId'),
             element: <EditAssetPage />
+          },
+          {
+            path: routeNames.asset.history(':assetId'),
+            element: <AssetHistoryPage />
           },
           {
             path: routeNames.assignment.list,
