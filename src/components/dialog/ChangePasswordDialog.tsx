@@ -19,8 +19,8 @@ const lengthMessage = 'Password length should be from 8 - 20 characters'
 const samePasswordMessage = 'New password should not be the same as old password'
 
 const validationSchema = yup.object({
-    oldPassword: yup.string().min(8, lengthMessage).max(20, lengthMessage),
-    newPassword: yup.string().min(8, lengthMessage).max(20, lengthMessage).notOneOf([yup.ref('oldPassword')], samePasswordMessage)
+    oldPassword: yup.string().required("Please enter your old password").min(8, lengthMessage).max(20, lengthMessage),
+    newPassword: yup.string().required("Please enter your new password").min(8, lengthMessage).max(20, lengthMessage).notOneOf([yup.ref('oldPassword')], samePasswordMessage)
 });
 
 const ChangePasswordDialog: FC<ChangePasswordDialogProps> = ({open, user, login, setOpen }) => {
@@ -129,6 +129,7 @@ const ChangePasswordDialog: FC<ChangePasswordDialogProps> = ({open, user, login,
                         </Stack>
                         <Box sx={{ display: 'flex', justifyContent: 'end', gap: '1rem', ml: '5rem' }}>
                             <LoadingButton
+                                disabled={!(formik.isValid && formik.dirty && !isFetching)}
                                 loading={isFetching}
                                 type="submit"
                                 variant="contained"
@@ -168,7 +169,7 @@ const ChangePasswordDialog: FC<ChangePasswordDialogProps> = ({open, user, login,
     }
 
 
-    const handleCloseChangePassword: DialogProps["onClose"] = (event, reason) => {
+    const handleCloseChangePassword: DialogProps["onClose"] = (_, reason) => {
         if (reason && reason === "backdropClick")
             return;
         setOpen(false);

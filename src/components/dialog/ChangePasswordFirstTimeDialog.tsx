@@ -18,14 +18,14 @@ interface ChangePasswordFirstTimeDialogProps {
 const lengthMessage = 'Password length should be from 8 - 20 characters'
 
 const requiredValidationSchema = yup.object({
-    password: yup.string().min(8, lengthMessage).max(20, lengthMessage),
+    password: yup.string().required("Please enter your new password").min(8, lengthMessage).max(20, lengthMessage),
 });
 
 const ChangePasswordFirstTimeDialog: FC<ChangePasswordFirstTimeDialogProps> = ({ open, user, login, setOpen }) => {
     const [showPassword, setShowPassword] = useState<boolean>(false);
     const [isFetching, setIsFetching] = useState<boolean>(false);
 
-    const handleClose: DialogProps["onClose"] = (event, reason) => {
+    const handleClose: DialogProps["onClose"] = (_, reason) => {
         if (reason && reason === "backdropClick")
             return;
         setOpen(false);
@@ -101,6 +101,7 @@ const ChangePasswordFirstTimeDialog: FC<ChangePasswordFirstTimeDialogProps> = ({
                     <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'end', mt: '1rem' }}>
                         <LoadingButton
                             loading={isFetching}
+                            disabled={!(formikRequired.isValid && formikRequired.dirty)}
                             type="submit"
                             variant="contained"
                         >

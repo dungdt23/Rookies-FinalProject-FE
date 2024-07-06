@@ -199,7 +199,7 @@ const ReturnRequestListPage = () => {
         return (
             <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                 <Typography variant="body1" gutterBottom>
-                    Do you want to mark this request as "{isAccept ? "Completed" : "Declined"}"?
+                    {isAccept ? "Do you want to mark this request as \"Completed\"?" : "Do you want to cancel this returning request?"}
                 </Typography>
                 <Box sx={{ display: 'flex', gap: '1rem', mt: '1rem' }}>
                     <LoadingButton
@@ -240,7 +240,6 @@ const ReturnRequestListPage = () => {
                                 </MenuItem>
                                 <MenuItem value="WaitingForReturning">Waiting For Returning</MenuItem>
                                 <MenuItem value="Completed">Completed</MenuItem>
-                                <MenuItem value="Rejected">Rejected</MenuItem>
                             </Select>
                             <Divider sx={{ height: 0, m: 1 }} orientation="vertical" />
                             <DatePicker
