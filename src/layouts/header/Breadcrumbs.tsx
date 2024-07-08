@@ -2,8 +2,8 @@ import { Box, Breadcrumbs as BreadcrumbsMui, Link as LinkMui, Typography } from 
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { theme } from '../../constants/appTheme';
-import { routeNameBreadcrumbsNameMap } from '../../constants/routeNameMaps';
 import { routeNames } from '../../constants/routeName';
+import { routeNameBreadcrumbsNameMap } from '../../constants/routeNameMaps';
 
 const Breadcrumbs: React.FC = () => {
     const location = useLocation();
@@ -28,7 +28,7 @@ const Breadcrumbs: React.FC = () => {
         const routeName = generateRouteName(url);
 
         if (routeName === "") return
-        if (index < pathnames.length - 1) {
+        if (!url.includes("/edit") && index < pathnames.length - 1) {
             return (
                 <LinkMui component={Link} key={url} to={url} color="inherit" underline="hover">
                     <Typography component={Box}>{routeName}</Typography>
