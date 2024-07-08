@@ -37,7 +37,7 @@ const TABLE_HEAD: TableHeadInfo[] = [
         id: FieldReturnRequestFilter[FieldReturnRequestFilter.AssetName],
         label: "Asset Name",
         sortable: true,
-        minWidth: "10rem",
+        minWidth: "7rem",
     },
     {
         id: FieldReturnRequestFilter[FieldReturnRequestFilter.RequestedBy],
@@ -71,7 +71,7 @@ const TABLE_HEAD: TableHeadInfo[] = [
         id: FieldReturnRequestFilter[FieldReturnRequestFilter.State],
         label: "State",
         sortable: true,
-        minWidth: "8rem",
+        minWidth: "5rem",
         width: "8%"
     },
     {
