@@ -9,9 +9,19 @@ import { useAuth } from '../../contexts/AuthContext';
 import { loginPost, LoginRequest } from '../../services/user.service';
 
 // Define the validation schema
+const usernameLengthMessage = "The username length should be from 2 - 127 characters"
+const passwordLengthMessage = "The password length should be from 2 - 127 characters"
+const noTrailingWhitespaceMessage = 'Password should not have leading or trailing spaces';
+
 const validationSchema = yup.object({
-    username: yup.string().required('Username is required'),
-    password: yup.string().required('Password is required'),
+    username: yup.string().required('Username is required').min(2, usernameLengthMessage).max(127, usernameLengthMessage),
+    password: yup
+        .string()
+        .required('Password is required')
+        .min(2, passwordLengthMessage)
+        .max(127, passwordLengthMessage).test('no-trailing-whitespace', noTrailingWhitespaceMessage, value => {
+            return value === value?.trim();
+        }),
 });
 
 const LoginForm: React.FC = () => {
@@ -41,7 +51,7 @@ const LoginForm: React.FC = () => {
                     if (error.response?.status === 403) {
                         setError("This account is disabled. Please contact the admin for more information.")
                     } else if (error.response?.status === 400) {
-                        setError("Login failed. Please check your credentials");
+                        setError("Username or password is incorrect. Please try again.");
                     }
                     console.error(error);
                 }
@@ -98,7 +108,14 @@ const LoginForm: React.FC = () => {
                 <Typography sx={{ color: 'red', textAlign: 'center', marginBottom: '10px' }}>{error}</Typography>
             )}
 
-            <LoadingButton loading={isFetching} fullWidth size="large" type="submit" variant="contained">
+            <LoadingButton
+                disabled={!(formik.isValid && formik.dirty && !isFetching)}
+                loading={isFetching}
+                fullWidth
+                size="large"
+                type="submit"
+                variant="contained"
+            >
                 Login
             </LoadingButton>
         </form>
