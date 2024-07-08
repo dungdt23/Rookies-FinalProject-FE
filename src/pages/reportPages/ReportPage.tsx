@@ -175,7 +175,7 @@ const ReportPage = () => {
                     <CustomTableCell align="center" colSpan={TABLE_HEAD.length}>
                       <Box sx={{ textAlign: "center" }}>
                         <Typography variant="h6" paragraph>
-                          No results found.
+                        Empty! There are no records.
                         </Typography>
                       </Box>
                     </CustomTableCell>
