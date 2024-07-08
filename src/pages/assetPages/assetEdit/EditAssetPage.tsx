@@ -30,6 +30,8 @@ import { Category } from "../../../types/category";
 import { ListPageState } from "../../../types/common";
 import { toISOStringWithoutTimezone } from "../../../helpers/helper";
 import { RootBox } from "../../../components/form";
+import { HubConnectionBuilder } from "@microsoft/signalr";
+import signalrService from "../../../services/signalr.service";
 dayjs.locale("en");
 
 const isPastDate = (date: any) =>
@@ -95,11 +97,43 @@ const EditAssetPage: FC = () => {
   });
   const navigate = useNavigate();
 
+  useEffect(() => {
+    // const connection = new HubConnectionBuilder()
+    // .withUrl("https://localhost:7106/signalr-hub") 
+    // .build();
+
+    // connection.on("Deleted", (deletedAssetId) => {
+    //   if (deletedAssetId === assetId) {
+    //     navigate("/assets");
+    //   }
+    // });
+
+    // connection.start().catch(err => console.error("Connection failed: ", err));
+
+    // return () => {
+    //   connection.stop();
+    // };
+    const initializeSignalR = async() => {
+      await signalrService.startConnection();
+      signalrService.onDeleted((deletedAssetId) => {
+        if (deletedAssetId === assetId) {
+          navigate("/assets");
+        }
+      });
+    }
+    initializeSignalR();
+    return () => {
+      signalrService.stopConnection();
+    };
+  }, [assetId, navigate]);
+
   const fetchAssetDetails = useCallback(async () => {
     try {
       const response = await fetchAssetById(assetId!);
       const asset = response.data;
-
+      if(asset === null) {
+        navigate(routeNames.notFound);  
+      }
       const formValues = {
         assetName: asset.assetName,
         installedDate: dayjs(asset.installedDate),

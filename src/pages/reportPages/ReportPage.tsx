@@ -13,7 +13,7 @@ import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { CircularProgressWrapper } from "../../components/loading";
 import { RootListBox } from "../../components/styledComponents";
-import { CustomTableCell } from "../../components/table";
+import { CustomTableCell, StyledTableCell } from "../../components/table";
 import CustomTableHead, {
   Order,
   TableHeadInfo,
@@ -189,14 +189,21 @@ const ReportPage = () => {
                 )}
                 {reports.length === 0 && !isFetching && (
                   <TableRow style={{ height: 200 }}>
-                    <CustomTableCell align="center" colSpan={TABLE_HEAD.length}>
-                      <Box sx={{ textAlign: "center" }}>
-                        <Typography variant="h6" paragraph>
-                          No results found.
-                        </Typography>
-                      </Box>
-                    </CustomTableCell>
-                  </TableRow>
+                  <StyledTableCell align="center" colSpan={TABLE_HEAD.length}>
+                    <Box
+                      sx={{
+                        textAlign: "center",
+                      }}
+                    >
+                      <Typography variant="h6" paragraph>
+                        Empty!
+                      </Typography>
+                      <Typography variant="body2">
+                          There are no records  
+                      </Typography>
+                    </Box>
+                  </StyledTableCell>
+                </TableRow>
                 )}
               </TableBody>
             </Table>
