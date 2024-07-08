@@ -3,6 +3,8 @@ import { createContext, ReactNode, useContext, useEffect, useState } from 'react
 import { LocalStorageConstants } from '../constants/localStorage';
 import { ScreenLoader } from '../pages/screenLoader';
 import { JWTPayload } from '../types/user';
+import { useNavigate } from 'react-router-dom';
+import { routeNames } from '../constants/routeName';
 
 interface AuthContextProps {
   user: JWTPayload | null;
@@ -20,6 +22,7 @@ export const logout = () => {
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<JWTPayload | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setLoading(true);
@@ -27,6 +30,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (token) {
       try {
         const decoded = jwtDecode<JWTPayload>(token);
+        const currentTime = Date.now() / 1000;
+        if (decoded.exp < currentTime) {
+          logout()
+          navigate(routeNames.login)
+          return;
+        } 
         setUser(decoded);
         console.log(decoded)
       } catch (error) {
