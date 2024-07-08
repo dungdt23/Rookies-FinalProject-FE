@@ -261,6 +261,7 @@ const ReturnRequestListPage = () => {
                             <Divider sx={{ height: 0, m: 1 }} orientation="vertical" />
                             <DatePicker
                                 format="DD/MM/YYYY"
+                                disableFuture
                                 onAccept={(value) => handleReturnedDateChange(value)}
                                 slotProps={{
                                     field: {
