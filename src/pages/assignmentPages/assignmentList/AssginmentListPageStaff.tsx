@@ -28,36 +28,49 @@ const TABLE_HEAD: TableHeadInfo[] = [
     {
         id: FieldAssignmentFilter[FieldAssignmentFilter.AssetCode],
         label: "Asset Code",
-        sortable: true
+        sortable: true,
+        minWidth: "7rem",
+        width: "10%"
     },
     {
         id: FieldAssignmentFilter[FieldAssignmentFilter.AssetName],
         label: "Asset Name",
-        sortable: true
+        sortable: true,
+        minWidth: "10rem",
     },
     {
         id: FieldAssignmentFilter[FieldAssignmentFilter.AssignedTo],
         label: "Assigned To",
-        sortable: true
+        sortable: true,
+        minWidth: "8rem",
+        width: "10%"
     },
     {
         id: FieldAssignmentFilter[FieldAssignmentFilter.AssignedBy],
         label: "Assigned By",
-        sortable: true
+        sortable: true,
+        minWidth: "8rem",
+        width: "10%"
     },
     {
         id: FieldAssignmentFilter[FieldAssignmentFilter.AssignedDate],
         label: "Assigned Date",
-        sortable: true
+        sortable: true,
+        minWidth: "8rem",
+        width: "10%"
     },
     {
         id: FieldAssignmentFilter[FieldAssignmentFilter.State],
         label: "State",
-        sortable: true
+        sortable: true,
+        minWidth: "8rem",
+        width: "10%"
     },
     {
         id: "action",
         label: "Action",
+        minWidth: "8rem",
+        width: "8rem"
     }
 ]
 
@@ -166,7 +179,7 @@ const AssignmentListPageStaff = () => {
         setSelected(null);
         setRowAnchorEl(null);
         setRespondAnchorEl(null);
-        setCreateReturnRequestDeleteAnchorEl(null); 
+        setCreateReturnRequestDeleteAnchorEl(null);
     };
 
     const respondAssignment = async () => {
@@ -204,11 +217,10 @@ const AssignmentListPageStaff = () => {
             setAlert(`Returning request for assignment of asset ${selected?.assetName} is created`);
             getAssignments();
         } catch (error: any) {
-            if (error.response.status === 409)
-            {
+            if (error.response.status === 409) {
                 setCanCreateReturnRequest(false);
                 console.log('Conflics in business');
-            }    
+            }
             console.error('Error creating return request:', error);
         } finally {
             setIsDisabling(false);
@@ -299,7 +311,7 @@ const AssignmentListPageStaff = () => {
                         loading={isDisabling}
                         type="submit"
                         variant="contained"
-                        onClick = {createReturnReq}
+                        onClick={createReturnReq}
                     >
                         Yes
                     </LoadingButton>
@@ -312,14 +324,14 @@ const AssignmentListPageStaff = () => {
     }
     const renderCannotCreateReturnRequestDialog = (): ReactNode => {
         return (
-          <Box sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-            <Typography variant="body1" gutterBottom>
-              Cannot create a new returning request because this assignment has currently active returning request
-              <br />
-            </Typography>
-          </Box>
+            <Box sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                <Typography variant="body1" gutterBottom>
+                    Cannot create a new returning request because this assignment has currently active returning request
+                    <br />
+                </Typography>
+            </Box>
         );
-      };
+    };
     return (
         <>
             <Helmet>
@@ -426,7 +438,7 @@ const AssignmentListPageStaff = () => {
                 elAnchor={createReturnRequestAnchorEl}
                 open={Boolean(createReturnRequestAnchorEl)}
                 handleClose={handleClosePopover}
-                renderTitle={() => canCreateReturnRequest ? <span>Are you sure?</span> : <span>Can not create a new returning request</span> }
+                renderTitle={() => canCreateReturnRequest ? <span>Are you sure?</span> : <span>Can not create a new returning request</span>}
                 renderDescription={canCreateReturnRequest ? renderReturnRequestCreateDialog : renderCannotCreateReturnRequestDialog}
             >
 

@@ -35,23 +35,33 @@ const AssetHistoryPage: FC = () => {
   const TABLE_HEAD: TableHeadInfo[] = [
     {
       id: "Date",
-      label: "Date"
+      label: "Date",
+      minWidth: "7rem",
+      width: "20%"
     },
     {
       id: "AssignedBy",
-      label: "Assigned By"
+      label: "Assigned By",
+      minWidth: "8rem",
+      width: "20%"
     },
     {
       id: "AssignedTo",
-      label: "Assigned To"
+      label: "Assigned To",
+      minWidth: "8rem",
+      width: "20%"
+
     },
     {
       id: "State",
-      label: "State"
+      label: "State",
+      minWidth: "7rem",
     },
     {
       id: "ReturnDate",
-      label: "Return Date"
+      label: "Return Date",
+      minWidth: "7rem",
+      width: "20%"
     },
   ]
   function onRequestSort(_: string): void {

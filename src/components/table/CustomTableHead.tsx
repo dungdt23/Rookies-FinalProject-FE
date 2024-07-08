@@ -8,7 +8,9 @@ export interface TableHeadInfo {
     id: string,
     label: string,
     sortable?: boolean,
-    disableDivider?: boolean
+    disableDivider?: boolean,
+    minWidth: string,
+    width?: string
 }
 
 export type Order = 'asc' | 'desc';
@@ -39,6 +41,10 @@ const CustomTableHead: FC<TableHeadProps> = ({ columns, order, orderBy, onReques
                 <StyledTableCell
                     key={info.id}
                     onClick={info.sortable ? createSortHandler(info.id) : undefined}
+                    sx={{
+                        minWidth: info.minWidth,
+                        width: info.width ?? 'auto',
+                    }}
                 >
                     <Box
                         sx={{

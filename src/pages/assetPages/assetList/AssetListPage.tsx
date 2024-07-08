@@ -66,25 +66,33 @@ const TABLE_HEAD: TableHeadInfo[] = [
     id: AssetFieldFilter[AssetFieldFilter.assetCode],
     label: "Asset Code",
     sortable: true,
+    minWidth: "7rem",
+    width: "15%"
   },
   {
     id: AssetFieldFilter[AssetFieldFilter.assetName],
     label: "Asset Name",
     sortable: true,
+    minWidth: "7rem",
   },
   {
     id: AssetFieldFilter[AssetFieldFilter.category],
     label: "Category",
     sortable: true,
+    minWidth: "7rem",
   },
   {
     id: AssetFieldFilter[AssetFieldFilter.state],
     label: "State",
     sortable: true,
+    minWidth: "6rem",
+    width: "15%"
   },
   {
     id: "action",
     label: "Action",
+    minWidth: "6rem",
+    width: "6rem"
   },
 ];
 
@@ -171,7 +179,7 @@ const AssetListPage: FC = () => {
   };
 
 
-  
+
   const getCategories = async () => {
     setIsFetchingCategory(true);
     try {
@@ -239,7 +247,7 @@ const AssetListPage: FC = () => {
 
   const renderAssetDetailDialog = (): ReactNode => {
     console.log(selected);
-    
+
     if (!selected) return null;
     const assetDetails = [
       {
@@ -275,7 +283,7 @@ const AssetListPage: FC = () => {
       <Box sx={{ maxWidth: "30rem" }}>
         {assetDetails.map((item) => (
           <Grid container spacing={2} key={item.label}>
-            <Grid item xs={4} sx={{ minWidth: "4rem" }}>
+            <Grid item xs={4} sx={{ minWidth: "6rem" }}>
               <StyledTypography variant="body1" gutterBottom>{item.label}</StyledTypography>
             </Grid>
             <Grid item xs={8}>
@@ -285,26 +293,26 @@ const AssetListPage: FC = () => {
         ))}
         <Divider />
         <Box sx={{ display: 'flex', flexDirection: 'column', mt: 2 }}>
-                <Typography variant="h6">Assignment history:</Typography>
-                {selected.assignments.length > 0 ? (
-                    selected.assignments.map((assignment) => (
-                        <Typography key={assignment.id} variant="body2">
-                            Date: {toStandardFormat(assignment.assignedDate)} | Assigned by: {assignment.assignedBy} | Assigned to: {assignment.assignedTo}
-                        </Typography>
-                    ))
-                ) : (
-                    <Typography variant="body2">
-                        This asset doesn't have any historical assignment.
-                    </Typography>
-                )}
-    {selected.assignments.length > 0 && (
-        <Link to={routeNames.asset.history(selected?.id ?? "")} style={{ textDecoration: "none", marginTop: "16px" }}>
-            <Button variant="contained">
+          <Typography variant="h6">Assignment history:</Typography>
+          {selected.assignments.length > 0 ? (
+            selected.assignments.map((assignment) => (
+              <Typography key={assignment.id} variant="body2">
+                Date: {toStandardFormat(assignment.assignedDate)} | Assigned by: {assignment.assignedBy} | Assigned to: {assignment.assignedTo}
+              </Typography>
+            ))
+          ) : (
+            <Typography variant="body2">
+              This asset doesn't have any historical assignment.
+            </Typography>
+          )}
+          {selected.assignments.length > 0 && (
+            <Link to={routeNames.asset.history(selected?.id ?? "")} style={{ textDecoration: "none", marginTop: "16px" }}>
+              <Button variant="contained">
                 Show More
-            </Button>
-        </Link>
-    )}
-            </Box>
+              </Button>
+            </Link>
+          )}
+        </Box>
       </Box>
     );
   };

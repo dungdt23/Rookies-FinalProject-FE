@@ -33,41 +33,56 @@ const TABLE_HEAD: TableHeadInfo[] = [
     {
         id: 'No',
         label: 'No.',
-        sortable: false
+        sortable: false,
+        minWidth: "3rem",
+        width: "5%"
     },
     {
         id: FieldAssignmentFilter[FieldAssignmentFilter.AssetCode],
         label: "Asset Code",
-        sortable: true
+        sortable: true,
+        minWidth: "7rem",
+        width: "10%"
     },
     {
         id: FieldAssignmentFilter[FieldAssignmentFilter.AssetName],
         label: "Asset Name",
-        sortable: true
+        sortable: true,
+        minWidth: "10rem",
     },
     {
         id: FieldAssignmentFilter[FieldAssignmentFilter.AssignedTo],
         label: "Assigned To",
-        sortable: true
+        sortable: true,
+        minWidth: "8rem",
+        width: "10%"
     },
     {
         id: FieldAssignmentFilter[FieldAssignmentFilter.AssignedBy],
         label: "Assigned By",
-        sortable: true
+        sortable: true,
+        minWidth: "8rem",
+        width: "10%"
     },
     {
         id: FieldAssignmentFilter[FieldAssignmentFilter.AssignedDate],
         label: "Assigned Date",
-        sortable: true
+        sortable: true,
+        minWidth: "8rem",
+        width: "10%"
     },
     {
         id: FieldAssignmentFilter[FieldAssignmentFilter.State],
         label: "State",
-        sortable: true
+        sortable: true,
+        minWidth: "8rem",
+        width: "10%"
     },
     {
         id: "action",
         label: "Action",
+        minWidth: "8rem",
+        width: "8rem"
     }
 ]
 
@@ -392,12 +407,12 @@ const AssignmentListPageAdmin = () => {
     }
     const renderCannotCreateReturnRequestDialog = (): ReactNode => {
         return (
-          <Box sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-            <Typography variant="body1" gutterBottom>
-              Cannot create a new returning request because this assignment has currently active return request
-              <br />
-            </Typography>
-          </Box>
+            <Box sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                <Typography variant="body1" gutterBottom>
+                    Cannot create a new returning request because this assignment has currently active return request
+                    <br />
+                </Typography>
+            </Box>
         );
     };
     return (
@@ -570,7 +585,7 @@ const AssignmentListPageAdmin = () => {
                 elAnchor={createReturnRequestAnchorEl}
                 open={Boolean(createReturnRequestAnchorEl)}
                 handleClose={handleClosePopover}
-                renderTitle={() => canCreateReturnRequest ? <span>Are you sure?</span> : <span>Can not create a new returning request</span> }
+                renderTitle={() => canCreateReturnRequest ? <span>Are you sure?</span> : <span>Can not create a new returning request</span>}
                 renderDescription={canCreateReturnRequest ? renderReturnRequestCreateDialog : renderCannotCreateReturnRequestDialog}
             >
 

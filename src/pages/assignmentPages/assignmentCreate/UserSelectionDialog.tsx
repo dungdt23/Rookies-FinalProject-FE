@@ -26,22 +26,29 @@ const TABLE_HEAD: TableHeadInfo[] = [
     {
         id: "action",
         label: "",
-        disableDivider: true
+        disableDivider: true,
+        minWidth: "3rem",
+        width: "3rem"
     },
     {
         id: UserFieldFilter[UserFieldFilter.staffCode],
         label: "Staff Code",
-        sortable: true
+        sortable: true,
+        minWidth: "7rem",
+        width: "20%"
     },
     {
         id: UserFieldFilter[UserFieldFilter.fullName],
         label: "Full Name",
-        sortable: true
+        sortable: true,
+        minWidth: "10rem",
     },
     {
         id: UserFieldFilter[UserFieldFilter.type],
         label: "Type",
-        sortable: true
+        sortable: true,
+        minWidth: "7rem",
+        width: "20%"
     },
 ]
 
@@ -153,7 +160,7 @@ const UserSelectionDialog: FC<UserSelectionDialogProps> = ({ open, handleClose, 
                 "& .MuiDialog-container": {
                     "& .MuiPaper-root": {
                         width: "100%",
-                        minWidth: "50rem",  // Set your width here
+                        minWidth: "80dvw",  // Set your width here
                     },
                 },
             }}
@@ -222,7 +229,7 @@ const UserSelectionDialog: FC<UserSelectionDialogProps> = ({ open, handleClose, 
                                                 </Box>
                                             </CustomTableCell>
                                         </TableRow>
-                                    )} 
+                                    )}
                                 </StyleTableBody>
                             </StyleTable>
                         </Box>

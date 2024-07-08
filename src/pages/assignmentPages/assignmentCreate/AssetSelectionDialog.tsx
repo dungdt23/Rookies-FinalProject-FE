@@ -26,22 +26,29 @@ const TABLE_HEAD: TableHeadInfo[] = [
     {
         id: "action",
         label: "",
-        disableDivider: true
+        disableDivider: true,
+        minWidth: "3rem",
+        width: "3rem"
     },
     {
         id: AssetFieldFilter[AssetFieldFilter.assetCode],
         label: "Asset Code",
         sortable: true,
+        minWidth: "7rem",
+        width: "20%"
     },
     {
         id: AssetFieldFilter[AssetFieldFilter.assetName],
         label: "Asset Name",
         sortable: true,
+        minWidth: "7rem",
     },
     {
         id: AssetFieldFilter[AssetFieldFilter.category],
         label: "Category",
         sortable: true,
+        minWidth: "7rem",
+        width: "30%"
     },
 ]
 
@@ -101,7 +108,7 @@ const AssetSelectionDialog: FC<AssetSelectionDialogProps> = ({ open, handleClose
             getAssets();
         }
     }, [open])
-    
+
     const handleCancelClick = () => {
         handleClose()
         onClose()
@@ -155,7 +162,7 @@ const AssetSelectionDialog: FC<AssetSelectionDialogProps> = ({ open, handleClose
                 "& .MuiDialog-container": {
                     "& .MuiPaper-root": {
                         width: "100%",
-                        minWidth: "50rem",  // Set your width here
+                        minWidth: "80dvw",  // Set your width here
                     },
                 },
             }}
