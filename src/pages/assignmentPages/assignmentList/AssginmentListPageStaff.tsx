@@ -377,10 +377,16 @@ const AssignmentListPageStaff = () => {
                                                 onClick={(event) => handleDeleteClick(event, assignment)}>
                                                 <Close color={assignment.state === AssignmentState.WaitingForAcceptance ? "primary" : "disabled"} />
                                             </IconButton>
-                                            <IconButton disabled={assignment.state === AssignmentState.WaitingForAcceptance}
-                                                onClick={(event) => handleCreateReturnRequest(event, assignment)}>
-                                                <Refresh color={assignment.state !== AssignmentState.WaitingForAcceptance ? "info" : "disabled"} />
-                                            </IconButton>
+                                            {assignment.activeReturnRequestId ?
+                                                (<IconButton disabled
+                                                    onClick={(event) => handleCreateReturnRequest(event, assignment)}>
+                                                    <Refresh color="disabled" />
+                                                </IconButton>) :
+                                                (<IconButton disabled={assignment.state !== AssignmentState.Accepted}
+                                                    onClick={(event) => handleCreateReturnRequest(event, assignment)}>
+                                                    <Refresh color={(assignment.state === AssignmentState.Accepted) ? "info" : "disabled"} />
+                                                </IconButton>)
+                                            }
                                         </StyledTableCell>
                                     </ClickableTableRow>
                                 ))}

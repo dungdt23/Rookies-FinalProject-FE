@@ -16,9 +16,17 @@ interface ChangePasswordFirstTimeDialogProps {
 }
 
 const lengthMessage = 'Password length should be from 8 - 20 characters'
+const noTrailingWhitespaceMessage = 'Password should not have leading or trailing spaces';
+
 
 const requiredValidationSchema = yup.object({
-    password: yup.string().required("Please enter your new password").min(8, lengthMessage).max(20, lengthMessage),
+    password: yup.string()
+    .required("Please enter your new password")
+    .min(8, lengthMessage)
+    .max(20, lengthMessage)
+    .test('no-trailing-whitespace', noTrailingWhitespaceMessage, value => {
+        return value  === value?.trim();
+    }),
 });
 
 const ChangePasswordFirstTimeDialog: FC<ChangePasswordFirstTimeDialogProps> = ({ open, user, login, setOpen }) => {
@@ -39,14 +47,14 @@ const ChangePasswordFirstTimeDialog: FC<ChangePasswordFirstTimeDialogProps> = ({
         onSubmit: async (values) => {
             setIsFetching(true);
             const payload = {
-                newPassword: values.password,
+                newPassword: values.password.trim(),
             } as ChangePasswordFirstTimeRequest
             try {
                 await changePasswordFirstTime(payload);
 
                 const loginPayload: LoginRequest = {
                     userName: user ? user.username : "No token found",
-                    password: values.password,
+                    password: values.password.trim(),
                 };
                 const response = await loginPost(loginPayload);
                 login(response.data.token);

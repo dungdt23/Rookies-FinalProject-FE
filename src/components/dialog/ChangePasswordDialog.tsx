@@ -17,13 +17,28 @@ interface ChangePasswordDialogProps {
 
 const lengthMessage = 'Password length should be from 8 - 20 characters'
 const samePasswordMessage = 'New password should not be the same as old password'
+const noTrailingWhitespaceMessage = 'Password should not have leading or trailing spaces';
+
 
 const validationSchema = yup.object({
-    oldPassword: yup.string().required("Please enter your old password").min(8, lengthMessage).max(20, lengthMessage),
-    newPassword: yup.string().required("Please enter your new password").min(8, lengthMessage).max(20, lengthMessage).notOneOf([yup.ref('oldPassword')], samePasswordMessage)
+    oldPassword: yup.string()
+        .required("Please enter your old password")
+        .min(8, lengthMessage)
+        .max(20, lengthMessage)
+        .test('no-trailing-whitespace', noTrailingWhitespaceMessage, value => {
+            return value === value?.trim();
+        }),
+    newPassword: yup.string()
+        .required("Please enter your new password")
+        .min(8, lengthMessage)
+        .max(20, lengthMessage)
+        .notOneOf([yup.ref('oldPassword')], samePasswordMessage)
+        .test('no-trailing-whitespace', noTrailingWhitespaceMessage, value => {
+            return value === value?.trim();
+        }),
 });
 
-const ChangePasswordDialog: FC<ChangePasswordDialogProps> = ({open, user, login, setOpen }) => {
+const ChangePasswordDialog: FC<ChangePasswordDialogProps> = ({ open, user, login, setOpen }) => {
     const [showOldPassword, setShowOldPassword] = useState<boolean>(false);
     const [showNewPassword, setShowNewPassword] = useState<boolean>(false);
     const [isFetching, setIsFetching] = useState<boolean>(false);
@@ -39,14 +54,14 @@ const ChangePasswordDialog: FC<ChangePasswordDialogProps> = ({open, user, login,
             setIsFetching(true);
             try {
                 const payload: ChangePasswordRequest = {
-                    oldPassword: values.oldPassword,
-                    newPassword: values.newPassword
+                    oldPassword: values.oldPassword.trim(),
+                    newPassword: values.newPassword.trim()
                 };
                 await changePassword(payload);
 
                 const loginPayload: LoginRequest = {
                     userName: user ? user.username : "No token found",
-                    password: values.newPassword,
+                    password: values.newPassword.trim(),
                 };
                 const response = await loginPost(loginPayload);
                 login(response.data.token);
