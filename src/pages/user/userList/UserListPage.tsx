@@ -62,29 +62,40 @@ const TABLE_HEAD: TableHeadInfo[] = [
     id: UserFieldFilter[UserFieldFilter.staffCode],
     label: "Staff Code",
     sortable: true,
+    minWidth: "6rem",
+    width: "15%"
   },
   {
     id: UserFieldFilter[UserFieldFilter.fullName],
     label: "Full Name",
     sortable: true,
+    minWidth: "12rem",
   },
   {
     id: "username",
     label: "Username",
+    minWidth: "4rem",
+    width: "15%"
   },
   {
     id: UserFieldFilter[UserFieldFilter.joinedDate],
     label: "Joined Date",
     sortable: true,
+    minWidth: "7rem",
+    width: "15%"
   },
   {
     id: UserFieldFilter[UserFieldFilter.type],
     label: "Type",
     sortable: true,
+    minWidth: "6rem",
+    width: "15%"
   },
   {
     id: "action",
     label: "Action",
+    minWidth: "6rem",
+    width: "6rem"
   },
 ];
 
@@ -418,6 +429,7 @@ const UserListPage: FC = () => {
                   >
                     <CustomTableCell
                       onClick={(event) => handleRowClick(event, user)}
+
                     >
                       {user.staffCode}
                     </CustomTableCell>

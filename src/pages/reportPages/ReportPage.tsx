@@ -42,32 +42,49 @@ const TABLE_HEAD: TableHeadInfo[] = [
     id: TypeReportSort[TypeReportSort.CategoryName],
     label: "Category Name",
     sortable: true,
+    minWidth: "10rem",
   },
-  { id: TypeReportSort[TypeReportSort.Total], label: "Total", sortable: true },
+  {
+    id: TypeReportSort[TypeReportSort.Total],
+    label: "Total",
+    sortable: true,
+    minWidth: "4rem",
+    width: "7%"
+  },
   {
     id: TypeReportSort[TypeReportSort.Assigned],
     label: "Assigned",
     sortable: true,
+    minWidth: "5rem",
+    width: "7%"
   },
   {
     id: TypeReportSort[TypeReportSort.Available],
     label: "Available",
     sortable: true,
+    minWidth: "5rem",
+    width: "7%"
   },
   {
     id: TypeReportSort[TypeReportSort.NotAvailable],
     label: "Not Available",
     sortable: true,
+    minWidth: "7rem",
+    width: "7%"
   },
   {
     id: TypeReportSort[TypeReportSort.WaitingForRecycling],
     label: "Waiting for Recycling",
     sortable: true,
+    minWidth: "11rem",
+    width: "7%"
   },
   {
     id: TypeReportSort[TypeReportSort.Recycled],
     label: "Recycled",
     sortable: true,
+    minWidth: "5rem",
+    width: "7%"
   },
 ];
 
@@ -134,7 +151,7 @@ const ReportPage = () => {
       <RootListBox sx={{ mb: "1rem" }}>
         <Typography variant="h5" color="primary">
           Report
-        </Typography>        
+        </Typography>
         <ExportButton
           variant="contained"
           color="primary"
@@ -157,14 +174,14 @@ const ReportPage = () => {
                 {reports.map((report) => (
                   <TableRow key={report.categoryName}>
                     <CustomTableCell>{report.categoryName}</CustomTableCell>
-                    <CustomTableCell>{report.total}</CustomTableCell>
-                    <CustomTableCell>{report.assigned}</CustomTableCell>
-                    <CustomTableCell>{report.available}</CustomTableCell>
-                    <CustomTableCell>{report.notAvailable}</CustomTableCell>
-                    <CustomTableCell>
+                    <CustomTableCell sx={{ textAlign: "right" }}>{report.total}</CustomTableCell>
+                    <CustomTableCell sx={{ textAlign: "right" }}>{report.assigned}</CustomTableCell>
+                    <CustomTableCell sx={{ textAlign: "right" }}>{report.available}</CustomTableCell>
+                    <CustomTableCell sx={{ textAlign: "right" }}>{report.notAvailable}</CustomTableCell>
+                    <CustomTableCell sx={{ textAlign: "right" }}>
                       {report.waitingForRecycling}
                     </CustomTableCell>
-                    <CustomTableCell>{report.recycled}</CustomTableCell>
+                    <CustomTableCell sx={{ textAlign: "right" }}>{report.recycled}</CustomTableCell>
                   </TableRow>
                 ))}
                 {reports.length === 0 && isFetching && (

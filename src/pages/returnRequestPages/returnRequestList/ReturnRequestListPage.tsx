@@ -22,46 +22,63 @@ const TABLE_HEAD: TableHeadInfo[] = [
     {
         id: 'No',
         label: 'No.',
-        sortable: false
+        sortable: false,
+        minWidth: "3rem",
+        width: "5%"
     },
     {
         id: FieldReturnRequestFilter[FieldReturnRequestFilter.AssetCode],
         label: "Asset Code",
-        sortable: true
+        sortable: true,
+        minWidth: "7rem",
+        width: "8%"
     },
     {
         id: FieldReturnRequestFilter[FieldReturnRequestFilter.AssetName],
         label: "Asset Name",
-        sortable: true
+        sortable: true,
+        minWidth: "10rem",
     },
     {
         id: FieldReturnRequestFilter[FieldReturnRequestFilter.RequestedBy],
         label: "Requested By",
-        sortable: true
+        sortable: true,
+        minWidth: "8rem",
+        width: "8%"
     },
     {
         id: FieldReturnRequestFilter[FieldReturnRequestFilter.AssignedDate],
         label: "Assigned Date",
-        sortable: true
+        sortable: true,
+        minWidth: "8rem",
+        width: "8%"
     },
     {
         id: FieldReturnRequestFilter[FieldReturnRequestFilter.AcceptedBy],
         label: "Accepted By",
-        sortable: true
+        sortable: true,
+        minWidth: "8rem",
+        width: "8%"
     },
     {
         id: FieldReturnRequestFilter[FieldReturnRequestFilter.ReturnedDate],
         label: "Returned Date",
-        sortable: true
+        sortable: true,
+        minWidth: "8rem",
+        width: "8%"
     },
     {
         id: FieldReturnRequestFilter[FieldReturnRequestFilter.State],
         label: "State",
-        sortable: true
+        sortable: true,
+        minWidth: "8rem",
+        width: "8%"
     },
     {
         id: "action",
         label: "Action",
+        minWidth: "5rem",
+        width: "5rem"
     }
 ]
 
