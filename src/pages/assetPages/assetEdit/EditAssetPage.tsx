@@ -96,28 +96,16 @@ const EditAssetPage: FC = () => {
     state: AssetState.Available,
   });
   const navigate = useNavigate();
-
+  const [deletedAssetCode, setDeletedAssetCode] = useState<string>("");
   useEffect(() => {
-    // const connection = new HubConnectionBuilder()
-    // .withUrl("https://localhost:7106/signalr-hub") 
-    // .build();
-
-    // connection.on("Deleted", (deletedAssetId) => {
-    //   if (deletedAssetId === assetId) {
-    //     navigate("/assets");
-    //   }
-    // });
-
-    // connection.start().catch(err => console.error("Connection failed: ", err));
-
-    // return () => {
-    //   connection.stop();
-    // };
     const initializeSignalR = async() => {
       await signalrService.startConnection();
       signalrService.onDeleted((deletedAssetId) => {
         if (deletedAssetId === assetId) {
-          navigate("/assets");
+          const listAssetPageState = {
+            alertString: `You are sent back to manage page because the asset ${deletedAssetCode} was deleted by another admin!`,
+          } as ListPageState<Asset>
+          navigate(routeNames.asset.list, { state: listAssetPageState });
         }
       });
     }
@@ -125,7 +113,7 @@ const EditAssetPage: FC = () => {
     return () => {
       signalrService.stopConnection();
     };
-  }, [assetId, navigate]);
+  }, [assetId, navigate, deletedAssetCode]);
 
   const fetchAssetDetails = useCallback(async () => {
     try {
@@ -140,7 +128,8 @@ const EditAssetPage: FC = () => {
         specification: asset.specification,
         state: asset.state,
       };
-
+      
+      setDeletedAssetCode(asset.assetCode);
       setInitialValues(formValues);
       formik.setValues(formValues);
 

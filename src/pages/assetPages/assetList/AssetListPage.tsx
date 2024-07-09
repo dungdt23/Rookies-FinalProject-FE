@@ -297,7 +297,7 @@ const AssetListPage: FC = () => {
           {selected.assignments.length > 0 ? (
             selected.assignments.map((assignment) => (
               <Typography key={assignment.id} variant="body2">
-                Date: {toStandardFormat(assignment.assignedDate)} | Assigned by: {assignment.assignedBy} | Assigned to: {assignment.assignedTo}
+                Assigned Date: {toStandardFormat(assignment.assignedDate)} | Assigned by: {assignment.assignedBy} | Assigned to: {assignment.assignedTo}
               </Typography>
             ))
           ) : (

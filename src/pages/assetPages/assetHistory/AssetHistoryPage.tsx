@@ -32,12 +32,14 @@ const AssetHistoryPage: FC = () => {
   const [page, setPage] = useState<number>(1);
   const [pageSize] = useState<number>(10);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isDateAscending, setIsDateAscending] = useState<boolean>(true);
   const TABLE_HEAD: TableHeadInfo[] = [
     {
       id: "Date",
-      label: "Date",
+      label: "Assigned Date",
       minWidth: "7rem",
-      width: "20%"
+      width: "20%",    
+      sortable: true
     },
     {
       id: "AssignedBy",
@@ -64,15 +66,17 @@ const AssetHistoryPage: FC = () => {
       width: "20%"
     },
   ]
-  function onRequestSort(_: string): void {
-
+  function onRequestSort(property: string): void {
+    if (property === 'Date') {
+      setIsDateAscending(!isDateAscending);
+    }
   }
   useEffect(() => {
     const getAssignments = async () => {
       setIsLoading(true);
       try {
         const data: PaginateResponse<HistoricalAssignment> =
-          await fetchAssetHistory(assetId ?? "", page, pageSize);
+          await fetchAssetHistory(assetId ?? "", isDateAscending, page, pageSize);
         console.log(data);
         setAssignments(data.data);
         setAssetName(data.data[0].assetName);
@@ -86,7 +90,7 @@ const AssetHistoryPage: FC = () => {
     };
 
     getAssignments();
-  }, [assetId, page, pageSize]);
+  }, [assetId, isDateAscending, page, pageSize]);
 
   const handlePageChange = (_: unknown, newPage: number) => {
     setPage(newPage);
@@ -106,8 +110,8 @@ const AssetHistoryPage: FC = () => {
           <Table>
             <CustomTableHead
               columns={TABLE_HEAD}
-              order={'asc'}
-              orderBy={'asc'}
+              order={isDateAscending ? 'asc' : 'desc'}
+              orderBy={'Date'}
               onRequestSort={onRequestSort}
             />
             <TableBody>
