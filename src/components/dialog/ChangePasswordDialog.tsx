@@ -185,7 +185,7 @@ const ChangePasswordDialog: FC<ChangePasswordDialogProps> = ({ open, user, login
 
 
     const handleCloseChangePassword: DialogProps["onClose"] = (_, reason) => {
-        if (reason && reason === "backdropClick")
+        if (reason && reason === "backdropClick" && isFetching)
             return;
         setOpen(false);
     }
