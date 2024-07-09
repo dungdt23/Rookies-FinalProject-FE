@@ -57,9 +57,9 @@ export const deleteAssetById = async (id: string): Promise<boolean> => {
     }
 };
 
-export const fetchAssetHistory = async (assetId: string, isDateAscending: boolean, index: number = 1, size: number = 10): Promise<PaginateResponse<HistoricalAssignment>> => {
+export const fetchAssetHistory = async (assetId: string, isDateDescending: boolean, index: number = 1, size: number = 10): Promise<PaginateResponse<HistoricalAssignment>> => {
     const response = await axiosInstance.get(`${apiEndpoints.ASSIGNMENT.HISTORY(assetId)}`, {
-        params: { isDateAscending: isDateAscending, index: index, size: size }
+        params: { isDateDescending: isDateDescending, index: index, size: size }
     });
     return response.data;
 }
