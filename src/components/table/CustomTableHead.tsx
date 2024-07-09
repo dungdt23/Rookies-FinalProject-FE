@@ -55,7 +55,7 @@ const CustomTableHead: FC<TableHeadProps> = ({ columns, order, orderBy, onReques
                         <TableSortLabel
                             active={info.sortable}
                             hideSortIcon={info.sortable}
-                            direction={orderBy === info.id ? order : 'asc'}
+                            direction={orderBy === info.id ? order : 'desc'}
                             IconComponent={ArrowDropDown}
                             sx={{
                                 '&.MuiTableSortLabel-root': {
