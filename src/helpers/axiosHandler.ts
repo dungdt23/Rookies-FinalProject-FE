@@ -2,13 +2,13 @@
 import { AxiosError, AxiosResponse } from 'axios';
 import { NavigateFunction } from 'react-router-dom';
 import { routeNames } from '../constants/routeName';
-import { logout } from '../contexts/AuthContext';
 import { ApiResponse } from '../services/user.service';
 
 export const handleResponseError = (
     error: AxiosError,
     showSnackbar: (message: string, severity?: 'error' | 'warning' | 'info' | 'success') => void,
-    navigate: NavigateFunction
+    navigate: NavigateFunction,
+    logout: () => void
 ) => {
     console.log(error);
 
@@ -29,12 +29,12 @@ export const handleResponseError = (
         console.error('Unauthorized, redirecting to login...');
         showSnackbar('Unauthorized, redirecting to login...', 'error');
         logout();
-        window.location.href = routeNames.login;
+        navigate(routeNames.login);
     }
 
     if (status === 500) {
         showSnackbar('Server error, redirecting...', 'error');
-        window.location.href = routeNames.serverError;
+        navigate(routeNames.serverError);
     }
 
     const responseData = error.response.data as ApiResponse<any>;

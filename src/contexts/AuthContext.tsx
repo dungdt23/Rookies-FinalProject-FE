@@ -15,10 +15,6 @@ interface AuthContextProps {
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 
-export const logout = () => {
-  localStorage.removeItem(LocalStorageConstants.TOKEN);
-}
-
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<JWTPayload | null>(null);
   const [loading, setLoading] = useState<boolean>(true);

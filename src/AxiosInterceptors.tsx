@@ -19,7 +19,7 @@ const firstTimeApiEndpointsWhiteList = [
 
 const AxiosInterceptors: FC<AxiosInterceptorsProps> = ({ children }) => {
     const { showSnackbar } = useSnackbar();
-    const { user } = useAuth();
+    const { user, logout } = useAuth();
     const navigate = useNavigate();
     // useEffect(() => {
     axiosInstance.interceptors.request.clear();
@@ -58,7 +58,7 @@ const AxiosInterceptors: FC<AxiosInterceptorsProps> = ({ children }) => {
 
     const responseInterceptor = axiosInstance.interceptors.response.use(
         (response) => handleResponseSuccess(response),
-        (error) => handleResponseError(error, showSnackbar, navigate)
+        (error) => handleResponseError(error, showSnackbar, navigate, logout)
     );
 
 

@@ -1,10 +1,9 @@
+import { LoadingButton } from "@mui/lab";
+import { Box, Button, Typography } from "@mui/material";
 import { FC, ReactNode } from "react";
-import { logout } from "../../contexts/AuthContext";
-import CustomDialog from "./CustomDialog";
 import { useNavigate } from "react-router-dom";
 import { routeNames } from "../../constants/routeName";
-import { LoadingButton } from "@mui/lab";
-import { Box, Typography, Button } from "@mui/material";
+import CustomDialog from "./CustomDialog";
 
 interface LogOutDialogProps{
     open: boolean;
