@@ -11,6 +11,8 @@ export default defineConfig({
                 preventAssignment: true,
                 values: {
                     'console.log': '(()=>{})',
+                    'console.warn': '(()=>{})',
+                    'console.error': '(()=>{})',
                 },
             }),
             apply: 'build', // Apply only in build mode
