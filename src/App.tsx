@@ -9,6 +9,7 @@ import { theme } from './constants/appTheme';
 import { AuthProvider } from './contexts/AuthContext';
 import { SnackbarProvider } from './contexts/SnackbarContext';
 import AppRouter from './routes/AppRouter';
+import AxiosInterceptors from './AxiosInterceptors';
 // Initialize dayjs to handle dates in local timezone without timezone adjustments
 dayjs.locale('en'); // Set the locale as needed
 const App: FC = () => {
@@ -19,7 +20,9 @@ const App: FC = () => {
           <SnackbarProvider>
             <BrowserRouter>
               <AuthProvider>
-                <AppRouter />
+                <AxiosInterceptors>
+                  <AppRouter />
+                </AxiosInterceptors>
               </AuthProvider>
             </BrowserRouter>
           </SnackbarProvider>

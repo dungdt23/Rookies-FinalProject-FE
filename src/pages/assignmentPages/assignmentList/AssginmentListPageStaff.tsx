@@ -19,6 +19,7 @@ import { Assignment, AssignmentState } from "../../../types/assignment";
 import { ListPageState } from "../../../types/common";
 import { CreateReturnRequestRequest, createReturnRequest } from "../../../services/returnRequest.service";
 import { RootListBox } from "../../../components/styledComponents";
+import axios, { AxiosError } from "axios";
 
 const StyledTableContainer = styled(TableContainer)(() => ({
     border: '0px',
@@ -119,7 +120,7 @@ const AssignmentListPageStaff = () => {
             _setAssignments(data.data);
             setTotalCount(data.totalCount)
         } catch (error: any) {
-            if (error.response.data.statusCode === 404) {
+            if (axios.isAxiosError(error) && error.response?.data.statusCode === 404) {
                 _setAssignments([]);
             }
         } finally {
