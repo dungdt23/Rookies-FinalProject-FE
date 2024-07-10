@@ -1,6 +1,9 @@
 import { Outlet } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
 import { Logo } from '../../components/logo';
+import { useSnackbar } from '../../contexts/SnackbarContext';
+import axiosInstance from '../../services/axios';
+import { handleResponseError, handleResponseSuccess } from '../../helpers/axiosHandler';
 
 const StyledHeader = styled('header')(({ theme }) => ({
   top: 0,
@@ -15,10 +18,16 @@ const StyledHeader = styled('header')(({ theme }) => ({
 }));
 
 export default function SimpleLayout() {
+  const { showSnackbar } = useSnackbar();
+
+  axiosInstance.interceptors.response.use(
+    (response) => handleResponseSuccess(response, showSnackbar),
+    (error) => handleResponseError(error, showSnackbar)
+  );
   return (
     <>
       <StyledHeader>
-        <Logo sx={{maxWidth: '5rem'}} />
+        <Logo sx={{ maxWidth: '5rem' }} />
       </StyledHeader>
 
       <Outlet />
