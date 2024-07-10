@@ -29,12 +29,12 @@ export const handleResponseError = (
         console.error('Unauthorized, redirecting to login...');
         showSnackbar('Unauthorized, redirecting to login...', 'error');
         logout();
-        navigate(routeNames.login);
+        window.location.href = routeNames.login;
     }
 
     if (status === 500) {
         showSnackbar('Server error, redirecting...', 'error');
-        navigate(routeNames.serverError);
+        window.location.href = routeNames.serverError;
     }
 
     const responseData = error.response.data as ApiResponse<any>;
