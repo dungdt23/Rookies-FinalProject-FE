@@ -1,5 +1,5 @@
-import { Outlet } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
+import { Outlet } from 'react-router-dom';
 import { Logo } from '../../components/logo';
 
 const StyledHeader = styled('header')(({ theme }) => ({
@@ -18,7 +18,7 @@ export default function SimpleLayout() {
   return (
     <>
       <StyledHeader>
-        <Logo sx={{maxWidth: '5rem'}} />
+        <Logo sx={{ maxWidth: '5rem' }} />
       </StyledHeader>
 
       <Outlet />
