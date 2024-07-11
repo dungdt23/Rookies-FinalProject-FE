@@ -30,6 +30,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         if (decoded.exp < currentTime) {
           logout()
           navigate(routeNames.login)
+          setLoading(false);
           return;
         } 
         setUser(decoded);
