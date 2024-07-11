@@ -27,17 +27,21 @@ export const handleResponseError = (
 
     if (status === 401 && window.location.pathname !== routeNames.login) {
         console.error('Unauthorized, redirecting to login...');
-        showSnackbar('Unauthorized, redirecting to login...', 'error');
         logout();
         navigate(routeNames.login);
+        showSnackbar('Unauthorized, redirecting to login...', 'error');
+        return Promise.reject(error);
     }
 
     if (status === 500) {
         showSnackbar('Server error, redirecting...', 'error');
         navigate(routeNames.serverError);
+        return Promise.reject(error);
     }
 
-    const responseData = error.response.data as ApiResponse<any>;
+    console.log(status === 401);
+    
+    const responseData = error.response.data as ApiResponse<any> | null;
     showSnackbar(`Error ${status}: ${responseData?.message ?? "Something went wrong"}`, 'error');
     return Promise.reject(error);
 };
