@@ -44,7 +44,7 @@ const validationSchema = yup.object({
         .required('Please enter last name')
         .matches(unicodeAlphabetRegex, 'Last name should contain alphabetic characters.')
         .min(2, 'The last name length should be 2-100 characters')
-        .max(100, 'The Last Name length should be 2-100 characters'),
+        .max(100, 'The last name length should be 2-100 characters'),
     dateOfBirth: yup.mixed()
         .required('Please choose date of birth')
         .test('is-valid', 'Please enter a valid date.', function (value) {
