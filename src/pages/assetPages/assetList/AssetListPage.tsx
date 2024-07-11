@@ -275,6 +275,7 @@ const AssetListPage: FC = () => {
         value: addSpacesToCamelCase(AssetState[selected?.state]),
       },
     ];
+
     return (
       <Box sx={{ maxWidth: "30rem" }}>
         {assetDetails.map((item) => (
@@ -302,11 +303,20 @@ const AssetListPage: FC = () => {
             </Typography>
           )}
           {selected.assignments.length > 0 && (
-            <Link to={routeNames.asset.history(selected?.id ?? "")} style={{ textDecoration: "none", marginTop: "16px" }}>
-              <Button variant="contained">
-                Show More
-              </Button>
-            </Link>
+        <div style={{ marginTop: '16px', display: 'inline-block' }}>
+        <Link
+          to={routeNames.asset.history(selected?.id ?? '')}
+          style={{
+            textDecoration: 'none',
+            display: 'block', 
+            width: '30%', 
+          }}
+        >
+          <Button variant="contained" style={{ width: '100%' }}>
+            Show More
+          </Button>
+        </Link>
+      </div>
           )}
         </Box>
       </Box>
