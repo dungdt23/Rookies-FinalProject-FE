@@ -12,10 +12,8 @@ import {
   Pagination,
   Select,
   SelectChangeEvent,
-  TableContainer,
   TableRow,
-  Typography,
-  styled
+  Typography
 } from "@mui/material";
 import { FC, MouseEvent, ReactNode, useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
@@ -24,6 +22,7 @@ import { SearchBar } from "../../../components/form";
 import { CircularProgressWrapper } from "../../../components/loading";
 import { NoStyleLink } from "../../../components/noStyleLink";
 import { ListPopper } from "../../../components/popover";
+import { RootListBox } from "../../../components/styledComponents";
 import {
   ClickableTableRow,
   CustomTableCell,
@@ -31,6 +30,7 @@ import {
   StyleTable,
   StyleTableBody,
   StyledTableCell,
+  StyledTableContainer,
 } from "../../../components/table";
 import {
   Order,
@@ -51,11 +51,6 @@ import {
 import { ListPageState } from "../../../types/common";
 import { User, UserGender, UserType } from "../../../types/user";
 import CannotDisableYourPopper from "./CannotDisableYourselfPopper";
-import { RootListBox } from "../../../components/styledComponents";
-
-const StyledTableContainer = styled(TableContainer)(() => ({
-  border: "0px",
-}));
 
 const TABLE_HEAD: TableHeadInfo[] = [
   {

@@ -4,16 +4,15 @@ import {
   Pagination,
   Table,
   TableBody,
-  TableContainer,
   TableRow,
   Typography,
-  styled,
+  styled
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { CircularProgressWrapper } from "../../components/loading";
 import { RootListBox } from "../../components/styledComponents";
-import { CustomTableCell, StyledTableCell } from "../../components/table";
+import { CustomTableCell, StyledTableCell, StyledTableContainer } from "../../components/table";
 import CustomTableHead, {
   Order,
   TableHeadInfo,
@@ -26,10 +25,6 @@ import {
   fetchReport,
 } from "../../services/report.service";
 import { ReportResponse } from "../../types/report";
-
-const StyledTableContainer = styled(TableContainer)(() => ({
-  border: "0px",
-}));
 
 const ExportButton = styled(Button)(() => ({
   padding: "1rem 2rem",

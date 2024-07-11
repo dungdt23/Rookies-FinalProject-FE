@@ -1,13 +1,15 @@
 import { Check, Close, Refresh } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
-import { Alert, Box, Button, Grid, IconButton, Pagination, Table, TableBody, TableContainer, TableRow, Typography, styled } from "@mui/material";
+import { Alert, Box, Button, Grid, IconButton, Pagination, Table, TableBody, TableRow, Typography } from "@mui/material";
+import axios from "axios";
 import dayjs, { Dayjs } from "dayjs";
 import { MouseEvent, ReactNode, useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useLocation } from "react-router-dom";
 import { CircularProgressWrapper } from "../../../components/loading";
 import { ListPopper } from "../../../components/popover";
-import { ClickableTableRow, CustomTableCell, StyledTableCell } from "../../../components/table";
+import { RootListBox } from "../../../components/styledComponents";
+import { ClickableTableRow, CustomTableCell, StyledTableCell, StyledTableContainer } from "../../../components/table";
 import CustomTableHead, { Order, TableHeadInfo } from "../../../components/table/CustomTableHead";
 import { StyledTypography } from "../../../components/typography";
 import { theme } from "../../../constants/appTheme";
@@ -15,15 +17,9 @@ import { toStandardFormat } from "../../../helpers/formatDate";
 import { addSpacesToCamelCase } from "../../../helpers/helper";
 import { removeUndefinedValues } from "../../../helpers/removeUndefined";
 import { FieldAssignmentFilter, GetAllAssignmentParams, RespondAssignmentRequest, fetchAllAssignments, respondAssignmentById } from "../../../services/assignment.service";
+import { CreateReturnRequestRequest, createReturnRequest } from "../../../services/returnRequest.service";
 import { Assignment, AssignmentState } from "../../../types/assignment";
 import { ListPageState } from "../../../types/common";
-import { CreateReturnRequestRequest, createReturnRequest } from "../../../services/returnRequest.service";
-import { RootListBox } from "../../../components/styledComponents";
-import axios, { AxiosError } from "axios";
-
-const StyledTableContainer = styled(TableContainer)(() => ({
-    border: '0px',
-}))
 
 const TABLE_HEAD: TableHeadInfo[] = [
     {
@@ -213,7 +209,7 @@ const AssignmentListPageStaff = () => {
             const payload = {
                 assignmentId: selected?.id
             } as CreateReturnRequestRequest;
-            const response = await createReturnRequest(payload);
+            await createReturnRequest(payload);
             handleClosePopover();
             setAlert(`Returning request for assignment of asset ${selected?.assetName} is created`);
             getAssignments();

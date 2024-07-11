@@ -13,12 +13,10 @@ import {
   Pagination,
   Select,
   SelectChangeEvent,
-  styled,
   Table,
   TableBody,
-  TableContainer,
   TableRow,
-  Typography,
+  Typography
 } from "@mui/material";
 import { FC, MouseEvent, ReactNode, useEffect, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
@@ -30,16 +28,19 @@ import LoadingSelect, {
 import { CircularProgressWrapper } from "../../../components/loading";
 import { NoStyleLink } from "../../../components/noStyleLink";
 import { ListPopper } from "../../../components/popover";
+import { RootListBox } from "../../../components/styledComponents";
 import {
   ClickableTableRow,
   CustomTableCell,
   CustomTableHead,
   StyledTableCell,
+  StyledTableContainer,
 } from "../../../components/table";
 import {
   Order,
   TableHeadInfo,
 } from "../../../components/table/CustomTableHead";
+import { StyledTypography } from "../../../components/typography";
 import { theme } from "../../../constants/appTheme";
 import { routeNames } from "../../../constants/routeName";
 import { toStandardFormat } from "../../../helpers/formatDate";
@@ -54,12 +55,6 @@ import {
 import { fetchAllCategory } from "../../../services/category.service";
 import { Asset, AssetState } from "../../../types/asset";
 import { ListPageState, SortOrder } from "../../../types/common";
-import { StyledTypography } from "../../../components/typography";
-import { RootListBox } from "../../../components/styledComponents";
-
-const StyledTableContainer = styled(TableContainer)(() => ({
-  border: "0px",
-}));
 
 const TABLE_HEAD: TableHeadInfo[] = [
   {

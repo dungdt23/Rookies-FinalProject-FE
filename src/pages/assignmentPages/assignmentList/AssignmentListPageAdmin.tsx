@@ -284,7 +284,7 @@ const AssignmentListPageAdmin = () => {
             const payload = {
                 assignmentId: selected?.id
             } as CreateReturnRequestRequest;
-            const response = await createReturnRequest(payload);
+            await createReturnRequest(payload);
             handleClosePopover();
             setAlert(`Returning request for assignment of asset ${selected?.assetName} is created`);
             getAssignments();
