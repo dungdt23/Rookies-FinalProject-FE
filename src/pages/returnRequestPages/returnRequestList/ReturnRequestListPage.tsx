@@ -281,7 +281,7 @@ const ReturnRequestListPage = () => {
                             onSearchSubmit={handleSearchSubmit}
                             TextFieldProps={
                                 {
-                                    sx: { minWidth: "26rem" },
+                                    sx: { minWidth: "20rem" },
                                 }
                             }
                         />

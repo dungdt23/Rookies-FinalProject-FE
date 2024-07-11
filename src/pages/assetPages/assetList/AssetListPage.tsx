@@ -75,6 +75,7 @@ const TABLE_HEAD: TableHeadInfo[] = [
     label: "Category",
     sortable: true,
     minWidth: "7rem",
+    width: "30%"
   },
   {
     id: AssetFieldFilter[AssetFieldFilter.state],

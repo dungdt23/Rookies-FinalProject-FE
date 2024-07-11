@@ -461,7 +461,7 @@ const AssignmentListPageAdmin = () => {
                             onSearchSubmit={handleSearchSubmit}
                             TextFieldProps={
                                 {
-                                    sx: { minWidth: "26rem" },
+                                    sx: { minWidth: "19rem" },
                                 }
                             }
                         />
