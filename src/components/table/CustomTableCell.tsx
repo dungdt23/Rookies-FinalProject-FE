@@ -5,7 +5,7 @@ export const StyledTableCell = styled(TableCell)(() => ({
     border: "0",
     paddingRight: "0.5rem",
     overflowWrap: "break-word",
-    wordBreak: "break-all",
+    wordBreak: "break-word",
     whiteSpace: "normal",
     height: "inherit"
 }))
