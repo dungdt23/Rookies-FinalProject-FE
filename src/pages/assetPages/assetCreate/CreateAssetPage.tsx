@@ -93,19 +93,6 @@ const validationSchema = yup.object({
     ),
 });
 
-const categoryValidationSchema = yup.object({
-  prefix: yup
-    .string()
-    .required("Please enter prefix")
-    .min(2, "Prefix must be at least 2 characters")
-    .max(4, "Prefix must be at most 4 characters"),
-  categoryName: yup
-    .string()
-    .required("Please enter category name")
-    .min(0, "Category Name must be at least 0 characters")
-    .max(200, "Category Name must be at most 200 characters"),
-});
-
 const debounce = (func: Function, delay: number) => {
   let timeoutId: ReturnType<typeof setTimeout>;
   return (...args: any[]) => {
@@ -297,7 +284,11 @@ const CreateAssetPage: FC = () => {
                   ))}
                   <MenuItem
                     onClick={handleCreateCategoryOpen}
-                    style={{ color: "red" }}
+                    sx={{ color: "red", position: "sticky", paddingBottom: "8px", bottom: 0, backgroundColor: "white",
+                      "&:hover": {
+                        backgroundColor: "white"
+                      }
+                     }}
                   >
                     Create a new category
                   </MenuItem>

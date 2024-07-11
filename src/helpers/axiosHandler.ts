@@ -39,8 +39,6 @@ export const handleResponseError = (
         return Promise.reject(error);
     }
 
-    console.log(status === 401);
-    
     const responseData = error.response.data as ApiResponse<any> | null;
     showSnackbar(`Error ${status}: ${responseData?.message ?? "Something went wrong"}`, 'error');
     return Promise.reject(error);
