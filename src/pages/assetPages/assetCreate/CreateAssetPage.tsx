@@ -15,8 +15,7 @@ import {
   Radio,
   RadioGroup,
   Stack,
-  styled,
-  TextField,
+  TextField
 } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import { DatePicker } from "@mui/x-date-pickers";
@@ -26,6 +25,7 @@ import { FC, useCallback, useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
 import * as yup from "yup";
+import { RootBox } from "../../../components/form";
 import { NoStyleLink } from "../../../components/noStyleLink";
 import { routeNames } from "../../../constants/routeName";
 import { toISOStringWithoutTimezone } from "../../../helpers/helper";
@@ -40,12 +40,6 @@ import {
 import { Asset, AssetState, CreateAssetRequest } from "../../../types/asset";
 import { Category } from "../../../types/category";
 import { ListPageState } from "../../../types/common";
-
-const RootBox = styled(Box)(() => ({
-  maxWidth: "100vh",
-  margin: "auto",
-}));
-
 dayjs.locale("en");
 
 const isPastDate = (date: any) =>
@@ -97,19 +91,6 @@ const validationSchema = yup.object({
       [AssetState.Available, AssetState.NotAvailable],
       "Invalid state value"
     ),
-});
-
-const categoryValidationSchema = yup.object({
-  prefix: yup
-    .string()
-    .required("Please enter prefix")
-    .min(2, "Prefix must be at least 2 characters")
-    .max(4, "Prefix must be at most 4 characters"),
-  categoryName: yup
-    .string()
-    .required("Please enter category name")
-    .min(0, "Category Name must be at least 0 characters")
-    .max(200, "Category Name must be at most 200 characters"),
 });
 
 const debounce = (func: Function, delay: number) => {
@@ -303,7 +284,11 @@ const CreateAssetPage: FC = () => {
                   ))}
                   <MenuItem
                     onClick={handleCreateCategoryOpen}
-                    style={{ color: "red" }}
+                    sx={{ color: "red", position: "sticky", paddingBottom: "8px", bottom: 0, backgroundColor: "white",
+                      "&:hover": {
+                        backgroundColor: "white"
+                      }
+                     }}
                   >
                     Create a new category
                   </MenuItem>

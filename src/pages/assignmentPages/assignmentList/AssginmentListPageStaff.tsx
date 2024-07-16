@@ -1,13 +1,15 @@
 import { Check, Close, Refresh } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
-import { Alert, Box, Button, Grid, IconButton, Pagination, Table, TableBody, TableContainer, TableRow, Typography, styled } from "@mui/material";
+import { Alert, Box, Button, Grid, IconButton, Pagination, Table, TableBody, TableRow, Typography } from "@mui/material";
+import axios from "axios";
 import dayjs, { Dayjs } from "dayjs";
 import { MouseEvent, ReactNode, useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useLocation } from "react-router-dom";
 import { CircularProgressWrapper } from "../../../components/loading";
-import { CustomPopover } from "../../../components/popover";
-import { ClickableTableRow, CustomTableCell, StyledTableCell } from "../../../components/table";
+import { ListPopper } from "../../../components/popover";
+import { RootListBox } from "../../../components/styledComponents";
+import { ClickableTableRow, CustomTableCell, StyledTableCell, StyledTableContainer } from "../../../components/table";
 import CustomTableHead, { Order, TableHeadInfo } from "../../../components/table/CustomTableHead";
 import { StyledTypography } from "../../../components/typography";
 import { theme } from "../../../constants/appTheme";
@@ -15,58 +17,57 @@ import { toStandardFormat } from "../../../helpers/formatDate";
 import { addSpacesToCamelCase } from "../../../helpers/helper";
 import { removeUndefinedValues } from "../../../helpers/removeUndefined";
 import { FieldAssignmentFilter, GetAllAssignmentParams, RespondAssignmentRequest, fetchAllAssignments, respondAssignmentById } from "../../../services/assignment.service";
+import { CreateReturnRequestRequest, createReturnRequest } from "../../../services/returnRequest.service";
 import { Assignment, AssignmentState } from "../../../types/assignment";
 import { ListPageState } from "../../../types/common";
-
-const RootBox = styled(Box)(() => ({
-    minWidth: '30rem',
-    width: '100%',
-    p: 2
-}))
-
-const allOption = {
-    label: "None",
-    value: ""
-}
-
-const StyledTableContainer = styled(TableContainer)(() => ({
-    border: '0px',
-}))
 
 const TABLE_HEAD: TableHeadInfo[] = [
     {
         id: FieldAssignmentFilter[FieldAssignmentFilter.AssetCode],
         label: "Asset Code",
-        sortable: true
+        sortable: true,
+        minWidth: "7rem",
+        width: "10%"
     },
     {
         id: FieldAssignmentFilter[FieldAssignmentFilter.AssetName],
         label: "Asset Name",
-        sortable: true
+        sortable: true,
+        minWidth: "10rem",
     },
     {
         id: FieldAssignmentFilter[FieldAssignmentFilter.AssignedTo],
         label: "Assigned To",
-        sortable: true
+        sortable: true,
+        minWidth: "8rem",
+        width: "10%"
     },
     {
         id: FieldAssignmentFilter[FieldAssignmentFilter.AssignedBy],
         label: "Assigned By",
-        sortable: true
+        sortable: true,
+        minWidth: "8rem",
+        width: "10%"
     },
     {
         id: FieldAssignmentFilter[FieldAssignmentFilter.AssignedDate],
         label: "Assigned Date",
-        sortable: true
+        sortable: true,
+        minWidth: "8rem",
+        width: "10%"
     },
     {
         id: FieldAssignmentFilter[FieldAssignmentFilter.State],
         label: "State",
-        sortable: true
+        sortable: true,
+        minWidth: "8rem",
+        width: "10%"
     },
     {
         id: "action",
         label: "Action",
+        minWidth: "8rem",
+        width: "8rem"
     }
 ]
 
@@ -75,8 +76,6 @@ const AssignmentListPageStaff = () => {
     const defaultSortOrder: Order = "asc"
     const [assignments, _setAssignments] = useState<Assignment[]>([]);
     const [totalCount, setTotalCount] = useState<number>(0);
-    const [assignmentState, setAssignmentState] = useState<AssignmentState | string>(allOption.value);
-    const [search, setSearch] = useState<string>("");
     const [order, setOrder] = useState<Order>(defaultSortOrder);
     const [orderBy, setOrderBy] = useState<string>(TABLE_HEAD[0].id);
     const [page, setPage] = useState<number>(1);
@@ -86,6 +85,8 @@ const AssignmentListPageStaff = () => {
     const [isFetching, setIsFetching] = useState<boolean>(false);
     const [isDisabling, setIsDisabling] = useState<boolean>(false);
     const [selected, setSelected] = useState<Assignment | null>(null);
+    const [canCreateReturnRequest, setCanCreateReturnRequest] = useState<boolean>(true);
+    const [createReturnRequestAnchorEl, setCreateReturnRequestDeleteAnchorEl] = useState<HTMLElement | null>(null);
     const [rowAnchorEl, setRowAnchorEl] = useState<HTMLElement | null>(null);
     const [respondAnchorEl, setRespondAnchorEl] = useState<HTMLElement | null>(null);
     const [canRespond, setCanRespond] = useState<boolean>(true);
@@ -101,12 +102,10 @@ const AssignmentListPageStaff = () => {
         setIsFetching(true);
         let params: GetAllAssignmentParams = {
             own: true,
-            searchString: search ? search as string : undefined,
             isAscending: order === "asc",
             fieldFilter: FieldAssignmentFilter[orderBy as keyof typeof FieldAssignmentFilter],
             index: page,
             size: pageSize,
-            stateFilter: AssignmentState[assignmentState as keyof typeof AssignmentState],
             assignedDateFilter: assignedDate ? dayjs(assignedDate).format('MM-DD-YYYY') : undefined
         };
 
@@ -117,7 +116,7 @@ const AssignmentListPageStaff = () => {
             _setAssignments(data.data);
             setTotalCount(data.totalCount)
         } catch (error: any) {
-            if (error.response.data.statusCode === 404) {
+            if (axios.isAxiosError(error) && error.response?.data.statusCode === 404) {
                 _setAssignments([]);
             }
         } finally {
@@ -127,7 +126,7 @@ const AssignmentListPageStaff = () => {
 
     useEffect(() => {
         getAssignments();
-    }, [assignmentState, assignedDate, search, order, orderBy, page, pageSize]);
+    }, [assignedDate, order, orderBy, page, pageSize]);
 
     useEffect(() => {
         if (clearDate) {
@@ -157,7 +156,11 @@ const AssignmentListPageStaff = () => {
         setSelected(assignment);
         setCanRespond(true);
     }
-
+    function handleCreateReturnRequest(event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, assignment: Assignment): void {
+        setCreateReturnRequestDeleteAnchorEl(event.currentTarget);
+        setSelected(assignment);
+        setCanCreateReturnRequest(true);
+    }
     const handleRespondClick = (event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, assignment: Assignment) => {
         setIsAccpet(true);
         setRespondAnchorEl(event.currentTarget);
@@ -173,6 +176,7 @@ const AssignmentListPageStaff = () => {
         setSelected(null);
         setRowAnchorEl(null);
         setRespondAnchorEl(null);
+        setCreateReturnRequestDeleteAnchorEl(null);
     };
 
     const respondAssignment = async () => {
@@ -199,6 +203,26 @@ const AssignmentListPageStaff = () => {
         }
         setIsDisabling(false);
     }
+    const createReturnReq = async () => {
+        setIsDisabling(true);
+        try {
+            const payload = {
+                assignmentId: selected?.id
+            } as CreateReturnRequestRequest;
+            await createReturnRequest(payload);
+            handleClosePopover();
+            setAlert(`Returning request for assignment of asset ${selected?.assetName} is created`);
+            getAssignments();
+        } catch (error: any) {
+            if (error.response.status === 409) {
+                setCanCreateReturnRequest(false);
+                console.log('Conflics in business');
+            }
+            console.error('Error creating return request:', error);
+        } finally {
+            setIsDisabling(false);
+        }
+    };
     const renderAssignmentDetailDialog = (): ReactNode => {
         if (!selected) return null;
         const assignmentDetails = [
@@ -273,16 +297,47 @@ const AssignmentListPageStaff = () => {
             </Box>
         )
     }
-
+    const renderReturnRequestCreateDialog = (): ReactNode => {
+        return (
+            <Box>
+                <Typography variant="body1" gutterBottom>
+                    Do you want to create a returning request for this asset?
+                </Typography>
+                <Box sx={{ display: 'flex', gap: '1rem', mt: '1rem' }}>
+                    <LoadingButton
+                        loading={isDisabling}
+                        type="submit"
+                        variant="contained"
+                        onClick={createReturnReq}
+                    >
+                        Yes
+                    </LoadingButton>
+                    <Button variant="outlined" onClick={handleClosePopover}>
+                        No
+                    </Button>
+                </Box>
+            </Box>
+        )
+    }
+    const renderCannotCreateReturnRequestDialog = (): ReactNode => {
+        return (
+            <Box sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                <Typography variant="body1" gutterBottom>
+                    Cannot create a new returning request because this assignment has currently active returning request
+                    <br />
+                </Typography>
+            </Box>
+        );
+    };
     return (
         <>
             <Helmet>
-                <title>Manage assignment</title>
+                <title>My Assignment</title>
             </Helmet>
-            <RootBox sx={{ mb: '1rem' }}>
+            <RootListBox sx={{ mb: '1rem' }}>
                 <Typography variant="h5" color='primary'>My Assignment</Typography>
-            </RootBox>
-            <RootBox>
+            </RootListBox>
+            <RootListBox>
                 {alert && <Alert sx={{ mb: '1rem' }} severity="success" onClose={() => setAlert(undefined)}>{alert}</Alert>}
 
                 <StyledTableContainer>
@@ -319,9 +374,16 @@ const AssignmentListPageStaff = () => {
                                                 onClick={(event) => handleDeleteClick(event, assignment)}>
                                                 <Close color={assignment.state === AssignmentState.WaitingForAcceptance ? "primary" : "disabled"} />
                                             </IconButton>
-                                            <IconButton disabled={assignment.state === AssignmentState.WaitingForAcceptance}>
-                                                <Refresh color={assignment.state !== AssignmentState.WaitingForAcceptance ? "info" : "disabled"} />
-                                            </IconButton>
+                                            {assignment.activeReturnRequestId ?
+                                                (<IconButton disabled
+                                                    onClick={(event) => handleCreateReturnRequest(event, assignment)}>
+                                                    <Refresh color="disabled" />
+                                                </IconButton>) :
+                                                (<IconButton disabled={assignment.state !== AssignmentState.Accepted}
+                                                    onClick={(event) => handleCreateReturnRequest(event, assignment)}>
+                                                    <Refresh color={(assignment.state === AssignmentState.Accepted) ? "info" : "disabled"} />
+                                                </IconButton>)
+                                            }
                                         </StyledTableCell>
                                     </ClickableTableRow>
                                 ))}
@@ -337,17 +399,11 @@ const AssignmentListPageStaff = () => {
                                                 }}
                                             >
                                                 <Typography variant="h6" paragraph>
-                                                    {search === "" ? "Empty!" : "Not found"}
+                                                    Empty!
                                                 </Typography>
 
                                                 <Typography variant="body2">
-                                                    {search === "" ? "There are no records."
-                                                        : (<>
-                                                            No results found for{' '}
-                                                            <strong>
-                                                                &quot;{search}&quot;
-                                                            </strong>.
-                                                            <br /> Try checking for typos or using complete words.</>)}
+                                                    There are no records.
                                                 </Typography>
                                             </Box>
                                         </StyledTableCell>
@@ -364,8 +420,8 @@ const AssignmentListPageStaff = () => {
                             onChange={handleChangePage}
                         />
                     </Box>}
-            </RootBox >
-            <CustomPopover
+            </RootListBox >
+            <ListPopper
                 elAnchor={rowAnchorEl}
                 open={Boolean(rowAnchorEl)}
                 handleClose={handleClosePopover}
@@ -373,7 +429,7 @@ const AssignmentListPageStaff = () => {
                 renderDescription={renderAssignmentDetailDialog}
                 boxProps={{ sx: { minWidth: '25rem' } }}
             />
-            <CustomPopover
+            <ListPopper
                 elAnchor={respondAnchorEl}
                 open={Boolean(respondAnchorEl)}
                 handleClose={handleClosePopover}
@@ -381,6 +437,15 @@ const AssignmentListPageStaff = () => {
                 renderDescription={renderAssignmentRespondDialog}
                 boxProps={{ sx: { maxWidth: '25rem' } }}
             />
+            <ListPopper
+                elAnchor={createReturnRequestAnchorEl}
+                open={Boolean(createReturnRequestAnchorEl)}
+                handleClose={handleClosePopover}
+                renderTitle={() => canCreateReturnRequest ? <span>Are you sure?</span> : <span>Can not create a new returning request</span>}
+                renderDescription={canCreateReturnRequest ? renderReturnRequestCreateDialog : renderCannotCreateReturnRequestDialog}
+            >
+
+            </ListPopper>
         </>
     )
 }

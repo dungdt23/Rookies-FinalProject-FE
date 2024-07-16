@@ -29,12 +29,9 @@ import { Asset, AssetState, CreateAssetRequest } from "../../../types/asset";
 import { Category } from "../../../types/category";
 import { ListPageState } from "../../../types/common";
 import { toISOStringWithoutTimezone } from "../../../helpers/helper";
-
-const RootBox = styled(Box)(() => ({
-  maxWidth: "100vh",
-  margin: "auto",
-}));
-
+import { RootBox } from "../../../components/form";
+import { HubConnectionBuilder } from "@microsoft/signalr";
+import signalrService from "../../../services/signalr.service";
 dayjs.locale("en");
 
 const isPastDate = (date: any) =>
@@ -99,19 +96,40 @@ const EditAssetPage: FC = () => {
     state: AssetState.Available,
   });
   const navigate = useNavigate();
+  const [deletedAssetCode, setDeletedAssetCode] = useState<string>("");
+  useEffect(() => {
+    const initializeSignalR = async() => {
+      await signalrService.startConnection();
+      signalrService.onDeleted((deletedAssetId) => {
+        if (deletedAssetId === assetId) {
+          const listAssetPageState = {
+            alertString: `You are sent back to manage page because the asset ${deletedAssetCode} was deleted by another admin!`,
+          } as ListPageState<Asset>
+          navigate(routeNames.asset.list, { state: listAssetPageState });
+        }
+      });
+    }
+    initializeSignalR();
+    return () => {
+      signalrService.stopConnection();
+    };
+  }, [assetId, navigate, deletedAssetCode]);
 
   const fetchAssetDetails = useCallback(async () => {
     try {
       const response = await fetchAssetById(assetId!);
       const asset = response.data;
-
+      if(asset === null) {
+        navigate(routeNames.notFound);  
+      }
       const formValues = {
         assetName: asset.assetName,
         installedDate: dayjs(asset.installedDate),
         specification: asset.specification,
         state: asset.state,
       };
-
+      
+      setDeletedAssetCode(asset.assetCode);
       setInitialValues(formValues);
       formik.setValues(formValues);
 

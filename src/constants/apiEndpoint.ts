@@ -5,6 +5,8 @@ export const apiEndpoints = {
         CREATE: "/users",
         EDIT: (userId: string) => `/users/${userId}`,
         DELETE: (userId: string) => `/users/${userId}`,
+        CHANGE_PASSWORD: "/users/change-password",
+        CHANGE_PASSWORD_FIRST_TIME: "/users/change-password-first-time"
     },
     ASSET: {
         GET_ALL: "/assets",
@@ -19,7 +21,13 @@ export const apiEndpoints = {
         CREATE: "/assignments",
         EDIT: (assignmentId: string) => `/assignments/${assignmentId}`,
         DELETE: (assignmentId: string) => `/assignments/${assignmentId}`,
+        HISTORY: (assetId: string) => `/assignments/asset-historical/${assetId}`,
         RESPOND: "/assignments/respond"
+    },
+    RETURN_REQUEST: {
+        GET_ALL: "/return-requests",
+        COMPLETE: (returnRequestId:string) => `/return-requests/${returnRequestId}/state`,
+        CREATE: "/return-requests"
     },
     CATEGORY: {
         GET_ALL: "/categories",
@@ -28,6 +36,10 @@ export const apiEndpoints = {
     },
     TYPE: {
         GET_ALL: "/types"
+    },
+    REPORT: {
+        GET_ALL: "/reports",
+        EXPORT: "/reports/export"
     },
     LOGIN: "/users/login"
 }

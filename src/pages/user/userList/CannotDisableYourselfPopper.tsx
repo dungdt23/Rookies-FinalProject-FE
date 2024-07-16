@@ -1,5 +1,5 @@
 import { FC, ReactNode } from "react";
-import { CustomPopover } from "../../../components/popover";
+import { ListPopper } from "../../../components/popover";
 import { Box, Typography } from "@mui/material";
 
 interface CannotDisableYourPopperProps {
@@ -19,7 +19,7 @@ const renderDescription = (): ReactNode => {
 
 const CannotDisableYourPopper: FC<CannotDisableYourPopperProps> = ({ elAnchor, handleClose }) => {
     return (
-        <CustomPopover
+        <ListPopper
             elAnchor={elAnchor}
             open={Boolean(elAnchor)}
             handleClose={handleClose}

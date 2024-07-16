@@ -2,12 +2,15 @@ import { ArrowDropDown } from "@mui/icons-material";
 import { Box, TableHead, TableSortLabel } from '@mui/material';
 import { FC } from "react";
 import { StyledTableCell } from "./CustomTableCell";
+import { theme } from "../../constants/appTheme";
 
 export interface TableHeadInfo {
     id: string,
     label: string,
     sortable?: boolean,
-    disableDivider?: boolean
+    disableDivider?: boolean,
+    minWidth: string,
+    width?: string
 }
 
 export type Order = 'asc' | 'desc';
@@ -29,11 +32,19 @@ const CustomTableHead: FC<TableHeadProps> = ({ columns, order, orderBy, onReques
     return (
         <TableHead sx={{
             height: "1px",
+            position: "sticky",
+            top: 0,
+            zIndex: 1,
+            background: theme.palette.common.white,
         }}>
             {columns.map((info) => (
                 <StyledTableCell
                     key={info.id}
                     onClick={info.sortable ? createSortHandler(info.id) : undefined}
+                    sx={{
+                        minWidth: info.minWidth,
+                        width: info.width ?? 'auto',
+                    }}
                 >
                     <Box
                         sx={{
@@ -44,7 +55,7 @@ const CustomTableHead: FC<TableHeadProps> = ({ columns, order, orderBy, onReques
                         <TableSortLabel
                             active={info.sortable}
                             hideSortIcon={info.sortable}
-                            direction={orderBy === info.id ? order : 'asc'}
+                            direction={orderBy === info.id ? order : 'desc'}
                             IconComponent={ArrowDropDown}
                             sx={{
                                 '&.MuiTableSortLabel-root': {

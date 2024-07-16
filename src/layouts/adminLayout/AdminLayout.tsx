@@ -10,7 +10,7 @@ const AdminLayout: FC = () => {
             <Header />
             <Box display={'flex'} sx={{ flexDirection: 'row', m: "1rem 8px 0 8px" }}>
                 <Sidebar />
-                <main style={{ padding: "1rem", width: "100%" }}>
+                <main style={{ padding: "1rem", overflowX: 'hidden', flexGrow: 1 }}>
                     <Outlet />
                 </main>
             </Box>

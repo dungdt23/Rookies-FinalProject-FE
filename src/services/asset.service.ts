@@ -4,6 +4,7 @@ import { Asset, AssetState, CreateAssetRequest } from "../types/asset";
 import { PaginateResponse, SortOrder } from "../types/common";
 import axiosInstance from "./axios";
 import { ApiResponse } from "./user.service";
+import { HistoricalAssignment } from '../types/assignment';
 
 export interface GetAllAssetParams {
     state?: AssetState,
@@ -55,3 +56,10 @@ export const deleteAssetById = async (id: string): Promise<boolean> => {
         throw error;
     }
 };
+
+export const fetchAssetHistory = async (assetId: string, isDateDescending: boolean, index: number = 1, size: number = 10): Promise<PaginateResponse<HistoricalAssignment>> => {
+    const response = await axiosInstance.get(`${apiEndpoints.ASSIGNMENT.HISTORY(assetId)}`, {
+        params: { isDateDescending: isDateDescending, index: index, size: size }
+    });
+    return response.data;
+}

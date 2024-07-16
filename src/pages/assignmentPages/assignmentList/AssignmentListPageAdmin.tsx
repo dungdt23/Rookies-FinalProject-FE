@@ -1,15 +1,16 @@
-import { Edit, HighlightOff, Refresh, VpnLock } from "@mui/icons-material";
+import { Edit, HighlightOff, Refresh } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
-import { Alert, Box, Button, Divider, FormControl, Grid, IconButton, InputLabel, MenuItem, Pagination, Select, SelectChangeEvent, Table, TableBody, TableRow, Typography, styled } from "@mui/material";
+import { Alert, Box, Button, Divider, FormControl, Grid, IconButton, InputLabel, MenuItem, Pagination, Select, SelectChangeEvent, Table, TableBody, TableRow, Typography } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
-import { ChangeEventHandler, MouseEvent, ReactNode, useEffect, useState } from "react";
+import { MouseEvent, ReactNode, useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useLocation, useNavigate } from "react-router-dom";
 import { SearchBar } from "../../../components/form";
 import { CircularProgressWrapper } from "../../../components/loading";
 import { NoStyleLink } from "../../../components/noStyleLink";
-import { CustomPopover } from "../../../components/popover";
+import { ListPopper } from "../../../components/popover";
+import { RootListBox } from "../../../components/styledComponents";
 import { ClickableTableRow, CustomTableCell, StyledTableCell, StyledTableContainer } from "../../../components/table";
 import CustomTableHead, { Order, TableHeadInfo } from "../../../components/table/CustomTableHead";
 import { StyledTypography } from "../../../components/typography";
@@ -19,15 +20,9 @@ import { toStandardFormat } from "../../../helpers/formatDate";
 import { addSpacesToCamelCase } from "../../../helpers/helper";
 import { removeUndefinedValues } from "../../../helpers/removeUndefined";
 import { FieldAssignmentFilter, GetAllAssignmentParams, disableAssignmentrById, fetchAllAssignments } from "../../../services/assignment.service";
+import { CreateReturnRequestRequest, createReturnRequest } from "../../../services/returnRequest.service";
 import { Assignment, AssignmentState } from "../../../types/assignment";
 import { ListPageState } from "../../../types/common";
-
-
-const RootBox = styled(Box)(() => ({
-    minWidth: '30rem',
-    width: '100%',
-    p: 2
-}))
 
 const allOption = {
     label: "None",
@@ -38,41 +33,56 @@ const TABLE_HEAD: TableHeadInfo[] = [
     {
         id: 'No',
         label: 'No.',
-        sortable: false
+        sortable: false,
+        minWidth: "3rem",
+        width: "5%"
     },
     {
         id: FieldAssignmentFilter[FieldAssignmentFilter.AssetCode],
         label: "Asset Code",
-        sortable: true
+        sortable: true,
+        minWidth: "7rem",
+        width: "10%"
     },
     {
         id: FieldAssignmentFilter[FieldAssignmentFilter.AssetName],
         label: "Asset Name",
-        sortable: true
+        sortable: true,
+        minWidth: "10rem",
     },
     {
         id: FieldAssignmentFilter[FieldAssignmentFilter.AssignedTo],
         label: "Assigned To",
-        sortable: true
+        sortable: true,
+        minWidth: "8rem",
+        width: "10%"
     },
     {
         id: FieldAssignmentFilter[FieldAssignmentFilter.AssignedBy],
         label: "Assigned By",
-        sortable: true
+        sortable: true,
+        minWidth: "8rem",
+        width: "10%"
     },
     {
         id: FieldAssignmentFilter[FieldAssignmentFilter.AssignedDate],
         label: "Assigned Date",
-        sortable: true
+        sortable: true,
+        minWidth: "8rem",
+        width: "10%"
     },
     {
         id: FieldAssignmentFilter[FieldAssignmentFilter.State],
         label: "State",
-        sortable: true
+        sortable: true,
+        minWidth: "8rem",
+        width: "10%"
     },
     {
         id: "action",
         label: "Action",
+        minWidth: "8rem",
+        width: "8rem"
     }
 ]
 
@@ -95,6 +105,8 @@ const AssignmentListPageAdmin = () => {
     const [selected, setSelected] = useState<Assignment | null>(null);
     const [rowAnchorEl, setRowAnchorEl] = useState<HTMLElement | null>(null);
     const [deleteAnchorEl, setDeleteAnchorEl] = useState<HTMLElement | null>(null);
+    const [canCreateReturnRequest, setCanCreateReturnRequest] = useState<boolean>(true);
+    const [createReturnRequestAnchorEl, setCreateReturnRequestDeleteAnchorEl] = useState<HTMLElement | null>(null);
     const [canDisable, setCanDisable] = useState<boolean>(true);
     const [no, setNo] = useState<number>(1);
     const [change, setChange] = useState<boolean>(true);
@@ -190,6 +202,7 @@ const AssignmentListPageAdmin = () => {
         setPage(1);
     };
 
+
     const handleAssignedDateChange = (value: dayjs.Dayjs | null) => {
         setChange(!change);
         setAssignedDate(null);
@@ -225,7 +238,12 @@ const AssignmentListPageAdmin = () => {
         setSelected(assignment);
         setCanDisable(true);
     }
-
+    function handleCreateReturnRequest(event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, assignment: Assignment): void {
+        setCreateReturnRequestDeleteAnchorEl(event.currentTarget);
+        setSelected(assignment);
+        setCanDisable(true);
+        setCanCreateReturnRequest(true);
+    }
     const handleEditClick = (assignment: Assignment) => {
         navigate(routeNames.assignment.edit(assignment.id));
     }
@@ -238,6 +256,7 @@ const AssignmentListPageAdmin = () => {
         setSelected(null);
         setRowAnchorEl(null);
         setDeleteAnchorEl(null);
+        setCreateReturnRequestDeleteAnchorEl(null);
     };
 
     const deleteAssignment = async () => {
@@ -258,7 +277,27 @@ const AssignmentListPageAdmin = () => {
             console.error(error)
         }
         setIsDisabling(false);
-    }
+    };
+    const createReturnReq = async () => {
+        setIsDisabling(true);
+        try {
+            const payload = {
+                assignmentId: selected?.id
+            } as CreateReturnRequestRequest;
+            await createReturnRequest(payload);
+            handleClosePopover();
+            setAlert(`Returning request for assignment of asset ${selected?.assetName} is created`);
+            getAssignments();
+        } catch (error: any) {
+            if (error.response.status === 409) {
+                setCanCreateReturnRequest(false);
+                console.log('Conflics in business');
+            }
+            console.error('Error creating return request:', error);
+        } finally {
+            setIsDisabling(false);
+        }
+    };
     const renderAssignmentDetailDialog = (): ReactNode => {
         if (!selected) return null;
         const assignmentDetails = [
@@ -344,16 +383,47 @@ const AssignmentListPageAdmin = () => {
             </Box>
         )
     }
-
+    const renderReturnRequestCreateDialog = (): ReactNode => {
+        return (
+            <Box>
+                <Typography variant="body1" gutterBottom>
+                    Do you want to create a returning request for this asset?
+                </Typography>
+                <Box sx={{ display: 'flex', gap: '1rem', mt: '1rem' }}>
+                    <LoadingButton
+                        loading={isDisabling}
+                        type="submit"
+                        variant="contained"
+                        onClick={createReturnReq}
+                    >
+                        Yes
+                    </LoadingButton>
+                    <Button variant="outlined" onClick={handleClosePopover}>
+                        No
+                    </Button>
+                </Box>
+            </Box>
+        )
+    }
+    const renderCannotCreateReturnRequestDialog = (): ReactNode => {
+        return (
+            <Box sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                <Typography variant="body1" gutterBottom>
+                    Cannot create a new returning request because this assignment has currently active return request
+                    <br />
+                </Typography>
+            </Box>
+        );
+    };
     return (
         <>
             <Helmet>
                 <title>Manage assignment</title>
             </Helmet>
-            <RootBox sx={{ mb: '1rem' }}>
+            <RootListBox sx={{ mb: '1rem' }}>
                 <Typography variant="h5" color='primary'>Assignment Management</Typography>
-            </RootBox>
-            <RootBox>
+            </RootListBox>
+            <RootListBox>
                 {alert && <Alert sx={{ mb: '1rem' }} severity="success" onClose={() => setAlert(undefined)}>{alert}</Alert>}
                 <Box display="flex" justifyContent="space-between" alignItems="center" sx={{ mb: '1rem' }} >
                     <FormControl>
@@ -390,8 +460,8 @@ const AssignmentListPageAdmin = () => {
                             placeholderSearch={placeholderSearch}
                             onSearchSubmit={handleSearchSubmit}
                             TextFieldProps={
-                                { 
-                                    sx: { minWidth: "26rem" },
+                                {
+                                    sx: { minWidth: "19rem" },
                                 }
                             }
                         />
@@ -440,9 +510,17 @@ const AssignmentListPageAdmin = () => {
                                                 onClick={(event) => handleDeleteClick(event, assignment)}>
                                                 <HighlightOff color={assignment.state === AssignmentState.Accepted ? "disabled" : "primary"} />
                                             </IconButton>
-                                            <IconButton disabled={assignment.state === AssignmentState.Accepted}>
-                                                <Refresh color={assignment.state === AssignmentState.Accepted ? "info" : "disabled"} />
-                                            </IconButton>
+                                            {assignment.activeReturnRequestId ?
+                                                (<IconButton disabled
+                                                    onClick={(event) => handleCreateReturnRequest(event, assignment)}>
+                                                    <Refresh color="disabled" />
+                                                </IconButton>) :
+                                                (<IconButton disabled={assignment.state !== AssignmentState.Accepted}
+                                                    onClick={(event) => handleCreateReturnRequest(event, assignment)}>
+                                                    <Refresh color={(assignment.state === AssignmentState.Accepted) ? "info" : "disabled"} />
+                                                </IconButton>)
+                                            }
+
                                         </StyledTableCell>
                                     </ClickableTableRow>
                                 ))}
@@ -485,15 +563,15 @@ const AssignmentListPageAdmin = () => {
                             onChange={handleChangePage}
                         />
                     </Box>}
-            </RootBox >
-            <CustomPopover
+            </RootListBox >
+            <ListPopper
                 elAnchor={rowAnchorEl}
                 open={Boolean(rowAnchorEl)}
                 handleClose={handleClosePopover}
                 renderTitle={() => <span>Detailed Assignment Information</span>}
                 renderDescription={renderAssignmentDetailDialog}
             />
-            <CustomPopover
+            <ListPopper
                 elAnchor={deleteAnchorEl}
                 open={Boolean(deleteAnchorEl)}
                 handleClose={handleClosePopover}
@@ -502,7 +580,16 @@ const AssignmentListPageAdmin = () => {
                 boxProps={{ sx: { maxWidth: '25rem' } }}
             >
 
-            </CustomPopover>
+            </ListPopper>
+            <ListPopper
+                elAnchor={createReturnRequestAnchorEl}
+                open={Boolean(createReturnRequestAnchorEl)}
+                handleClose={handleClosePopover}
+                renderTitle={() => canCreateReturnRequest ? <span>Are you sure?</span> : <span>Can not create a new returning request</span>}
+                renderDescription={canCreateReturnRequest ? renderReturnRequestCreateDialog : renderCannotCreateReturnRequestDialog}
+            >
+
+            </ListPopper>
         </>
     )
 }

@@ -12,10 +12,8 @@ import {
   Pagination,
   Select,
   SelectChangeEvent,
-  TableContainer,
   TableRow,
-  Typography,
-  styled
+  Typography
 } from "@mui/material";
 import { FC, MouseEvent, ReactNode, useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
@@ -23,7 +21,8 @@ import { useLocation } from "react-router-dom";
 import { SearchBar } from "../../../components/form";
 import { CircularProgressWrapper } from "../../../components/loading";
 import { NoStyleLink } from "../../../components/noStyleLink";
-import { CustomPopover } from "../../../components/popover";
+import { ListPopper } from "../../../components/popover";
+import { RootListBox } from "../../../components/styledComponents";
 import {
   ClickableTableRow,
   CustomTableCell,
@@ -31,6 +30,7 @@ import {
   StyleTable,
   StyleTableBody,
   StyledTableCell,
+  StyledTableContainer,
 } from "../../../components/table";
 import {
   Order,
@@ -52,44 +52,45 @@ import { ListPageState } from "../../../types/common";
 import { User, UserGender, UserType } from "../../../types/user";
 import CannotDisableYourPopper from "./CannotDisableYourselfPopper";
 
-const RootBox = styled(Box)(() => ({
-  minWidth: "30rem",
-  width: "100%",
-  p: 2,
-}));
-
-const StyledTableContainer = styled(TableContainer)(() => ({
-  border: "0px",
-}));
-
 const TABLE_HEAD: TableHeadInfo[] = [
   {
     id: UserFieldFilter[UserFieldFilter.staffCode],
     label: "Staff Code",
     sortable: true,
+    minWidth: "6rem",
+    width: "15%"
   },
   {
     id: UserFieldFilter[UserFieldFilter.fullName],
     label: "Full Name",
     sortable: true,
+    minWidth: "12rem",
   },
   {
     id: "username",
     label: "Username",
+    minWidth: "4rem",
+    width: "15%"
   },
   {
     id: UserFieldFilter[UserFieldFilter.joinedDate],
     label: "Joined Date",
     sortable: true,
+    minWidth: "7rem",
+    width: "15%"
   },
   {
     id: UserFieldFilter[UserFieldFilter.type],
     label: "Type",
     sortable: true,
+    minWidth: "6rem",
+    width: "15%"
   },
   {
     id: "action",
     label: "Action",
+    minWidth: "6rem",
+    width: "6rem"
   },
 ];
 
@@ -347,12 +348,12 @@ const UserListPage: FC = () => {
       <Helmet>
         <title>Manage User</title>
       </Helmet>
-      <RootBox sx={{ mb: "1rem" }}>
+      <RootListBox sx={{ mb: "1rem" }}>
         <Typography variant="h5" color="primary">
           User Management
         </Typography>
-      </RootBox>
-      <RootBox>
+      </RootListBox>
+      <RootListBox>
         {alert && (
           <Alert
             sx={{ mb: "1rem" }}
@@ -423,6 +424,7 @@ const UserListPage: FC = () => {
                   >
                     <CustomTableCell
                       onClick={(event) => handleRowClick(event, user)}
+
                     >
                       {user.staffCode}
                     </CustomTableCell>
@@ -504,15 +506,15 @@ const UserListPage: FC = () => {
               onChange={handleChangePage}
             />
           </Box>}
-      </RootBox>
-      <CustomPopover
+      </RootListBox>
+      <ListPopper
         elAnchor={rowAnchorEl}
         open={Boolean(rowAnchorEl)}
         handleClose={handleClosePopover}
         renderTitle={() => <span>Detailed User Information</span>}
         renderDescription={renderUserDetailDialog}
       />
-      <CustomPopover
+      <ListPopper
         elAnchor={deleteAnchorEl}
         open={Boolean(deleteAnchorEl)}
         handleClose={handleClosePopover}
@@ -527,7 +529,7 @@ const UserListPage: FC = () => {
           canDisable ? renderUserDisableDialog : renderCannotDisableDialog
         }
         boxProps={{ sx: { maxWidth: "25rem" } }}
-      ></CustomPopover>
+      ></ListPopper>
       <CannotDisableYourPopper
         elAnchor={cannotDisableYourselfAnchorEl}
         handleClose={handleClosePopover}

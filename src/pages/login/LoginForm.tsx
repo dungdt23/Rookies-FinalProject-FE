@@ -1,5 +1,6 @@
 import { LoadingButton } from '@mui/lab';
-import { IconButton, InputAdornment, Stack, TextField } from '@mui/material';
+import { IconButton, InputAdornment, Stack, TextField, Typography } from '@mui/material';
+import axios from 'axios';
 import { useFormik } from 'formik';
 import React, { useState } from 'react';
 import * as yup from 'yup';
@@ -8,9 +9,19 @@ import { useAuth } from '../../contexts/AuthContext';
 import { loginPost, LoginRequest } from '../../services/user.service';
 
 // Define the validation schema
+const usernameLengthMessage = "The username length should be from 2 - 127 characters"
+const passwordLengthMessage = "The password length should be from 2 - 127 characters"
+const noTrailingWhitespaceMessage = 'Password should not have leading or trailing spaces';
+
 const validationSchema = yup.object({
-    username: yup.string().required('Username is required'),
-    password: yup.string().required('Password is required'),
+    username: yup.string().required('Username is required').min(2, usernameLengthMessage).max(127, usernameLengthMessage),
+    password: yup
+        .string()
+        .required('Password is required')
+        .min(2, passwordLengthMessage)
+        .max(127, passwordLengthMessage).test('no-trailing-whitespace', noTrailingWhitespaceMessage, value => {
+            return value === value?.trim();
+        }),
 });
 
 const LoginForm: React.FC = () => {
@@ -18,7 +29,7 @@ const LoginForm: React.FC = () => {
     const { login } = useAuth();
     const [isFetching, setIsFetching] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
-    
+
     const formik = useFormik({
         initialValues: {
             username: '',
@@ -36,8 +47,14 @@ const LoginForm: React.FC = () => {
                 const response = await loginPost(payload);
                 login(response.data.token);
             } catch (error) {
-                setError("Login failed. Please check your credentials");
-                console.error(error);
+                if (axios.isAxiosError(error)) {
+                    if (error.response?.status === 403) {
+                        setError("This account is disabled. Please contact the admin for more information.")
+                    } else if (error.response?.status === 400) {
+                        setError("Username or password is incorrect. Please try again.");
+                    }
+                    console.error(error);
+                }
             } finally {
                 setIsFetching(false);
             }
@@ -88,10 +105,17 @@ const LoginForm: React.FC = () => {
             </Stack>
 
             {error && (
-                <div style={{ color: 'red', textAlign: 'center', marginBottom: '10px' }}>{error}</div>
+                <Typography sx={{ color: 'red', textAlign: 'center', marginBottom: '10px' }}>{error}</Typography>
             )}
 
-            <LoadingButton loading={isFetching} fullWidth size="large" type="submit" variant="contained">
+            <LoadingButton
+                disabled={!(formik.isValid && formik.dirty && !isFetching)}
+                loading={isFetching}
+                fullWidth
+                size="large"
+                type="submit"
+                variant="contained"
+            >
                 Login
             </LoadingButton>
         </form>

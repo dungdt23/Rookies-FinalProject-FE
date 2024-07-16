@@ -1,3 +1,4 @@
 export const LocalStorageConstants = {
-    TOKEN: "token"
+    TOKEN: "token",
+    PASSWORD_CHANGED:"password_changed"
 }

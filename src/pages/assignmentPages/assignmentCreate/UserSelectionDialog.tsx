@@ -1,12 +1,10 @@
 import {
     Box,
     Button,
-    Checkbox,
     Dialog,
     DialogTitle,
     Pagination,
-    Table,
-    TableBody,
+    Radio,
     TableRow,
     Typography
 } from '@mui/material';
@@ -17,6 +15,8 @@ import 'simplebar-react/dist/simplebar.min.css';
 import { SearchBar } from '../../../components/form';
 import { CircularProgressWrapper } from '../../../components/loading';
 import { ClickableTableRow, CustomTableCell, CustomTableHead, StyledTableCell } from '../../../components/table';
+import { StyleTable } from '../../../components/table/CustomTable';
+import { StyleTableBody } from '../../../components/table/CustomTableBody';
 import { Order, TableHeadInfo } from '../../../components/table/CustomTableHead';
 import { removeUndefinedValues } from '../../../helpers/removeUndefined';
 import { fetchAllUsers, GetAllUserParams, UserFieldFilter } from '../../../services/user.service';
@@ -26,22 +26,29 @@ const TABLE_HEAD: TableHeadInfo[] = [
     {
         id: "action",
         label: "",
-        disableDivider: true
+        disableDivider: true,
+        minWidth: "3rem",
+        width: "3rem"
     },
     {
         id: UserFieldFilter[UserFieldFilter.staffCode],
         label: "Staff Code",
-        sortable: true
+        sortable: true,
+        minWidth: "7rem",
+        width: "20%"
     },
     {
         id: UserFieldFilter[UserFieldFilter.fullName],
         label: "Full Name",
-        sortable: true
+        sortable: true,
+        minWidth: "10rem",
     },
     {
         id: UserFieldFilter[UserFieldFilter.type],
         label: "Type",
-        sortable: true
+        sortable: true,
+        minWidth: "7rem",
+        width: "20%"
     },
 ]
 
@@ -100,9 +107,6 @@ const UserSelectionDialog: FC<UserSelectionDialogProps> = ({ open, handleClose, 
         }
     }, [open])
 
-    console.log(selected);
-    
-
     const handleCancelClick = () => {
         handleClose()
         onClose()
@@ -156,7 +160,7 @@ const UserSelectionDialog: FC<UserSelectionDialogProps> = ({ open, handleClose, 
                 "& .MuiDialog-container": {
                     "& .MuiPaper-root": {
                         width: "100%",
-                        minWidth: "50rem",  // Set your width here
+                        minWidth: "80dvw",  // Set your width here
                     },
                 },
             }}
@@ -172,24 +176,24 @@ const UserSelectionDialog: FC<UserSelectionDialogProps> = ({ open, handleClose, 
                         loading={isFetching}
                     >
                         <Box>
-                            <Table>
+                            <StyleTable>
                                 <CustomTableHead
                                     columns={TABLE_HEAD}
                                     order={order}
                                     orderBy={orderBy}
                                     onRequestSort={onRequestSort}
                                 />
-                                <TableBody>
+                                <StyleTableBody>
                                     {users.map((user) => (
                                         <ClickableTableRow
                                             key={user.id}
                                             sx={{ backgroundColor: selected?.id === user.id ? theme.palette.action.hover : 'unset' }}
                                         >
                                             <StyledTableCell sx={{ maxWidth: "1rem" }}>
-                                                <Checkbox
+                                                <Radio
                                                     checked={selected?.id === user.id}
                                                     inputProps={{
-                                                        'aria-label': "checkbox"
+                                                        'aria-label': "radio"
                                                     }}
                                                     onClick={() => handleRowClick(user)}
                                                 />
@@ -226,8 +230,8 @@ const UserSelectionDialog: FC<UserSelectionDialogProps> = ({ open, handleClose, 
                                             </CustomTableCell>
                                         </TableRow>
                                     )}
-                                </TableBody>
-                            </Table>
+                                </StyleTableBody>
+                            </StyleTable>
                         </Box>
                     </CircularProgressWrapper>
                 </SimpleBar>

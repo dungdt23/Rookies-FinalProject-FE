@@ -7,7 +7,6 @@ import { Logo } from '../../components/logo';
 const StyledContent = styled('div')(({ theme }) => ({
   maxWidth: 480,
   margin: 'auto',
-  minHeight: '100vh',
   display: 'flex',
   justifyContent: 'center',
   flexDirection: 'column',
@@ -34,7 +33,7 @@ const ErrorPage = ({ code, title, heading, message }: ErrorPageProps) => {
         <title>{`${code} ${title}`}</title>
       </Helmet>
 
-      <Container>
+      <Container sx={{ height: '100%', display: 'flex', alignItems: 'stretch' }}>
         <StyledContent sx={{ textAlign: 'center', alignItems: 'center' }}>
           <Logo sx={{ maxWidth: '5rem', mb: '1.5rem' }} />
           <Typography variant="h3" paragraph>

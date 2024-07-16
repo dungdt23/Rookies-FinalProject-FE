@@ -13,12 +13,10 @@ import {
   Pagination,
   Select,
   SelectChangeEvent,
-  styled,
   Table,
   TableBody,
-  TableContainer,
   TableRow,
-  Typography,
+  Typography
 } from "@mui/material";
 import { FC, MouseEvent, ReactNode, useEffect, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
@@ -29,17 +27,20 @@ import LoadingSelect, {
 } from "../../../components/form/LoadingSelect";
 import { CircularProgressWrapper } from "../../../components/loading";
 import { NoStyleLink } from "../../../components/noStyleLink";
-import { CustomPopover } from "../../../components/popover";
+import { ListPopper } from "../../../components/popover";
+import { RootListBox } from "../../../components/styledComponents";
 import {
   ClickableTableRow,
   CustomTableCell,
   CustomTableHead,
   StyledTableCell,
+  StyledTableContainer,
 } from "../../../components/table";
 import {
   Order,
   TableHeadInfo,
 } from "../../../components/table/CustomTableHead";
+import { StyledTypography } from "../../../components/typography";
 import { theme } from "../../../constants/appTheme";
 import { routeNames } from "../../../constants/routeName";
 import { toStandardFormat } from "../../../helpers/formatDate";
@@ -54,42 +55,40 @@ import {
 import { fetchAllCategory } from "../../../services/category.service";
 import { Asset, AssetState } from "../../../types/asset";
 import { ListPageState, SortOrder } from "../../../types/common";
-import { StyledTypography } from "../../../components/typography";
-
-const RootBox = styled(Box)(() => ({
-  minWidth: "30rem",
-  width: "100%",
-  p: 2,
-}));
-
-const StyledTableContainer = styled(TableContainer)(() => ({
-  border: "0px",
-}));
 
 const TABLE_HEAD: TableHeadInfo[] = [
   {
     id: AssetFieldFilter[AssetFieldFilter.assetCode],
     label: "Asset Code",
     sortable: true,
+    minWidth: "7rem",
+    width: "15%"
   },
   {
     id: AssetFieldFilter[AssetFieldFilter.assetName],
     label: "Asset Name",
     sortable: true,
+    minWidth: "7rem",
   },
   {
     id: AssetFieldFilter[AssetFieldFilter.category],
     label: "Category",
     sortable: true,
+    minWidth: "7rem",
+    width: "30%"
   },
   {
     id: AssetFieldFilter[AssetFieldFilter.state],
     label: "State",
     sortable: true,
+    minWidth: "6rem",
+    width: "15%"
   },
   {
     id: "action",
     label: "Action",
+    minWidth: "6rem",
+    width: "6rem"
   },
 ];
 
@@ -175,6 +174,8 @@ const AssetListPage: FC = () => {
     window.history.replaceState(location.pathname, "");
   };
 
+
+
   const getCategories = async () => {
     setIsFetchingCategory(true);
     try {
@@ -241,6 +242,8 @@ const AssetListPage: FC = () => {
   };
 
   const renderAssetDetailDialog = (): ReactNode => {
+    console.log(selected);
+
     if (!selected) return null;
     const assetDetails = [
       {
@@ -272,11 +275,12 @@ const AssetListPage: FC = () => {
         value: addSpacesToCamelCase(AssetState[selected?.state]),
       },
     ];
+
     return (
       <Box sx={{ maxWidth: "30rem" }}>
         {assetDetails.map((item) => (
           <Grid container spacing={2} key={item.label}>
-            <Grid item xs={4} sx={{ minWidth: "4rem" }}>
+            <Grid item xs={4} sx={{ minWidth: "6rem" }}>
               <StyledTypography variant="body1" gutterBottom>{item.label}</StyledTypography>
             </Grid>
             <Grid item xs={8}>
@@ -285,13 +289,35 @@ const AssetListPage: FC = () => {
           </Grid>
         ))}
         <Divider />
-        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', mt: 2 }}>
           <Typography variant="h6">Assignment history:</Typography>
-          <Typography variant="subtitle2">Time: Lorem | Assignment: Lorem</Typography>
-          <Typography variant="subtitle2">Time: Lorem | Assignment: Lorem</Typography>
-          <Typography variant="subtitle2">Time: Lorem | Assignment: Lorem</Typography>
-          <Typography variant="subtitle2">Time: Lorem | Assignment: Lorem</Typography>
-          <Typography variant="subtitle2">Time: Lorem | Assignment: Lorem</Typography>
+          {selected.assignments.length > 0 ? (
+            selected.assignments.map((assignment) => (
+              <Typography key={assignment.id} variant="body2">
+                Assigned Date: {toStandardFormat(assignment.assignedDate)} | Assigned by: {assignment.assignedBy} | Assigned to: {assignment.assignedTo}
+              </Typography>
+            ))
+          ) : (
+            <Typography variant="body2">
+              This asset doesn't have any historical assignment.
+            </Typography>
+          )}
+          {selected.assignments.length > 0 && (
+        <div style={{ marginTop: '16px', display: 'inline-block' }}>
+        <Link
+          to={routeNames.asset.history(selected?.id ?? '')}
+          style={{
+            textDecoration: 'none',
+            display: 'block', 
+            width: '30%', 
+          }}
+        >
+          <Button variant="contained" style={{ width: '100%' }}>
+            Show More
+          </Button>
+        </Link>
+      </div>
+          )}
         </Box>
       </Box>
     );
@@ -368,12 +394,12 @@ const AssetListPage: FC = () => {
       <Helmet>
         <title>Manage Assets</title>
       </Helmet>
-      <RootBox sx={{ mb: "1rem" }}>
+      <RootListBox sx={{ mb: "1rem" }}>
         <Typography variant="h5" color="primary">
           Asset Management
         </Typography>
-      </RootBox>
-      <RootBox>
+      </RootListBox>
+      <RootListBox>
         {alert && (
           <Alert
             sx={{ mb: "1rem" }}
@@ -550,15 +576,15 @@ const AssetListPage: FC = () => {
               onChange={handleChangePage}
             />
           </Box>}
-      </RootBox>
-      <CustomPopover
+      </RootListBox>
+      <ListPopper
         elAnchor={rowAnchorEl}
         open={Boolean(rowAnchorEl)}
         handleClose={handleClosePopover}
         renderTitle={() => <span>Detailed Asset Information</span>}
         renderDescription={renderAssetDetailDialog}
       />
-      <CustomPopover
+      <ListPopper
         elAnchor={deleteAnchorEl}
         open={Boolean(deleteAnchorEl)}
         handleClose={handleClosePopover}

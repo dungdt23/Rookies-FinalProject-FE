@@ -1,12 +1,10 @@
 import {
     Box,
     Button,
-    Checkbox,
     Dialog,
     DialogTitle,
     Pagination,
-    Table,
-    TableBody,
+    Radio,
     TableRow,
     Typography
 } from '@mui/material';
@@ -16,7 +14,8 @@ import SimpleBar from 'simplebar-react';
 import 'simplebar-react/dist/simplebar.min.css';
 import { SearchBar } from '../../../components/form';
 import { CircularProgressWrapper } from '../../../components/loading';
-import { ClickableTableRow, CustomTableCell, CustomTableHead, StyledTableCell } from '../../../components/table';
+import { ClickableTableRow, CustomTableCell, CustomTableHead, StyledTableCell, StyleTableBody } from '../../../components/table';
+import { StyleTable } from '../../../components/table/CustomTable';
 import { Order, TableHeadInfo } from '../../../components/table/CustomTableHead';
 import { removeUndefinedValues } from '../../../helpers/removeUndefined';
 import { AssetFieldFilter, fetchAllAssets, GetAllAssetParams } from '../../../services/asset.service';
@@ -27,22 +26,29 @@ const TABLE_HEAD: TableHeadInfo[] = [
     {
         id: "action",
         label: "",
-        disableDivider: true
+        disableDivider: true,
+        minWidth: "3rem",
+        width: "3rem"
     },
     {
         id: AssetFieldFilter[AssetFieldFilter.assetCode],
         label: "Asset Code",
         sortable: true,
+        minWidth: "7rem",
+        width: "20%"
     },
     {
         id: AssetFieldFilter[AssetFieldFilter.assetName],
         label: "Asset Name",
         sortable: true,
+        minWidth: "7rem",
     },
     {
         id: AssetFieldFilter[AssetFieldFilter.category],
         label: "Category",
         sortable: true,
+        minWidth: "7rem",
+        width: "30%"
     },
 ]
 
@@ -102,7 +108,7 @@ const AssetSelectionDialog: FC<AssetSelectionDialogProps> = ({ open, handleClose
             getAssets();
         }
     }, [open])
-    
+
     const handleCancelClick = () => {
         handleClose()
         onClose()
@@ -156,7 +162,7 @@ const AssetSelectionDialog: FC<AssetSelectionDialogProps> = ({ open, handleClose
                 "& .MuiDialog-container": {
                     "& .MuiPaper-root": {
                         width: "100%",
-                        minWidth: "50rem",  // Set your width here
+                        minWidth: "80dvw",  // Set your width here
                     },
                 },
             }}
@@ -172,24 +178,24 @@ const AssetSelectionDialog: FC<AssetSelectionDialogProps> = ({ open, handleClose
                         loading={isFetching}
                     >
                         <Box>
-                            <Table>
+                            <StyleTable>
                                 <CustomTableHead
                                     columns={TABLE_HEAD}
                                     order={order}
                                     orderBy={orderBy}
                                     onRequestSort={onRequestSort}
                                 />
-                                <TableBody>
+                                <StyleTableBody>
                                     {assets.map((asset) => (
                                         <ClickableTableRow
                                             key={asset.id}
                                             sx={{ backgroundColor: selected?.id === asset.id ? theme.palette.action.hover : 'unset' }}
                                         >
                                             <StyledTableCell sx={{ maxWidth: "1rem" }}>
-                                                <Checkbox
+                                                <Radio
                                                     checked={selected?.id === asset.id}
                                                     inputProps={{
-                                                        'aria-label': "checkbox"
+                                                        'aria-label': "radio"
                                                     }}
                                                     onClick={() => handleRowClick(asset)}
                                                 />
@@ -226,8 +232,8 @@ const AssetSelectionDialog: FC<AssetSelectionDialogProps> = ({ open, handleClose
                                             </CustomTableCell>
                                         </TableRow>
                                     )}
-                                </TableBody>
-                            </Table>
+                                </StyleTableBody>
+                            </StyleTable>
                         </Box>
                     </CircularProgressWrapper>
                 </SimpleBar>
