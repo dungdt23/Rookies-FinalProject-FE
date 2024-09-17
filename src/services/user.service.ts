@@ -3,6 +3,7 @@ import { apiEndpoints } from '../constants/apiEndpoint';
 import { User, UserGender, UserType } from '../types/user';
 import axiosInstance from './axios';
 import { PaginateResponse } from '../types/common';
+import { AxiosConstants } from '../constants/axiosConstants';
 
 export interface ApiResponse<T> {
     data: T,
@@ -78,6 +79,8 @@ export const editUserById = async (id: string, payload: EditUserRequest): Promis
 }
 
 export const loginPost = async (payload: LoginRequest): Promise<ApiResponse<LoginResponse>> => {
+    console.log("hihi" + AxiosConstants.AXIOS_BASEURL);
+
     const response: AxiosResponse<ApiResponse<LoginResponse>> = await axiosInstance.post(apiEndpoints.LOGIN, payload)
     return response.data
 }

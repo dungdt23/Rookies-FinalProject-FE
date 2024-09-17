@@ -18,4 +18,12 @@ export default defineConfig({
             apply: 'build', // Apply only in build mode
         },
     ],
+    // server: {
+    //     watch: {
+    //         usePolling: true,
+    //     },
+    //     host: true,
+    //     strictPort: true,
+    //     port: 80
+    // }
 });
